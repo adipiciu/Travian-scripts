@@ -14,5 +14,5 @@ Safari: Userscript‪s‬ or Tampermonkey
 Android: Yandex or Kiwi browser with Violentmonkey or Tampermonkey
 
 # Warning
-Do not install these scripts from untrusty websites like greasyfork.org, where owners ban legit authors and deletes legit scripts in favor of clones. If you had an account there, you can warn other users and redirect them here, where the offical scripts are updated.
+Do not install these scripts from untrusty websites like greasyfork.org, where owners ban legit authors and deletes legit scripts in favor of clones. If you had an account there, you can warn other users and redirect them here, where the official scripts are updated.
 
