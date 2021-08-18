@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name           Travian wave builder
-// @namespace      https://github.com/adipiciu
+// @namespace      https://github.com/adipiciu/Travian-scripts
 // @description    Wave builder for Travian Legends and Travian Shadow Empires
 // @author         adipiciu (based on Travian wave builder 0.5 by Serj_LV)
 // @license        GPL version 3 or any later version; http://www.gnu.org/copyleft/gpl.html
