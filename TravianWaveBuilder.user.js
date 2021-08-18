@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name           Travian wave builder
-// @namespace      http://greasyfork.org/users/6214-adipiciu
+// @namespace      https://github.com/adipiciu
 // @description    Wave builder for Travian Legends and Travian Shadow Empires
 // @author         adipiciu (based on Travian wave builder 0.5 by Serj_LV)
 // @license        GPL version 3 or any later version; http://www.gnu.org/copyleft/gpl.html
@@ -10,13 +10,13 @@
 // @include        *://*/*.travian.*/build.php*
 // @include        *://*/*.travian.*.*/build.php*
 
-// @version        1.9
+// @version        2.0
 // ==/UserScript==
 
 function allInOneOpera () {
 
-var version = '1.9';
-var scriptURL = 'https://greasyfork.org/scripts/20154-travian-wave-builder';
+var version = '2.0';
+var scriptURL = 'https://github.com/adipiciu/Travian-scripts';
 var defInterval = 200;
 var sLang = detectLanguage();
 
