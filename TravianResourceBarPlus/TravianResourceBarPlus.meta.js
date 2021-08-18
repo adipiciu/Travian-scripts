@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name           Travian Resource bar plus
-// @namespace      http://userscripts.org/scripts/show/75431
+// @namespace      https://github.com/adipiciu/Travian-scripts
 // @description    Shows travian resources (for Travian Legends and Travian Shadow Empires)
 // @author         adipiciu (based on Travian Resource bar plus version 2.8.14 by Serj_LV)
 // @license        GPL version 3 or any later version; http://www.gnu.org/copyleft/gpl.html
