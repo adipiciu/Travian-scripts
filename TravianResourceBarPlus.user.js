@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name           Travian Resource bar plus
-// @namespace      http://userscripts.org/scripts/show/75431
+// @namespace      https://github.com/adipiciu
 // @description    Shows travian resources (for Travian Legends and Travian Shadow Empires)
 // @author         adipiciu (based on Travian Resource bar plus version 2.8.14 by Serj_LV)
 // @license        GPL version 3 or any later version; http://www.gnu.org/copyleft/gpl.html
@@ -43,7 +43,7 @@ var version = '2.21.17';
 
 notRunYet = false;
 
-var homepageurl = 'https://greasyfork.org/scripts/5923-travian-resource-bar-plus';
+var homepageurl = 'https://github.com/adipiciu/Travian-scripts';
 var audiofile = 'http://soundsplanet.com/authors/1001/tracks/touch_tone1.mp3';
 var bgcolor = ['#66ff66','yellow','red']; //resource bar colors
 var vHColor = '#777777'; //hints (second name) color
@@ -8849,7 +8849,7 @@ function displayWhatIsNew () {
 		var header = $e('div',[['style','height:35px;font-size:130%;font-weight:bold;text-align:center;']]);
 		var content = $e('div',[['style','margin:0px 20px;font-size: 13px;']]);
 		var footer = $e('div',[['style','display:table;margin:15px 20px 5px;width:370px;']]);
-		var feedback = $ee('div',$a('Feedback',[['href',homepageurl+'/feedback'],['target','_blank']]),[['style','display:table-cell;width:33%;']]);
+		var feedback = $ee('div',$a('Feedback',[['href',homepageurl],['target','_blank']]),[['style','display:table-cell;width:33%;']]);
 		var homepage = $ee('div',$a('Homepage',[['href',homepageurl],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:center;']]);
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
