@@ -1,6 +1,6 @@
 ﻿// ==UserScript==
 // @name        Travian Task Queue for Travian 4
-// @namespace   https://github.com/adipiciu
+// @namespace   https://github.com/adipiciu/Travian-scripts
 // @author      adipiciu (based on TTQ by Risi and further edited by Nevam and then Pimp Trizkit and Serj_LV)
 // @license     GPL version 3 or any later version; http://www.gnu.org/copyleft/gpl.html
 // @description Schedule delayed constructions, upgrades and attacks.
