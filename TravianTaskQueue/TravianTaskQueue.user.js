@@ -29,7 +29,7 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version     1.8.7
+// @version     1.8.8
 // ==/UserScript==
 
 (function () {
@@ -709,7 +709,7 @@ function vlist_addButtonsT4 () {
 			var nd = parseInt(linkVSwitch[vn].match(/newdid=(\d+)/)[1]);
 			villages_id[vn] = did;
 
-			if( linkEl.getAttribute('class').indexOf("active") != -1 )
+			if( linkEl.hasAttribute('class') && linkEl.getAttribute('class').indexOf("active") != -1 )
 				currentActiveVillage = nd;
 		}
 	}
