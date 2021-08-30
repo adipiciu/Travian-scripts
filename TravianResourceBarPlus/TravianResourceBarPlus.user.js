@@ -32,14 +32,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.21.17
+// @version        2.21.18
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.21.17';
+var version = '2.21.18';
 
 notRunYet = false;
 
@@ -4409,7 +4409,34 @@ function sendResTropAdd ( aLink, aType ) {
 
 function vlist_addButtonsT4 () {
 	var vlist = $g("sidebarBoxVillagelist");
-	if ( vlist ) {
+	var newvlist = $gc("listEntry",vlist);
+	console.log(newvlist.length)
+	if (newvlist.length > 0 ) {
+		var villages = newvlist;
+		for ( var vn = 0; vn < villages.length; vn++ ) {
+			var linkEl = $gt("a",villages[vn])[0];
+			linkVSwitch[vn] = linkEl.getAttribute('href');
+			var coords = $gc("coordinatesGrid",villages[vn])[0];
+			var myVid = getVidFromCoords(coords.innerHTML);
+			console.log(linkVSwitch[vn])
+			console.log(coords)
+			console.log(myVid)
+			villages_id[vn] = myVid;
+
+			if( linkEl.getAttribute('class').match(/active/i) ) {
+				village_aid = myVid; village_aNum = vn;
+			}
+			linkHint($gc('name',linkEl)[0], myVid);
+			villages_count++;
+			if( RB.Setup[21] != 2 && RB.Setup[15] > 0 ) {
+				var newAR = addARLinks(villages_id[vn],0);
+				newAR.setAttribute('class',allIDs[48]);
+				insertAfter(newAR,$gc('name',linkEl)[0]);
+				if (screen.width <= 1024) linkEl.parentNode.style.height = "36px";
+			}
+		}
+	}
+	else if ( newvlist.length == 0 && vlist ) {
 		var villages = $gt('li',vlist);
 		for ( var vn = 0; vn < villages.length; vn++ ) {
 			var linkEl = $gt("a",villages[vn])[0];
@@ -6057,15 +6084,7 @@ function showTooltipBuild ( tb ) {
 	}
 	makeTooltip(newTABLE);
 }
-function showTooltipDemolish ( tb ) {
-	var newTABLE = $e('TABLE',[['class',allIDs[7]]]);
-	for( var i = 0; i < tb[0]; i++ ) {
-		var newTR = $ee('TR',$c(tb[i*3+1]));
-		newTR.appendChild($c(tb[i*3+3]));
-		newTABLE.appendChild(newTR);
-	}
-	makeTooltip(newTABLE);
-}
+
 function showTooltipInfo ( tb ) {
 	var newTABLE = $e('TABLE',[['class',allIDs[7]]]);
 	var rf = new Array();
@@ -8854,7 +8873,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Resource Bar+";
-		content.innerHTML = "What's new in Version "+version+" - Aug 13, 2021:<p></p><ui><li>Fixed animal search</li></ui>";
+		content.innerHTML = "What's new in Version "+version+" - Aug 30, 2021:<p></p><ui><li>Fixed reading village coordinates</li></ui>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
@@ -8901,7 +8920,7 @@ function displayWhatIsNew () {
 	loadCookie ( 'Dict', 'dictionary' );
 
 	if( villages_id[0] == 0 ) if( RB.dictionary[0] == 0 ) {
-		document.location.href = fullName + 'player/' + userID;
+		document.location.href = fullName + 'profile/' + userID;
 	} else {
 		villages_id[0] = parseInt(RB.dictionary[0]);
 		village_aid = villages_id[0];
