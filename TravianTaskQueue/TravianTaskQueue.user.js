@@ -29,14 +29,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version     1.8.6
+// @version     1.8.7
 // ==/UserScript==
 
 (function () {
 
 function allInOneTTQ () {
 notRunYet = false;
-var sCurrentVersion = "1.8.6";
+var sCurrentVersion = "1.8.7";
 
 //find out if Server errors
 var strTitle = document.title;
@@ -698,7 +698,22 @@ if (init) {
 
 function vlist_addButtonsT4 () {
 	var vlist = $id("sidebarBoxVillagelist");
-	if ( vlist ) {
+	var newvlist = $gc("listEntry",vlist);
+	if (newvlist.length > 0 ) {
+		var villages = newvlist;
+		for ( var vn = 0; vn < villages.length; vn++ ) {
+			var linkEl = $gt("a",villages[vn])[0];
+			linkVSwitch[vn] = linkEl.getAttribute('href');
+			var coords = $gc("coordinatesGrid",villages[vn])[0];
+			var did = getVidFromCoords(coords.innerHTML);
+			var nd = parseInt(linkVSwitch[vn].match(/newdid=(\d+)/)[1]);
+			villages_id[vn] = did;
+
+			if( linkEl.getAttribute('class').indexOf("active") != -1 )
+				currentActiveVillage = nd;
+		}
+	}
+	else if ( newvlist.length == 0 && vlist ) {
 		var villages = $gt('li',vlist);
 		for ( var vn = 0; vn < villages.length; vn++ ) {
 			var linkEl = $gt("a",villages[vn])[0];
@@ -761,11 +776,13 @@ function TTQ_showMenuCommand() {
 	var myPlaceNames = new Object();
 	// Put Coords next to village names and make them clickable to view that village's details screen, and move the villages names over to the left some, and save them all for getVillageName() and getVillageNameXY()
 	var iMyRace = $gt('li',$id("sidebarBoxVillagelist")); //Recycled variable
+	if ( iMyRace.length ==0 ) {
+		iMyRace = $gc('listEntry',$id("sidebarBoxVillagelist"));
+	}
 	var l8, m8, n8, nFL=true;  //Sorry for the names, i was just being funny.
 	for ( n8 = 0, m8 = 0, l8 = iMyRace.length ; m8 < l8 ; ++m8 ) {
 //-- определение координат, активного здания и создание SPAN с кликабельными ссылками на деревню.
 		tA = iMyRace[m8];
-		if ( tA.tagName != "LI" ) continue;
 		tA = $gt("a",tA)[0];
 		if ( nFL ) {
 			iSiteId = tA.href.split("&id=");
@@ -2328,7 +2345,8 @@ function sendGoldClub (aTask) {
 	_log(1, "End attack from gold-club ("+aTask+")");
 }
 function getActiveVillage (el,adoc) {
-	var reqVID = xpath('//div[@id="sidebarBoxVillagelist"]//ul/li/a[@class="active"]',el,true,adoc);
+	var reqVID = xpath('//div[@id="sidebarBoxVillagelist"]//a[@class="active"]',el,true,adoc);
+	console.log(reqVID)
 	if ( reqVID ) {
 		reqVID = parseInt(reqVID.href.split("=")[1]);
 		if ( isNaN(reqVID) ) reqVID = -1;
