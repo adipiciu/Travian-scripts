@@ -32,14 +32,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.21.19
+// @version        2.21.20
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.21.19';
+var version = '2.21.20';
 
 notRunYet = false;
 
@@ -4419,7 +4419,7 @@ function vlist_addButtonsT4 () {
 			var myVid = getVidFromCoords(coords.innerHTML);
 			villages_id[vn] = myVid;
 
-			if( linkEl.getAttribute('class').match(/active/i) ) {
+			if( linkEl.hasAttribute('class') && linkEl.getAttribute('class').match(/active/i) ) {
 				village_aid = myVid; village_aNum = vn;
 			}
 			linkHint($gc('name',linkEl)[0], myVid);
