@@ -32,14 +32,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.21.18
+// @version        2.21.19
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.21.18';
+var version = '2.21.19';
 
 notRunYet = false;
 
@@ -4410,7 +4410,6 @@ function sendResTropAdd ( aLink, aType ) {
 function vlist_addButtonsT4 () {
 	var vlist = $g("sidebarBoxVillagelist");
 	var newvlist = $gc("listEntry",vlist);
-	console.log(newvlist.length)
 	if (newvlist.length > 0 ) {
 		var villages = newvlist;
 		for ( var vn = 0; vn < villages.length; vn++ ) {
@@ -4418,9 +4417,6 @@ function vlist_addButtonsT4 () {
 			linkVSwitch[vn] = linkEl.getAttribute('href');
 			var coords = $gc("coordinatesGrid",villages[vn])[0];
 			var myVid = getVidFromCoords(coords.innerHTML);
-			console.log(linkVSwitch[vn])
-			console.log(coords)
-			console.log(myVid)
 			villages_id[vn] = myVid;
 
 			if( linkEl.getAttribute('class').match(/active/i) ) {
@@ -5188,7 +5184,7 @@ function parseSpieler () {
 	}
 }
 
-var vLinksPat = '//div[@id="sidebarBoxVillagelist"]//li/a/div[@class="name"] | //div[@id="sidebarBoxVillagelist"]//li/a/span/span[@class="name"]';
+var vLinksPat = '//div[@id="sidebarBoxVillagelist"]//li/a/div[@class="name"] | //div[@id="sidebarBoxVillagelist"]//a/span/span[@class="name"]';
 
 function overviewWarehouse () {
 	function refreshOview () {
