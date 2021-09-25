@@ -32,14 +32,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.21.20
+// @version        2.21.21
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.21.20';
+var version = '2.21.21';
 
 notRunYet = false;
 
@@ -2592,7 +2592,7 @@ function getTTime(dist, speed, arena, artefact, shoes, leftHand) {
 
 function getUserID() {
 	try {
-		var uName = $gc('playerName',$g('center'))[0].textContent.trim();
+		var uName = $gc('playerName',$g('sidebarBoxActiveVillage'))[0].textContent.trim();
 	} catch(e) { return null }
 	worldId = detectWorldId();
 	if (worldId == null) return null;
@@ -8869,7 +8869,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Resource Bar+";
-		content.innerHTML = "What's new in Version "+version+" - Aug 30, 2021:<p></p><ui><li>Fixed reading village coordinates</li></ui>";
+		content.innerHTML = "What's new in Version "+version+" - Sept 25, 2021:<p></p><ui><li>Fixed reading player name</li></ui>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
