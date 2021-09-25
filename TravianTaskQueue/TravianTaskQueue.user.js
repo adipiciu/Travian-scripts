@@ -29,14 +29,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version     1.8.8
+// @version     1.8.9
 // ==/UserScript==
 
 (function () {
 
 function allInOneTTQ () {
 notRunYet = false;
-var sCurrentVersion = "1.8.7";
+var sCurrentVersion = "1.8.9";
 
 //find out if Server errors
 var strTitle = document.title;
@@ -392,7 +392,7 @@ function initialize() {
 	CURRENT_SERVER = location.hostname + "_";
 	_log(1, "Init> Using settings for server '" + CURRENT_SERVER + "'");
 	try {
-		var uName = $gc('playerName',$id('center'))[0].textContent.trim();
+		var uName = $gc('playerName',$id('sidebarBoxActiveVillage'))[0].textContent.trim();
 	} catch(e) { return false }
 	worldId = detectWorldId();
 	if (worldId == null) return false;
@@ -781,7 +781,7 @@ function TTQ_showMenuCommand() {
 	}
 	var l8, m8, n8, nFL=true;  //Sorry for the names, i was just being funny.
 	for ( n8 = 0, m8 = 0, l8 = iMyRace.length ; m8 < l8 ; ++m8 ) {
-//-- определение координат, активного здания и создание SPAN с кликабельными ссылками на деревню.
+	//Determine the coordinates of the active building and create a SPAN with clickable links to the village.
 		tA = iMyRace[m8];
 		tA = $gt("a",tA)[0];
 		if ( nFL ) {
@@ -2346,7 +2346,6 @@ function sendGoldClub (aTask) {
 }
 function getActiveVillage (el,adoc) {
 	var reqVID = xpath('//div[@id="sidebarBoxVillagelist"]//a[@class="active"]',el,true,adoc);
-	console.log(reqVID)
 	if ( reqVID ) {
 		reqVID = parseInt(reqVID.href.split("=")[1]);
 		if ( isNaN(reqVID) ) reqVID = -1;
