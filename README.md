@@ -1,7 +1,16 @@
 # How to install userscripts
 
 1. You need an userscript manager like Tampermonkey, Violentmonkey or Greasemonkey (read the requirement details below).
-2. Open any userscript you want (files with .user.js extension), and click the "Raw" button. The script will be opened in your userscript manager. Click Install.
+
+2. Click on any script you want to install:
+
+   [TravianResourceBarPlus](https://github.com/adipiciu/Travian-scripts/raw/main/TravianResourceBarPlus/TravianResourceBarPlus.user.js)
+
+   [TravianTaskQueue](https://github.com/adipiciu/Travian-scripts/raw/main/TravianTaskQueue/TravianTaskQueue.user.js)
+
+   [TravianWaveBuilder](https://github.com/adipiciu/Travian-scripts/raw/main/TravianWaveBuilder/TravianWaveBuilder.user.js)
+
+3. The script will be opened in your userscript manager. Click Install.
 
 # Requirements
 
