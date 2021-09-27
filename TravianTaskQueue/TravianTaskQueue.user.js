@@ -29,14 +29,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version     1.8.9
+// @version     1.9.0
 // ==/UserScript==
 
 (function () {
 
 function allInOneTTQ () {
 notRunYet = false;
-var sCurrentVersion = "1.8.9";
+var sCurrentVersion = "1.9.0";
 
 //find out if Server errors
 var strTitle = document.title;
@@ -1596,6 +1596,7 @@ function upgradebuild(aTask) {
 								}
 								tmp = tmp[0].getAttribute("onclick").split("'")[1];
 								if ( tmp ) {
+									if ( tmp.startsWith("/") ) { tmp = tmp.substring(1); }
 									_log(2, "UpgradeBuild> Posting Build/Upgrade request...\nhref> " + tmp + "\nmyOptions> " + aTask);
 									get(fullName+tmp, handleRequestBuild, aTask);
 									return;
