@@ -32,14 +32,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.21.21
+// @version        2.21.22
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.21.21';
+var version = '2.21.22';
 
 notRunYet = false;
 
@@ -102,7 +102,8 @@ var pageElem = pageElem42.slice();
 
 var docDir = ['left', 'right'];
 var ltr = true;
-if (document.defaultView.getComputedStyle(document.body, null).getPropertyValue("direction") == 'rtl') { docDir = ['right', 'left']; ltr = false; }
+//if (document.defaultView.getComputedStyle(document.body, null).getPropertyValue("direction") == 'rtl') { docDir = ['right', 'left']; ltr = false; }
+if (document.body.className.includes('rtl')) { docDir = ['right', 'left']; ltr = false; }
 
 var sK = 0;
 var sM = 1;
@@ -2409,6 +2410,7 @@ var img_up = "data:image/gif;base64,R0lGODlhDAAMAIABAHm94P///yH5BAEKAAEALAAAAAAM
 var img_down = "data:image/gif;base64,R0lGODlhDAAMAIABAHm94P///yH5BAEKAAEALAAAAAAMAAwAAAIXhI+pF8vtQJhu0mUvyvrxzXWhZYyklBUAOw==";
 var img_updown = "data:image/gif;base64,R0lGODlhDAAMAIABAHm94P///yH5BAEKAAEALAAAAAAMAAwAAAIajGGXB6jZ4gux0jUvdjlzuHxKJT1kCDUbahQAOw==";
 var img_bmove = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAE8AAAAgCAMAAABkSNU7AAAAAXNSR0IArs4c6QAAAGNQTFRFaAAAAAAAAABVVQAAVQBVqgAAAFUAAFVVVVUAVVVVVVWqqlUAqlVVqlWq/1UA/1VVVaoAVapVVaqqqqoAqqpVqqqq/6oA/6pV/6qqVf8Aqv8Aqv9Vqv+qqv////9V//+q////3pvvvAAAAAF0Uk5TAEDm2GYAAANUSURBVEjHrZaLktMwDEXXmAYJGxpTqQm7aez//0qu5LTZB+xrUGfSSeoeXz2du7s3rD21u0+btn+bfgzV3mefgKmqcNmMWXD/IeQOEia3IiJXoJTBnxr4Hcgby/+UUqBWF5hKTofZfinS7MEixahSX0NuLFt5Ok3rNE0UZMmHzdL2rUsV8X0MetX5d9qlOAsG3JpCpMWkucFtiVkEcvHYeBWXQlfXX9YG3DydVxMGO08Sw6/AbXP4YCDuzsIDBwK5lFq46LMastsKGmRtOJcXiIL2gLmROA6BuAELNlQe5IlEp1siHSQbkCJc4ag3nJBrxVamUA2omQW8wKQ70BPH83rexcESqeU50lN5iu3W1fJvAVDsyNBC1CVeYyfcJKV1lZ2IIrOS4Ehll1dVVjcQouik8yysWsAl2WLozrYqhVPaFaYYKbMLpF2e9uTDmLgdZ51VhLksuLjL3VsEA2GSdK2WSc7E8ARMQ+7RE+8O7JMzATc7ULEWPDhuAjtPBXuc3EtPy4kMRrYKkarX6HGiq3E+ttSOLc9Zg23BxSPoPCxHxjQQpJGVIWoZ2uzDg/N6ch/M1UCyorhzmzOICUQeRxpc35UnBE4LQSVNkiNHEwY12HgYCnikXm3ASWBLiswtzU6bo4wP97/HzlPPhw5WuhyahiDTGeGwYgkBX0PQiiYwn0cDpS+czIu5HZqCly6HPIwPD1s+XCB+jvZf431pGtMJhWU4e2a90HNSwJsIPJlUZkltTqizljLd34+3AuxAxIpOYvpaNV0AAWcFmGSTt2ACJvghlARuZtb5Z5t+tpw57PW8DQMMvPN0zpq/o5VDrTee5Zd6141jGUeMaKUhzscWy3S8cDIePR4JfeCUYRhRxycBCvI2ntULqqt3//AVlVHtDBhJv+WoOSE71kLPTim/XZBKCj+yTqhBMDuv/EI/LZclJUHpqo09dF2xBbxgHGK/sryYgNvgRhiLhQ7mzkpFJ2Ci4tKnKgaquw6ozTjM6CJ/H/rb0ypWw94+5nRmI+V8Ax5ssPbh93jet9eOI2tun0jwz9R6dDKokHa5ACTPzqP29tlbtXQql6HYgbmdwv24fHxeto+8G9jIlP0EfnGet//4uvGxlyN9laT/6y3rLdAf9yuedFIpoQQAAAAASUVORK5CYII=";
+var img_wounded = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAQCAMAAAD+iNU2AAABX1BMVEUAAADYjgH9/Pzv7O3ejQDe2NS2nYPcn0rQiAHx7/CylnTktW6miWz1slC1iE3BdwH2ogDakADX0c7PxsLCtKq/saa+rqC4q6D+zYP2wneqkHfwvnO2lWbxxFzysVT7uFPZnFDQnU29ikruvEXTlkXqtz3YmzvMljvotDfcmDbLjjakdDbLiS69fiXtph30pgf7qgXzoAHumwDXiwDMhACnXwCdVADz8fLn5ebh3dzPyMfGwcO4rKawoJS5ppOrmIeejoe5oobzwn+eiHi6nHTqunChhHD/yW76wGzyy2jMoGjjsGalg2K/lWHuwGDhq2D5uF/rtl/nrF/+x13fp13GllqwjVr+0Fj4yli4klHdqFDrp0zFl0zlpUv3wkjptkTkoUHMkEDSkjvDkTq2iDr6yTStfjHgoy70wivmsSuxfCO2fRvwpxPjqwzbnAvepAblkwC5bgC0bQCxZwCOSQCLqCi3AAAAAXRSTlMAQObYZgAAAN9JREFUCB0FwYN2wwAAQNEXpylT27bndbZt2/r/s3tB9PpHALD4/BKI4ZnQuhuwROt1h4QvGJpf3FcYOm7KctNADVqtm1uOsYNWxxRad3gjkdW9bGnF6dRN02Ug2pZ2stWTi0LPqbteJBDXTqvW5c+jVE9+HQYQbdvPuVguk69IADBbeCrGiu+7CwAwEPpnhx+ZjXLJBjDxJn//3d5flms38TCMPn4J+m8/la9dJ8/jAdRGVxDkn6nKVVLTElEmG51uWxjHnbZrWsLA8uBq6wHAk7bbHQpI03MeABRVVfgHfTshGMizJmkAAAAASUVORK5CYII="
 
 
 /*********************** common library ****************************/
@@ -7413,12 +7415,22 @@ function analyzerBattle () {
 			var tKirillC = tCount;
 			if( tCount > 0 ) {
 				for( j=0; j<pRU.length; j++) ptS[0][j] += troopInfo(pRace*10+i, pRU[j])*tCount;
-				if( i < 7 && troopInfo(pRace*10+i, 9) > 1 ) ptS[2] += troopInfo(pRace*10+i, 0)*tCount;
+				if( i < 7 && troopInfo(pRace*10+i, 9) > 1 ) ptS[3] += troopInfo(pRace*10+i, 0)*tCount;
 			}
 			if( pRows.length > 2 ) if( pRows[2].cells.length > 3 ) {
 				tCount = parseInt(pRows[2].cells[i].innerHTML);
 				if( tCount > 0 ) {
 					for( j=0; j<pRU.length; j++) ptS[1][j] += troopInfo(pRace*10+i, pRU[j])*tCount;
+					tKirillC -= tCount;
+				}
+			}
+			if( pRows.length > 3 ) if( pRows[3].cells.length > 3 ) {
+				tCount = parseInt(pRows[3].cells[i].innerHTML);
+				if( tCount > 0 ) {
+					for( j=0; j<pRU.length; j++) {
+						ptS[1][j] += troopInfo(pRace*10+i, pRU[j])*tCount;
+						ptS[2][j] += troopInfo(pRace*10+i, pRU[j])*tCount;
+					}
 					tKirillC -= tCount;
 				}
 			}
@@ -7435,7 +7447,7 @@ function analyzerBattle () {
 	var kirilloid = '#a:';
 	var aRow = tt[0].rows;
 	var tCount = 0;
-	var atS = [[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],0];
+	var atS = [[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],0];
 	var aRU =  [0,8,3,4,5,6,9];
 	var kirillRace = [0,1,2,3,3,4,5];
 	var kirillS = '';
@@ -7475,7 +7487,7 @@ function analyzerBattle () {
 		}
 	}
 
-	var dfS = [[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],0];
+	var dfS = [[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],0];
 	var dRU =  [1,2,3,4,5,6,9];
 	var kirillRace = [0,1,2,3,4,5,6];
 	var kirillSd = '';
@@ -7509,18 +7521,22 @@ function analyzerBattle () {
 	newTABLE.appendChild($em('TR',[$c(distRef),$c(attakerN),$c(defenderN),$c(gtext('total'))]));
 	// strength
 	var newTR = $ee('TR',$em('TD',[trImg('unit u13'),'+',trImg('unit u16')]));
-	var strAP = atS[0][0]-atS[2];
-	newTR.appendChild($em('TD',[humanRF(strAP),' + ',humanRF(atS[2])]));
+	var strAP = atS[0][0]-atS[3];
+	newTR.appendChild($em('TD',[humanRF(strAP),' + ',humanRF(atS[3])]));
 	newTR.appendChild($em('TD',[humanRF(dfS[0][0]),' + ',humanRF(dfS[0][1])]));
 	var proc = [0,0];
 	proc[0] = Math.round(strAP/(strAP+dfS[0][0])*100).NaN0();
-	proc[1] = Math.round(atS[2]/(atS[2]+dfS[0][1])*100).NaN0();
+	proc[1] = Math.round(atS[3]/(atS[3]+dfS[0][1])*100).NaN0();
 	newTR.appendChild($c(proc[0]+' + '+proc[1]+' = '+Math.round((proc[0]+proc[1])/(proc[0]>0 && proc[1] > 0 ? 2: 1))+'%'));
 	newTABLE.appendChild(newTR);
 	// crop
 	proc[0] = Math.round(atS[1][6]/(atS[1][6]+dfS[1][6])*100).NaN0();
 	var newTR = $em('TR',[$c($e('i',[['class','r5']])),$c(humanRF(atS[0][6])+'/'+humanRF(atS[1][6])),
 					$c(humanRF(dfS[0][6])+'/'+humanRF(dfS[1][6])),$c(proc[0]+'%')]);
+	newTABLE.appendChild(newTR);
+	//hospital
+	proc[0] = Math.round(atS[2][6]/(atS[2][6]+dfS[2][6])*100).NaN0();
+	var newTR = $em('TR',[$c($e('IMG',[['src',img_wounded]])),$c(humanRF(atS[2][6])),$c(humanRF(dfS[2][6])),$c(proc[0]+'%')]);
 	newTABLE.appendChild(newTR);
 	// resource
 	var newTR = $ee('TR',$em('TD',[$e('i',[['class','r1']]),'+',$e('i',[['class','r2']]),'+',$e('i',[['class','r3']]),'+',$e('i',[['class','r4']]),'=']));
@@ -7543,12 +7559,13 @@ function analyzerBattle () {
 	newTR.appendChild($c(proc[4]+'%'));
 	newTABLE.appendChild(newTR);
 
-	//var toLog = $a('https://www.inactivesearch.it/tools/battle-reports',[['href','https://www.inactivesearch.it/tools/battle-reports'],['target','_blank']]);
-	//toLog.addEventListener("click", addReport, true);
+	var toLog1 = $a('https://www.inactivesearch.it/tools/battle-reports');
+	toLog1.addEventListener("click", addReport, true);
 	var toLog = $a('https://travian-tool.com');
 	toLog.addEventListener("click", addReport2, true);
 	var kLog = $a('http://travian.kirilloid.ru/report.php',[['href','http://travian.kirilloid.ru/report.php'],['target','_blank']]);
 	newTABLE.appendChild($ee('TR',$c(toLog,[['colspan',4]])));
+	newTABLE.appendChild($ee('TR',$c(toLog1,[['colspan',4]])));
 	newTABLE.appendChild($ee('TR',$c(kLog,[['colspan',4]])));
 
 	$g('attacker').parentNode.parentNode.appendChild(newTABLE);
@@ -7816,7 +7833,7 @@ function addReport2 () {
 	}
 
 	function sendReport() {
-		var params = "data="+encodeURIComponent(b64EncodeUnicode(document.documentElement.outerHTML));
+		var params = "data="+encodeURIComponent(b64EncodeUnicode(document.getElementById('reportWrapper').outerHTML));
 		ajaxRequest('https://travian-tool.com/create/json', 'POST', params, function(response) {
 			var data = JSON.parse(response.responseText);
 			inp.value = data.url;
@@ -8869,7 +8886,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Resource Bar+";
-		content.innerHTML = "What's new in Version "+version+" - Sept 25, 2021:<p></p><ui><li>Fixed reading player name</li></ui>";
+		content.innerHTML = "What's new in Version "+version+" - Nov 9, 2021:<p></p><ui><li>Fixed script for arabic languages</li><li>Added support for hospital in battle analyzer</li></ui>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
@@ -8979,7 +8996,7 @@ function displayWhatIsNew () {
 		if ( ! $g('PlayerProfileEditor') ) { parseSpieler(); spielerSort(); }
 	}
 	if( /report.+id=/.test(crtPath) ) { addSpeedAndRTSend(); analyzerBattle(); getTroopNames(); }
-	if( ! /dorf.\.php/.test(crtPath) ) addRefIGM();
+	if( ! /dorf.\.php/.test(crtPath) && ! /profile/.test(crtPath) ) addRefIGM();
 	if( /hero/.test(crtPath) ) { speedBids(); timeToBids(); neededResAdd(); restHeroTime(); saveHeroSpeed(); addSpeedAndRTSend(); addSpeedAndRTSend($gc('boxes',cont)[0]); }
 	if( /build.php/.test(crtPath) ) { neededResAdd(); buildDispatcher(); addSpeedAndRTSend(); }
 
