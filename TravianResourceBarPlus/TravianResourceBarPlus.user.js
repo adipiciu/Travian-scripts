@@ -32,14 +32,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.21.23
+// @version        2.21.24
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.21.23';
+var version = '2.21.24';
 
 notRunYet = false;
 
@@ -4404,8 +4404,8 @@ function addARLinks(myVid, aDirect) {
 
 function addDorf12Links(myVid) {
 	var newLinks = $e('span');
-	var dorf1 = $ee('a',$e('IMG',[['src',img_in],['style','padding:0px 2px;cursor:pointer;']]),[['href',fullName + 'dorf1.php' + myVid]]);
-	var dorf2 = $ee('a',$e('IMG',[['src',img_out],['style','padding:0px 2px;cursor:pointer;']]),[['href',fullName + 'dorf2.php' + myVid]]);
+	var dorf1 = $ee('a',$e('IMG',[['src',img_out],['style','padding:0px 2px;cursor:pointer;']]),[['href',fullName + 'dorf1.php' + myVid]]);
+	var dorf2 = $ee('a',$e('IMG',[['src',img_in],['style','padding:0px 2px;cursor:pointer;']]),[['href',fullName + 'dorf2.php' + myVid]]);
 	newLinks.appendChild(dorf1);
 	newLinks.appendChild(dorf2);
 	return newLinks;
