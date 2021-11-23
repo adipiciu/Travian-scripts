@@ -32,14 +32,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.21.22
+// @version        2.21.23
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.21.22';
+var version = '2.21.23';
 
 notRunYet = false;
 
@@ -2411,6 +2411,8 @@ var img_down = "data:image/gif;base64,R0lGODlhDAAMAIABAHm94P///yH5BAEKAAEALAAAAA
 var img_updown = "data:image/gif;base64,R0lGODlhDAAMAIABAHm94P///yH5BAEKAAEALAAAAAAMAAwAAAIajGGXB6jZ4gux0jUvdjlzuHxKJT1kCDUbahQAOw==";
 var img_bmove = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAE8AAAAgCAMAAABkSNU7AAAAAXNSR0IArs4c6QAAAGNQTFRFaAAAAAAAAABVVQAAVQBVqgAAAFUAAFVVVVUAVVVVVVWqqlUAqlVVqlWq/1UA/1VVVaoAVapVVaqqqqoAqqpVqqqq/6oA/6pV/6qqVf8Aqv8Aqv9Vqv+qqv////9V//+q////3pvvvAAAAAF0Uk5TAEDm2GYAAANUSURBVEjHrZaLktMwDEXXmAYJGxpTqQm7aez//0qu5LTZB+xrUGfSSeoeXz2du7s3rD21u0+btn+bfgzV3mefgKmqcNmMWXD/IeQOEia3IiJXoJTBnxr4Hcgby/+UUqBWF5hKTofZfinS7MEixahSX0NuLFt5Ok3rNE0UZMmHzdL2rUsV8X0MetX5d9qlOAsG3JpCpMWkucFtiVkEcvHYeBWXQlfXX9YG3DydVxMGO08Sw6/AbXP4YCDuzsIDBwK5lFq46LMastsKGmRtOJcXiIL2gLmROA6BuAELNlQe5IlEp1siHSQbkCJc4ag3nJBrxVamUA2omQW8wKQ70BPH83rexcESqeU50lN5iu3W1fJvAVDsyNBC1CVeYyfcJKV1lZ2IIrOS4Ehll1dVVjcQouik8yysWsAl2WLozrYqhVPaFaYYKbMLpF2e9uTDmLgdZ51VhLksuLjL3VsEA2GSdK2WSc7E8ARMQ+7RE+8O7JMzATc7ULEWPDhuAjtPBXuc3EtPy4kMRrYKkarX6HGiq3E+ttSOLc9Zg23BxSPoPCxHxjQQpJGVIWoZ2uzDg/N6ch/M1UCyorhzmzOICUQeRxpc35UnBE4LQSVNkiNHEwY12HgYCnikXm3ASWBLiswtzU6bo4wP97/HzlPPhw5WuhyahiDTGeGwYgkBX0PQiiYwn0cDpS+czIu5HZqCly6HPIwPD1s+XCB+jvZf431pGtMJhWU4e2a90HNSwJsIPJlUZkltTqizljLd34+3AuxAxIpOYvpaNV0AAWcFmGSTt2ACJvghlARuZtb5Z5t+tpw57PW8DQMMvPN0zpq/o5VDrTee5Zd6141jGUeMaKUhzscWy3S8cDIePR4JfeCUYRhRxycBCvI2ntULqqt3//AVlVHtDBhJv+WoOSE71kLPTim/XZBKCj+yTqhBMDuv/EI/LZclJUHpqo09dF2xBbxgHGK/sryYgNvgRhiLhQ7mzkpFJ2Ci4tKnKgaquw6ozTjM6CJ/H/rb0ypWw94+5nRmI+V8Ax5ssPbh93jet9eOI2tun0jwz9R6dDKokHa5ACTPzqP29tlbtXQql6HYgbmdwv24fHxeto+8G9jIlP0EfnGet//4uvGxlyN9laT/6y3rLdAf9yuedFIpoQQAAAAASUVORK5CYII=";
 var img_wounded = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAQCAMAAAD+iNU2AAABX1BMVEUAAADYjgH9/Pzv7O3ejQDe2NS2nYPcn0rQiAHx7/CylnTktW6miWz1slC1iE3BdwH2ogDakADX0c7PxsLCtKq/saa+rqC4q6D+zYP2wneqkHfwvnO2lWbxxFzysVT7uFPZnFDQnU29ikruvEXTlkXqtz3YmzvMljvotDfcmDbLjjakdDbLiS69fiXtph30pgf7qgXzoAHumwDXiwDMhACnXwCdVADz8fLn5ebh3dzPyMfGwcO4rKawoJS5ppOrmIeejoe5oobzwn+eiHi6nHTqunChhHD/yW76wGzyy2jMoGjjsGalg2K/lWHuwGDhq2D5uF/rtl/nrF/+x13fp13GllqwjVr+0Fj4yli4klHdqFDrp0zFl0zlpUv3wkjptkTkoUHMkEDSkjvDkTq2iDr6yTStfjHgoy70wivmsSuxfCO2fRvwpxPjqwzbnAvepAblkwC5bgC0bQCxZwCOSQCLqCi3AAAAAXRSTlMAQObYZgAAAN9JREFUCB0FwYN2wwAAQNEXpylT27bndbZt2/r/s3tB9PpHALD4/BKI4ZnQuhuwROt1h4QvGJpf3FcYOm7KctNADVqtm1uOsYNWxxRad3gjkdW9bGnF6dRN02Ug2pZ2stWTi0LPqbteJBDXTqvW5c+jVE9+HQYQbdvPuVguk69IADBbeCrGiu+7CwAwEPpnhx+ZjXLJBjDxJn//3d5flms38TCMPn4J+m8/la9dJ8/jAdRGVxDkn6nKVVLTElEmG51uWxjHnbZrWsLA8uBq6wHAk7bbHQpI03MeABRVVfgHfTshGMizJmkAAAAASUVORK5CYII="
+var img_out = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAADvSURBVDhPzdK/i4FxAMfxByXK5A+4bFfqysLCX6AbzAZluMGsmJUSg0wWWU1kVjYrxQ23XlnUSZ0yiXh/nnvi6MEzeter5/l+6/nx/T6P8ZS58YYKRtjgGy28w4NTFwOrGNqIoo8mZkggB10zxg62BZGBzxyd04VJ/KChCbtS1vFeefwiZI6swuhBr/yoF3yiqIELEXTwijmmuE5zpb9Twws9aI20dnwLpZs5bW8dT2kJAzhdwgTmEq5zsokFLHGxif/TZ8zC7jOmsUJVE7eKQ3+elKG3+sAQenINAdxMu6w9qeMLByzQhW7mx9NkGEcQqinD/jxx2gAAAABJRU5ErkJggg=="
+var img_in = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAD8SURBVDhPzdIxa8JAGMbx2IJ06CD9AOpcKLjUyU1wEAdnB7cOHToVdHQpiIs4uYjfQHBVcHNV0A5Cp46FiqDgqNT/czlsAglx9IFfLu+Fy+Xu4lxlbvCEJqbY4xs9lHCLc3yFTRZ9PGOILpbI4RUaM8MBgXlAFXem+o8GFvGLjjouSdm23rxji7SpIqIljJAylZskPlFXEdOFNJBxb31RnwZ8oYIF4tCLd+rTjisqgpKwrU7Cm6NtI6OZxng0lRt90RxmCVEp2NabGtYI3UTN8IagY9Q+bNBSR1jy0J8nH9BRvmACzaw/9B6h0S5rzW2s8IcfDKCX6fnVxHFOUcIpzaJ0h3UAAAAASUVORK5CYII="
 
 
 /*********************** common library ****************************/
@@ -4400,6 +4402,15 @@ function addARLinks(myVid, aDirect) {
 	return newLinks;
 }
 
+function addDorf12Links(myVid) {
+	var newLinks = $e('span');
+	var dorf1 = $ee('a',$e('IMG',[['src',img_in],['style','padding:0px 2px;cursor:pointer;']]),[['href',fullName + 'dorf1.php' + myVid]]);
+	var dorf2 = $ee('a',$e('IMG',[['src',img_out],['style','padding:0px 2px;cursor:pointer;']]),[['href',fullName + 'dorf2.php' + myVid]]);
+	newLinks.appendChild(dorf1);
+	newLinks.appendChild(dorf2);
+	return newLinks;
+}
+
 function sendResTropAdd ( aLink, aType ) {
 	if( RB.Setup[15] == 0 ) return;
 	var vId = getVid(aLink.getAttribute('href'));
@@ -4433,28 +4444,6 @@ function vlist_addButtonsT4 () {
 				if (screen.width <= 1024) linkEl.parentNode.style.height = "36px";
 			}
 		}
-	}
-	else if ( newvlist.length == 0 && vlist ) {
-		var villages = $gt('li',vlist);
-		for ( var vn = 0; vn < villages.length; vn++ ) {
-			var linkEl = $gt("a",villages[vn])[0];
-			linkVSwitch[vn] = linkEl.getAttribute('href');
-			var coords = $gc("coordinatesGrid",villages[vn])[0];
-			var myVid = getVidFromCoords(coords.innerHTML);
-			villages_id[vn] = myVid;
-
-			if( linkEl.getAttribute('class').match(/active/i) ) {
-				village_aid = myVid; village_aNum = vn;
-			}
-			linkHint($gc('name',linkEl)[0], myVid);
-			villages_count++;
-			if( RB.Setup[21] != 2 && RB.Setup[15] > 0 ) {
-				var newAR = addARLinks(villages_id[vn],0);
-				newAR.setAttribute('class',allIDs[48]);
-				insertAfter(newAR,$gc('name',linkEl)[0]);
-				if (screen.width <= 1024) linkEl.parentNode.style.height = "36px";
-			}
-		}
 	} else {
 		villages_count = 1;
 		villages_id[0] = 0;
@@ -4471,7 +4460,7 @@ function vlist_addButtonsT4 () {
 		for( var i=0; i<villages.length; i++) {
 			vLink[i] = $a($gc("name",villages[i])[0].innerHTML,[['href',linkVSwitch[i]]]);
 			var cl = villages_id[i]==village_aid?"dot hl":"dot";
-			vilB.appendChild($em('TR',[$c('&#x25CF;',[['class',cl]]),$c($ee('DIV',vLink[i])),$c($a(printCoords(villages_id[i]),[['href',linkVSwitch[i]]])),$c(addARLinks(villages_id[i],0))]));
+			vilB.appendChild($em('TR',[$c('&#x25CF;',[['class',cl]]),$c($ee('DIV',vLink[i])),$c($a(printCoords(villages_id[i]),[['href',linkVSwitch[i]]])),$c(addDorf12Links(linkVSwitch[i],0)),$c(addARLinks(villages_id[i],0))]));
 		}
 		vilT.appendChild(vilB);
 		if( RB.Setup[21] == 1 ) makeFloatD(vilT,7);
@@ -5507,7 +5496,7 @@ function showLinks () {
 					newTR.appendChild(newTD);
 				}
 			}
-			var newA = $a(unesc(oneLink[1]),[['href','karte.php?'+oneLink[0]]]);
+			var newA = $a(unesc(oneLink[1]),[['href','/karte.php?'+oneLink[0]]]);
 			distanceTooltip(newA,0);
 			var newTD = $c( newA);
 			newTR.appendChild(newTD);
@@ -8886,7 +8875,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Resource Bar+";
-		content.innerHTML = "What's new in Version "+version+" - Nov 9, 2021:<p></p><ui><li>Fixed script for arabic languages</li><li>Added support for hospital in battle analyzer</li></ui>";
+		content.innerHTML = "What's new in Version "+version+" - Nov 23, 2021:<p></p><ui><li>Fixed relative urls in the Links window</li><li>Added dorf1 and dorf2 (resources and buildings) links in the Village window</li></ui>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
