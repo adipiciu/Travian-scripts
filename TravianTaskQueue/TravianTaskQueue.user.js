@@ -29,14 +29,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version     1.9.1
+// @version     1.9.2
 // ==/UserScript==
 
 (function () {
 
 function allInOneTTQ () {
 notRunYet = false;
-var sCurrentVersion = "1.9.1";
+var sCurrentVersion = "1.9.2";
 
 //find out if Server errors
 var strTitle = document.title;
@@ -2483,10 +2483,14 @@ function scheduleTraining(e) {
 
 	//get the code
 	var iCode = xpath("//form//input[@name='z']");
-	if(iCode.snapshotLength > 0) aTroops[0] = iCode.snapshotItem(0).value;
+	if(iCode.snapshotLength > 0) { aTroops[0] = iCode.snapshotItem(0).value; }
 	else {
-		_log(3, "ScheduleTraining> No code available. Exiting.");
-		return false;
+		var iCode = xpath("//form//input[@name='c']");
+		if(iCode.snapshotLength > 0) { aTroops[0] = iCode.snapshotItem(0).value; }
+		else {
+			_log(3, "ScheduleTraining> No code available. Exiting.");
+			return false;
+		}
 	}
 
 	//currently, only 1 kind of troop can be trained at once - null all elements except for the oth one (code) and the first non-zero value
