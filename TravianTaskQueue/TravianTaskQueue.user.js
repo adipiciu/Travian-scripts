@@ -29,14 +29,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version     1.9.0
+// @version     1.9.1
 // ==/UserScript==
 
 (function () {
 
 function allInOneTTQ () {
 notRunYet = false;
-var sCurrentVersion = "1.9.0";
+var sCurrentVersion = "1.9.1";
 
 //find out if Server errors
 var strTitle = document.title;
@@ -698,34 +698,17 @@ if (init) {
 
 function vlist_addButtonsT4 () {
 	var vlist = $id("sidebarBoxVillagelist");
-	var newvlist = $gc("listEntry",vlist);
-	if (newvlist.length > 0 ) {
-		var villages = newvlist;
-		for ( var vn = 0; vn < villages.length; vn++ ) {
-			var linkEl = $gt("a",villages[vn])[0];
-			linkVSwitch[vn] = linkEl.getAttribute('href');
-			var coords = $gc("coordinatesGrid",villages[vn])[0];
-			var did = getVidFromCoords(coords.innerHTML);
-			var nd = parseInt(linkVSwitch[vn].match(/newdid=(\d+)/)[1]);
-			villages_id[vn] = did;
+	var villages = $gc("listEntry",vlist);
+	for ( var vn = 0; vn < villages.length; vn++ ) {
+		var linkEl = $gt("a",villages[vn])[0];
+		linkVSwitch[vn] = linkEl.getAttribute('href');
+		var coords = $gc("coordinatesGrid",villages[vn])[0];
+		var did = getVidFromCoords(coords.innerHTML);
+		var nd = parseInt(linkVSwitch[vn].match(/newdid=(\d+)/)[1]);
+		villages_id[vn] = did;
 
-			if( linkEl.hasAttribute('class') && linkEl.getAttribute('class').indexOf("active") != -1 )
-				currentActiveVillage = nd;
-		}
-	}
-	else if ( newvlist.length == 0 && vlist ) {
-		var villages = $gt('li',vlist);
-		for ( var vn = 0; vn < villages.length; vn++ ) {
-			var linkEl = $gt("a",villages[vn])[0];
-			linkVSwitch[vn] = linkEl.getAttribute('href');
-			var coords = $gc("coordinatesGrid",villages[vn])[0];
-			var did = getVidFromCoords(coords.innerHTML);
-			var nd = parseInt(linkVSwitch[vn].match(/newdid=(\d+)/)[1]);
-			villages_id[vn] = did;
-
-			if( linkEl.getAttribute('class').indexOf("active") != -1 )
-				currentActiveVillage = nd;
-		}
+		if( linkEl.hasAttribute('class') && linkEl.getAttribute('class').indexOf("active") != -1 )
+			currentActiveVillage = nd;
 	}
 }
 
@@ -3703,7 +3686,7 @@ function detectTribe() {
 				if (httpRequest.status == 200 && httpRequest.responseText) { // ok
 					var parser = new DOMParser();
 					var holder = parser.parseFromString(httpRequest.responseText, "text/html");
-					var troopImg = xpath('.//img[contains(@class,"unit u")]',holder,true);
+					var troopImg = xpath('.//img[contains(@class,"unit u")]',holder,true,holder);
 					if( troopImg ) {
 						iMyRace = Math.floor(parseInt(troopImg.getAttribute('class').match(/\d+/)[0])/10);
 						if ( isNaN(iMyRace) || iMyRace < 0 || iMyRace > 6 ) iMyRace = 0;
@@ -3749,10 +3732,10 @@ function generateButton(title, callback){
 	oBtn.style.border="1px solid #71D000";
 	oBtn.style.backgroundImage = "linear-gradient(to top,#ccd5cc,#ffffff)";
 	oBtn.style.verticalAlign="middle";
-	oBtn.style.margin="5px 0";
-	oBtn.style.borderRadius = "3px";
+	oBtn.style.margin="5px 5px";
+	oBtn.style.borderRadius = "5px";
 	oBtn.style.cursor="pointer";
-	oBtn.style.padding="5px";
+	oBtn.style.padding="4px";
 	oBtn.style.display="inline-block";
 	oBtn.style.lineHeight="initial";
 	oBtn.setAttribute("onMouseOver", "this.style.border='1px solid #808080';");
