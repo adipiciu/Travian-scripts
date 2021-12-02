@@ -32,14 +32,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.21.24
+// @version        2.21.25
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.21.24';
+var version = '2.21.25';
 
 notRunYet = false;
 
@@ -65,7 +65,6 @@ var lastTimerP = [0,0,0];
 var lastTimerB = 0;
 var timerB = [];
 var timerB3 = [];
-var timerF = [];
 var timerOv = [];
 var timerN = [];
 var villages_id = [];
@@ -4422,9 +4421,8 @@ function sendResTropAdd ( aLink, aType ) {
 
 function vlist_addButtonsT4 () {
 	var vlist = $g("sidebarBoxVillagelist");
-	var newvlist = $gc("listEntry",vlist);
-	if (newvlist.length > 0 ) {
-		var villages = newvlist;
+	var villages = $gc("listEntry",vlist);
+	if (villages.length > 0 ) {
 		for ( var vn = 0; vn < villages.length; vn++ ) {
 			var linkEl = $gt("a",villages[vn])[0];
 			linkVSwitch[vn] = linkEl.getAttribute('href');
@@ -4494,7 +4492,7 @@ function newStyle(e, j, sp) {
 }
 
 function progressbar_updValues() {
-	var ts = Math.round(((Date.now()) - RunTime[4])/1000);
+	var ts = Math.round((Date.now() - RunTime[4])/1000);
 	getResources();
 	var addCss = '';
 	for (var j = 0; j < 4; j++) {
@@ -4579,13 +4577,13 @@ if( RB.bodyH[0] == 1 ) {
 	if( addCss != '' ) RB_addStyle(addCss);
 	for( var i = 0; i < timerP.length; i++ ) {
 		timerP[i].time += ts;
-		timerP[i].obj.innerHTML = formatTime(timerP[i].time, 1);
+		timerP[i].obj.textContent = formatTime(timerP[i].time, 1);
 	}
 	for( var i = 0; i < timerB.length; i++ ) {
 		if( Math.abs(timerB[i].time) < ts ) timerB[i].time = 0;
 		if( timerB[i].time != 0 ) {
 			timerB[i].time += timerB[i].time > 0 ? -ts : ts;
-			timerB[i].obj.innerHTML = formatTime(timerB[i].time, (typeof timerB[i].ft == 'undefined')? 0: timerB[i].ft);
+			timerB[i].obj.textContent = formatTime(timerB[i].time, (typeof timerB[i].ft == 'undefined')? 0: timerB[i].ft);
 		}
 	}
 	for( var i = 0; i < timerB3.length; i++ ) {
@@ -4594,7 +4592,7 @@ if( RB.bodyH[0] == 1 ) {
 		else
 			timerB3[i].time -= ts;
 		if( timerB3[i].time >= 0 ) {
-			timerB3[i].obj.innerHTML = formatTime(timerB3[i].time, 3);
+			timerB3[i].obj.textContent = formatTime(timerB3[i].time, 3);
 			if( timerB3[i].time == 0 ) {
 				timerB3[i].obj.style.color = 'red';
 				timerB3[i].time--;
@@ -4602,15 +4600,11 @@ if( RB.bodyH[0] == 1 ) {
 			}
 		}
 	}
-	for( var i = 0; i < timerF.length; i++ ) {
-		timerF[i].time += ts;
-		timerF[i].obj.innerHTML = formatTime(timerF[i].time, 0);
-	}
 	for( var i = 0; i < timerOv.length; i++ ) {
 		if( Math.abs(timerOv[i].time) < ts ) timerOv[i].time = -timerOv[i].dir;
 		if( timerOv[i].time != 0 ) {
 			timerOv[i].time += timerOv[i].dir*ts;
-			timerOv[i].obj.innerHTML = formatTime(timerOv[i].time, 0);
+			timerOv[i].obj.textContent = formatTime(timerOv[i].time, 0);
 		}
 	}
 	RunTime[4] = Date.now();
@@ -5977,14 +5971,14 @@ function parseDorf1 () {
 			for( var i = 0; i < descr.length; i++ ) {
 				newCookie[0]++;
 				var td = $gt('div',descr[i]);
-				newCookie[t++] = td[s].innerHTML.onlyText().replace(/\s+?/g,' ').trim();
+				newCookie[t++] = td[s].textContent.onlyText().replace(/\s+?/g,' ').trim();
 				if( td.length < 3 ) {
 					newCookie[t++] = 0;
 					newCookie[t++] = '';
 				} else {
-					var ts = td[s+1].innerHTML.match(/\d+:\d\d:\d\d/);
-					newCookie[t++] = Math.round(RunTime[0]/1000) + toSeconds(ts?ts[0]:"0:00:00");
-					newCookie[t++] = td[s+1].innerHTML.onlyText().replace(/.+?\d\d\s\S+\s/,'').replace(/\s+?/g,' ').trim();
+					var timer = $xf('.//span[contains(@class, "timer")]','f',td[s+1]).getAttribute("value");
+					newCookie[t++] = Math.round(RunTime[0]/1000) + (timer?parseInt(timer):0);
+					newCookie[t++] = td[s+1].textContent.onlyText().replace(/.+?\d\d\s\S+\s/,'').replace(/\s+?/g,' ').trim();
 				}
 				if( RB.dictFL[14] == 0 ) {
 					RB.dictionary[14] = newCookie[t-1].split(/\d/,1)[0];
@@ -6763,13 +6757,20 @@ function showTroopsITT () {
 	var tc = 0;
 	var ti = [0,0,0,0,0];
 	var ts = [0,0,0,0,0];
+	var hp = parseInt(RB.dictFL[17]);
 	for( var i = 0; i < RB.village_dorf12[0]; i++ ) {
 		tn = RB.village_dorf12[i*2+1];
 		tt = parseInt(tn);
 		tc = parseInt(RB.village_dorf12[i*2+2]);
 		var atfl = ( (tt%10) < 7 && troopInfo( tt, 9 ) > 1 ) ? false: true;
+		if (tn === 'hero') {
+			atfl = RB.dictFL[18] == 1 ? false : true;
+		}
 		ti = [atfl?gti(tt,0,tc):0, atfl?0:gti(tt,0,tc), gti(tt,1,tc), gti(tt,2,tc), gti(tt,9,tc)];
 		if( tt > 30 && tt < 51) ti[0]=0;
+		if (tn === 'hero') {
+			RB.dictFL[18] == 1 ? ti=[0,hp,0,hp,6] : ti=[hp,0,hp,0,6];
+		}
 		ts = [atfl?ts[0]+ti[0]:ts[0], atfl?ts[1]:ts[1]+ti[1], ts[2]+ti[2], ts[3]+ti[3], ts[4]+ti[4]];
 		ITTb.appendChild($em('TR',[$c(trImg('unit u'+tn)),$c(humanRF(ti[0])),$c(humanRF(ti[1])),$c(humanRF(ti[2])),$c(humanRF(ti[3])),$c(humanRF(ti[4]))]));
 	}
@@ -8029,7 +8030,7 @@ function getMaxLevel(gid) {
 		case 1:
 		case 2:
 		case 3:
-		case 4: if( village_aid == RB.dictionary[0] ) maxLevel = RB.dictFL[17]==1 ? 12: 25;
+		case 4: if( village_aid == RB.dictionary[0] ) maxLevel = 25;
 				else maxLevel = 10;
 			break;
 		case 5:
@@ -8041,9 +8042,6 @@ function getMaxLevel(gid) {
 			break;
 		case 23:
 			maxLevel = 10;
-			break;
-		case 35:
-			maxLevel = 20;
 			break;
 		case 40:
 			maxLevel = 100;
@@ -8132,9 +8130,10 @@ if( /build/.test(window.location.href) ) cultureCalc();
 
 function allyQStats (members) {
 	var sumC = 0, sumV = 0;
+	var villRow = RB.Setup[46] == 1 ? 5 : 4;
 	for( var i=1; i<members.rows.length; i++ ) {
 		sumC += parseInt( members.rows[i].cells[3].textContent );
-		sumV += parseInt( members.rows[i].cells[4].textContent );
+		sumV += parseInt( members.rows[i].cells[villRow].textContent );
 	}
 	i--;
 	var semafor = $e('div',[['style','text-align:center;']]);
@@ -8243,6 +8242,30 @@ function saveHeroSpeed () {
 	if( sb.length > 0 ) {
 		RB.dictFL[19] = sb[0].innerHTML.match(/>\s*?(\d+)/)[1];
 		saveCookie( 'DictFL', 'dictFL' );
+	}
+}
+
+function saveHeroPower () {
+	var ap = $g('attributepower');
+	if (ap) {
+		var pw = $gc("powervalue",ap);
+		if( pw.length > 0 ) {
+			RB.dictFL[17] = pw[0].textContent.onlyText().trim();
+			saveCookie( 'DictFL', 'dictFL' );
+		}
+	}	
+}
+
+function saveHeroMount () {
+	var hr = $g('horse');
+	if (hr) {
+		if( hr.childElementCount > 0 ) {
+			RB.dictFL[18] = 1;
+			saveCookie( 'DictFL', 'dictFL' );
+		} else {
+			RB.dictFL[18] = 0;
+			saveCookie( 'DictFL', 'dictFL' );
+		}
 	}
 }
 
@@ -8875,7 +8898,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Resource Bar+";
-		content.innerHTML = "What's new in Version "+version+" - Nov 23, 2021:<p></p><ui><li>Fixed relative urls in the Links window</li><li>Added dorf1 and dorf2 (resources and buildings) links in the Village window</li></ui>";
+		content.innerHTML = "What's new in Version "+version+" - Dec 2, 2021:<p></p><ui><li>Added Hero strength in troop info</li><li>Minor fixes and improvements</li></ui>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
@@ -8986,7 +9009,7 @@ function displayWhatIsNew () {
 	}
 	if( /report.+id=/.test(crtPath) ) { addSpeedAndRTSend(); analyzerBattle(); getTroopNames(); }
 	if( ! /dorf.\.php/.test(crtPath) && ! /profile/.test(crtPath) ) addRefIGM();
-	if( /hero/.test(crtPath) ) { speedBids(); timeToBids(); neededResAdd(); restHeroTime(); saveHeroSpeed(); addSpeedAndRTSend(); addSpeedAndRTSend($gc('boxes',cont)[0]); }
+	if( /hero/.test(crtPath) ) { speedBids(); timeToBids(); neededResAdd(); restHeroTime(); saveHeroSpeed(); saveHeroPower(); saveHeroMount(); addSpeedAndRTSend(); addSpeedAndRTSend($gc('boxes',cont)[0]); }
 	if( /build.php/.test(crtPath) ) { neededResAdd(); buildDispatcher(); addSpeedAndRTSend(); }
 
 	setTimeout( function() { progressbar_updValues(); setInterval(progressbar_updValues, 1000); }, (1000-progressbar_time-((Date.now())-RunTime[0])));
