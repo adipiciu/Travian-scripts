@@ -32,14 +32,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.21.25
+// @version        2.21.26
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.21.25';
+var version = '2.21.26';
 
 notRunYet = false;
 
@@ -4839,11 +4839,12 @@ function fillXY ( nXY ) {
 
 function fillXYtoRP() {
 	fillXY();
-	if( $g('troops') ) {
+	var tt = $g('troops');
+	if( tt ) {
 		var ss = $g('btn_ok');
 		if( ss ) {
 			//*Start detect Tribe
-			var troopImg = $xf('.//img[contains(@class,"unit u")]','f',cont);
+			var troopImg = $xf('.//img[contains(@class,"unit u")]','f',tt);
 			if( ! troopImg ) return;
 			race = Math.floor(parseInt(troopImg.getAttribute('class').match(/\d+/)[0])/10);
 			if( race != RB.Setup[2] ) {
@@ -4859,7 +4860,7 @@ function fillXYtoRP() {
 }
 
 function sendArmy( myVid ) {
-	if( $gn('t9').length > 0 ) {
+	if( $gc('a2b').length > 0 ) {
 		fillXY( myVid );
 		showDistanceIn( 0 );
 	} else {
@@ -6764,12 +6765,12 @@ function showTroopsITT () {
 		tc = parseInt(RB.village_dorf12[i*2+2]);
 		var atfl = ( (tt%10) < 7 && troopInfo( tt, 9 ) > 1 ) ? false: true;
 		if (tn === 'hero') {
-			atfl = RB.dictFL[18] == 1 ? false : true;
+			atfl = parseInt(RB.dictFL[18]) == 1 ? false : true;
 		}
 		ti = [atfl?gti(tt,0,tc):0, atfl?0:gti(tt,0,tc), gti(tt,1,tc), gti(tt,2,tc), gti(tt,9,tc)];
 		if( tt > 30 && tt < 51) ti[0]=0;
 		if (tn === 'hero') {
-			RB.dictFL[18] == 1 ? ti=[0,hp,0,hp,6] : ti=[hp,0,hp,0,6];
+			parseInt(RB.dictFL[18]) == 1 ? ti=[0,hp,0,hp,6] : ti=[hp,0,hp,0,6];
 		}
 		ts = [atfl?ts[0]+ti[0]:ts[0], atfl?ts[1]:ts[1]+ti[1], ts[2]+ti[2], ts[3]+ti[3], ts[4]+ti[4]];
 		ITTb.appendChild($em('TR',[$c(trImg('unit u'+tn)),$c(humanRF(ti[0])),$c(humanRF(ti[1])),$c(humanRF(ti[2])),$c(humanRF(ti[3])),$c(humanRF(ti[4]))]));
@@ -6816,12 +6817,17 @@ function a2bInfo () {
 	for( var i=0; i<inputs.length; i++ ) {
 		if( /t\d+/.test(inputs[i].getAttribute('name')) ) {
 			var rtt = parseInt(inputs[i].getAttribute('name').match(/t(\d+)/)[1]);
-			if( rtt == 11 ) continue;
 			var tt = rtt+(parseInt(RB.Setup[2])*10);
 			var tc = parseInt(inputs[i].value);
 			if( isNaN(tc) ) continue;
 			var atfl = ( rtt < 7 && troopInfo( tt, 9 ) > 1 ) ? false: true;
-			ts = [atfl?ts[0]+gti(tt,0,tc):ts[0], atfl?ts[1]:ts[1]+gti(tt,0,tc), ts[2]+gti(tt,1,tc), ts[3]+gti(tt,2,tc), ts[4]+gti(tt,8,tc), ts[5]+gti(tt,9,tc)];
+			if (rtt == 11) { //hero
+				var hp = parseInt(RB.dictFL[17]);
+				var hm = parseInt(RB.dictFL[18]);
+				ts = [hm?ts[0]:ts[0]+hp, hm?ts[1]+hp:ts[1], ts[2]+hp, ts[3]+hp, ts[4], ts[5]+6];
+			} else {
+				ts = [atfl?ts[0]+gti(tt,0,tc):ts[0], atfl?ts[1]:ts[1]+gti(tt,0,tc), ts[2]+gti(tt,1,tc), ts[3]+gti(tt,2,tc), ts[4]+gti(tt,8,tc), ts[5]+gti(tt,9,tc)];
+			}
 		}
 	}
 	var rP = $g(allIDs[21]);
@@ -8258,8 +8264,20 @@ function saveHeroPower () {
 
 function saveHeroMount () {
 	var hr = $g('horse');
-	if (hr) {
-		if( hr.childElementCount > 0 ) {
+	if ( !hr ) return;
+	checkHeroMount();
+	var MutationObserver = window.MutationObserver;
+	var observer = new MutationObserver(function(mutations) {
+		mutations.forEach(function(mutation) {
+			if (mutation.type === 'childList') {
+				checkHeroMount();
+			}
+		});
+	});
+	observer.observe(hr, { childList: true, subtree: true });
+
+	function checkHeroMount () {
+		if( hr.hasChildNodes() ) {
 			RB.dictFL[18] = 1;
 			saveCookie( 'DictFL', 'dictFL' );
 		} else {
@@ -8898,7 +8916,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Resource Bar+";
-		content.innerHTML = "What's new in Version "+version+" - Dec 2, 2021:<p></p><ui><li>Added Hero strength in troop info</li><li>Minor fixes and improvements</li></ui>";
+		content.innerHTML = "What's new in Version "+version+" - Dec 3, 2021:<p></p><ui><li>Minor fixes and improvements</li></ui>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
