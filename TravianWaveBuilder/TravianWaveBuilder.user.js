@@ -10,12 +10,12 @@
 // @include        *://*/*.travian.*/build.php*
 // @include        *://*/*.travian.*.*/build.php*
 
-// @version        2.0
+// @version        2.1
 // ==/UserScript==
 
 function allInOneOpera () {
 
-var version = '2.0';
+var version = '2.1';
 var scriptURL = 'https://github.com/adipiciu/Travian-scripts';
 var defInterval = 200;
 var sLang = detectLanguage();
@@ -219,8 +219,8 @@ function addWave () {
 		} else if (tSpy.length>0) {
 			$at(tSpy[0],[['name',tSpy[0].name+"twb"+tbl.tBodies.length]]);
 			if (tSpy.length>1) $at(tSpy[1],[['name',tSpy[1].name+"twb"+tbl.tBodies.length]]);
-			$at(tSpy[0].parentNode,[['colspan',6]]);
-			nrow.appendChild(tSpy[0].parentNode);
+			$at(tSpy[0].parentNode.parentNode,[['colspan',6]]);
+			nrow.appendChild(tSpy[0].parentNode.parentNode);
 		} else {
 			nrow.appendChild($c('-',[['colspan',6]]));
 		}
