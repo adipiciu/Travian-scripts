@@ -32,14 +32,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.21.26
+// @version        2.21.27
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.21.26';
+var version = '2.21.27';
 
 notRunYet = false;
 
@@ -7424,7 +7424,6 @@ function analyzerBattle () {
 				tCount = parseInt(pRows[3].cells[i].innerHTML);
 				if( tCount > 0 ) {
 					for( j=0; j<pRU.length; j++) {
-						ptS[1][j] += troopInfo(pRace*10+i, pRU[j])*tCount;
 						ptS[2][j] += troopInfo(pRace*10+i, pRU[j])*tCount;
 					}
 					tKirillC -= tCount;
@@ -8591,65 +8590,9 @@ function getNextReportPage ( bl ) {
 function reportsDelOrSearch () {
 	var reportsForm = $g('reportsForm');
 	if( !reportsForm ) return;
-
-	function delRep () {
-		var nr = getNextReportPage();
-		if( ! nr ) {
-			RB.overview[0] = -1;
-			saveCookie('OV', 'overview');
-		}
-		var ac = $xf('./table/tbody//input[@type="checkbox"]','l',reportsForm);
-		for( var i=0; i<ac.snapshotLength; i++ ) ac.snapshotItem(i).checked=true;
-		delButt.click();
-	}
-	function delRepInit () {
-		RB.overview[0] = -4;
-		saveCookie('OV', 'overview');
-		delRep();
-	}
-
 	var buttons = $gt('button',reportsForm);
-	for (i=0; i<buttons.length; i++) {
-		if (buttons[i].value == 'delete') {
-			var delButt = buttons[i];
-		}
-		if (buttons[i].value == 'archive') {
-			var archiveButton = buttons[i];
-		}
-		if (buttons[i].value == 'mark_as_read') {
-			var markasreadButt = buttons[i];
-		}
-	}
-
-	var newDel = delButt.cloneNode(true);
-	newDel.setAttribute('title',delButt.textContent);
-	newDel.textContent = " [X] >> ";
-	newDel.setAttribute('value','deleteAll');
-	ltr ? newDel.style.marginLeft = "4px" : newDel.style.marginRight = "4px";
-	newDel.setAttribute('onclick',jsNone);
-	newDel.addEventListener('click',delRepInit,true);
-	delButt.parentNode.insertBefore(newDel, archiveButton ? archiveButton.nextSibling : delButt.nextSibling);
-
-	if (buttons.length > 0 && delButt) {
-		var newDelAllAbove = newDel.cloneNode(true);
-		reportsForm.prepend(newDelAllAbove);
-		newDelAllAbove.setAttribute('onclick',jsNone);
-		newDelAllAbove.addEventListener('click',delRepInit,true);
-		if ( archiveButton ) { 
-			var newArcAbove = archiveButton.cloneNode(true);
-			ltr ? newArcAbove.style.marginLeft = "4px" : newArcAbove.style.marginRight = "4px";
-			reportsForm.prepend(newArcAbove);
-		}
-		var newDelAbove = delButt.cloneNode(true);
-		ltr ? newDelAbove.style.marginLeft = "4px" : newDelAbove.style.marginRight = "4px";
-		reportsForm.prepend(newDelAbove);
-		if ( markasreadButt ) {
-			var newMarkAbove = markasreadButt.cloneNode(true);
-			reportsForm.prepend(newMarkAbove);
-		}
-
+	if (buttons.length > 0) {
 		dictRpInit();
-		if( RB.overview[0] == -4 ) setTimeout(delRep, getRandom(300,1000));
 	}
 }
 
@@ -8916,7 +8859,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Resource Bar+";
-		content.innerHTML = "What's new in Version "+version+" - Dec 3, 2021:<p></p><ui><li>Minor fixes and improvements</li></ui>";
+		content.innerHTML = "What's new in Version "+version+" - Dec 20, 2021:<p></p><ui><li>Fixes and cleaning</li></ui>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
