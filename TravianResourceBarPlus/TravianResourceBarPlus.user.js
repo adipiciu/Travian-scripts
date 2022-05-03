@@ -32,14 +32,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.21.27
+// @version        2.22.1
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.21.27';
+var version = '2.22.1';
 
 notRunYet = false;
 
@@ -2444,7 +2444,7 @@ function RB_deleteValue( key ) {
 function $xf(xpath, xpt, startnode, aDoc) {
 	var XPFirst = XPathResult.FIRST_ORDERED_NODE_TYPE;
 	var XPList = XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE;
-	var XPIterate = XPathResult.UNORDERED_NODE_ITERATOR_TYPE;
+	var XPIterator = XPathResult.UNORDERED_NODE_ITERATOR_TYPE;
 	var XPResult = XPathResult.ORDERED_NODE_SNAPSHOT_TYPE;
 	if (!aDoc) aDoc = document;
 	if (!startnode) startnode = document;
@@ -2610,9 +2610,9 @@ function getUserID() {
 		}
 	}
 	function getID() {
-		ajaxRequest(fullName+'profile', 'GET', null, function(ajaxResp) {
+		ajaxRequest(fullName+'statistics', 'GET', null, function(ajaxResp) {
 			var ad = ajaxNDIV(ajaxResp);
-			var aV = $xf('//a[contains(@class,"tabItem") and contains(@href,"profile")]', 'f', ad);
+			var aV = $xf('//td[contains(@class,"pla")]/a[contains(@href,"profile") and text() = "' + uName + '"]', 'f', ad);
 			ad = null;
 			if (aV) { 
 				var uId = aV.href.match(/profile\/(\d+)/)[1];
@@ -5134,7 +5134,7 @@ function allStorageDelete () {
 		RB_deleteValue( GMcookieID + allCookies[i] );
 	}
 	RB_deleteValue(crtName + '-TRBP-UID');
-	document.location.href = fullName + 'logout.php';
+	document.location.href = fullName + 'logout';
 }
 
 function parseSpieler () {
@@ -5892,7 +5892,7 @@ function viewMessageIW() {
 	function selectMessage (num) {
 		var allRows = $xf('.//tr[td/@class="sel"]','l',cont);
 		var tds = allRows.snapshotItem(num).cells;
-		$gt('INPUT',tds[0])[0].setAttribute('checked',true);
+		$gt('INPUT',tds[0])[0].click();
 		var aLinks = $xf('.//a[(contains(@href, "?id=") or contains(@href, "messages/")) and not(contains(@href, "toggleState=")) and not(contains(@href, "mark=")) and not(contains(@href, "build.php"))]','f',tds[1]);
 		var aLink = aLinks.href;
 		var tV = /report/.test(aLink) ? 1: 0;
@@ -8859,7 +8859,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Resource Bar+";
-		content.innerHTML = "What's new in Version "+version+" - Dec 20, 2021:<p></p><ui><li>Fixes and cleaning</li></ui>";
+		content.innerHTML = "What's new in Version "+version+" - May 3, 2021:<p></p><ui><li>Fixes for Travian hero fashion test server</li></ui>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
