@@ -29,14 +29,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version     1.9.2
+// @version     1.9.3
 // ==/UserScript==
 
 (function () {
 
 function allInOneTTQ () {
 notRunYet = false;
-var sCurrentVersion = "1.9.2";
+var sCurrentVersion = "1.9.3";
 
 //find out if Server errors
 var strTitle = document.title;
@@ -407,13 +407,13 @@ function initialize() {
 			}
 		}
 	}
-	get(fullName+'profile', getuId, '');
+	get(fullName+'statistics', getuId, '');
 	function getuId(httpRequest) {
 		if (httpRequest.readyState == 4) {
 			if (httpRequest.status == 200 && httpRequest.responseText) {
 				var holder = document.createElement('div');
 				holder.innerHTML = httpRequest.responseText;
-				var aV = xpath('//a[contains(@class,"tabItem") and contains(@href,"profile")]', holder, true);
+				var aV = xpath('//td[contains(@class,"pla")]/a[contains(@href,"profile") and text() = "' + uName + '"]', holder, true);
 				if (aV) { 
 					var uId = aV.href.match(/profile\/(\d+)/)[1];
 					uidcookie += worldId + "\/@_" + uName +"\/@_"+ uId +"@@_";
@@ -446,7 +446,7 @@ if (init) {
 	// Default is English. This is also the array that will be used to replace the zeros (missing words) in the below translations. The Buildings are only used for catapult targeting for now. I hope to get rid of it entirely.
 	var nLangBuildings = ["", "Woodcutter", "Clay Pit", "Iron Mine", "Cropland", "Sawmill", "Brickyard", "Iron Foundry", "Grain Mill", "Bakery", "Warehouse", "Granary", "<No Building>", "Smithy", "Tournament Square", "Main Building", "Rally Point", "Marketplace", "Embassy", "Barracks", "Stable", "Workshop", "Academy", "Cranny", "Town Hall", "Residence", "Palace", "Treasury", "Trade Office", "Great Barracks", "Great Stable", "City Wall", "Earth Wall", "Palisade", "Stonemason's Lodge", "Brewery", "Trapper", "Hero's Mansion", "Great Warehouse", "Great Granary", "Wonder Of The World", "Horse Drinking Trough", "Stone Wall", "Makeshift Wall", "Command Center", "Waterworks", "Hospital"];
 	var nLangTasks = ["Build", "Upgrade", "Attack", "Research", "Train", "Party", "Demolish", "Send Merchants", "Send Back/Withdraw"];
-	var nLangStrings = ["Build later", "Upgrade later", "Unknown Town", "Research later", "Schedule this Task for Later", "We started building ", "<center>HALT!</center><br>Please wait, TTQ is processing this task!<br>Step", "Traps", " build request sent. However, it appears that the building is not building.", "was attempted but the server redirected us.", "The task was scheduled.", "Redirected", "We can't schedule this task right now.", "Error", "Scheduled Tasks", "Delete", "Send later", "No troops were selected.", "Your troops were sent to", "Your troops could not be sent to", "Support", "Attack", "Raid", "Catapults will aim at", "random", "at", "or after", "seconds", "minutes", "hours", "days", "Spy for resources and troops", "Spy for troops and defenses", "away", "The attack cannot be scheduled because no destination was specified.", "at site no.", "Sort by:", "type ", "time ", "target ", "options ", "village ", "Task History", "Flush History", "We started researching ", " cannot be researched.", "Page Failed", "Spy", "train later", "troops.", "... May have not happened!", "We started training ", " cannot be trained.", "Party Later", " but not today.", "We started to ", "Close", "Add/Edit Task Schedule", "Edit and Close", "Add and Close", "Add", "Are you sure you want to [s1] [s2]?", "Demolish Later", "Demolishing", "Cannot demolish", "Invalid coordinates or no resources selected.", "Using Local Time", "Using Server Time", " was attempted but we could not find the link.", " was attempted but failed. Reason: ", "No Link", " was attempted but the building was not found.", "No Building", " was attempted but the server returned an error.", "Server:", "Confirmation Failed", "Sorry, I <b>may</b> have built the building in the wrong town.", "Misbuild:", "Sent Back/Withdrew troops.<br>Troops are going home to:", "Sent Back/Withdrew troops Failed (I think).<br>Troops were supposed to go home to: ", "Click to make this your Active Village." , "Click to see this Village Details screen.", "Timeout or TTQ Crash"];
+	var nLangStrings = ["Build later", "Upgrade later", "Unknown Town", "Research later", "Schedule this Task for Later", "We started building ", "<center>HALT!</center><br>Please wait, TTQ is processing this task!<br>Step", "Traps", " build request sent. However, it appears that the building is not building.", "was attempted but the server redirected us.", "The task was scheduled.", "Redirected", "We can't schedule this task right now.", "Error", "Scheduled Tasks", "Delete", "Send later", "No troops were selected.", "Your troops were sent to", "Your troops could not be sent to", "Reinforcement", "Attack", "Raid", "Catapults will aim at", "random", "at", "or after", "seconds", "minutes", "hours", "days", "Spy for resources and troops", "Spy for troops and defenses", "away", "The attack cannot be scheduled because no destination was specified.", "at site no.", "Sort by:", "type ", "time ", "target ", "options ", "village ", "Task History", "Flush History", "We started researching ", " cannot be researched.", "Page Failed", "Spy", "train later", "troops.", "... May have not happened!", "We started training ", " cannot be trained.", "Party Later", " but not today.", "We started to ", "Close", "Add/Edit Task Schedule", "Edit and Close", "Add and Close", "Add", "Are you sure you want to [s1] [s2]?", "Demolish Later", "Demolishing", "Cannot demolish", "Invalid coordinates or no resources selected.", "Using Local Time", "Using Server Time", " was attempted but we could not find the link.", " was attempted but failed. Reason: ", "No Link", " was attempted but the building was not found.", "No Building", " was attempted but the server returned an error.", "Server:", "Confirmation Failed", "Sorry, I <b>may</b> have built the building in the wrong town.", "Misbuild:", "Sent Back/Withdrew troops.<br>Troops are going home to:", "Sent Back/Withdrew troops Failed (I think).<br>Troops were supposed to go home to: ", "Click to make this your Active Village." , "Click to see this Village Details screen.", "Timeout or TTQ Crash"];
 	var nLangMenuOptions = ["TTQ: ", "Use server time", "Use local time", "Set your tribe", "Task History", "Reset", "\nHow many past tasks do we keep in history?\n(Type 0 to disable task history.) \nCurrently: ", " What is your tribe on this server?\nType 0 for Romans, 1 for Teutons, 2 for Gauls, 5 for Egyptians, 6 for Huns. Or a negative number to enable autodetect (ie: -1)\nCurrently: ", "Are you sure you want to reset all TTQ variables?"];
 	// The english troop names are not really needed. But they are provided here in the situation that the the troop name autodetect (rip) does not work. (ie. no rally point)
 	var nLangTroops = new Array();
@@ -1942,17 +1942,18 @@ function createAttackLinks() {
 	} else {
 		//create textbox for hero if it's not present
 		var heroBox = document.getElementsByClassName ("line-last column-last");
-		if( heroBox[0].firstChild == null )   //no hero textbox - make one
+		if( heroBox[0].firstElementChild == null ) {  //no hero textbox - make one
 			heroBox[0].innerHTML = " <img class='unit uhero' src='/img/x.gif' title='"
 				+aLangTroops[10]+"' onclick='document.snd.t11.value=\"\"; return false;' alt='"+aLangTroops[10]+"' style='cursor:pointer' />"
 				+" <input type='text' class='text' name='t11' value='' />"
 				+" <a style='cursor:pointer'>(1)<br />(" +aLangStrings[33]+ ")</a>";
+		}
 		//Set the last line of table to top-aligned
 		lastline=xpath("//table[@id='troops']/tbody/tr[3]/td");
 		for (var x=0;x<lastline.snapshotLength;x++) {lastline.snapshotItem(x).style.verticalAlign="top";}
 		var SndLtrBtn = generateButton(aLangStrings[16], scheduleAttack);
 	}
-	var oOkBtn = $id('btn_ok');
+	var oOkBtn = $id('ok');
 	var obp = oOkBtn.parentNode;
 	if (obp.childNodes.length < 14 ) obp.appendChild(SndLtrBtn);
 	else oOkBtn.parentNode.appendChild(SndLtrBtn, obp.childNodes[13]);
@@ -2050,7 +2051,7 @@ function scheduleAttack(e) {
 	var aTroops = [0,		0,	0,	0,	0,	0,	0,	0,	0,	0,	0,		0,		0,		-1,		-1,		-1,		-1,];
 	var iAttackType = null;
 	var xpathRes = xpath("id('content')//input[@type='radio']");
-	for (var i = 0; i < xpathRes.snapshotLength; ++i) if (xpathRes.snapshotItem(i).checked) iAttackType = i+2;
+	for (var i = 0; i < xpathRes.snapshotLength; ++i) if (xpathRes.snapshotItem(i).checked) iAttackType = xpathRes.snapshotItem(i).value;
 	if(iAttackType != null) {aTroops[0] = iAttackType;}
 	else {
 		_log(2, "The type of attack was not determined again. Unable to schedule the attack.");
@@ -2063,10 +2064,8 @@ function scheduleAttack(e) {
 	if(xpathRes.snapshotLength > 10) {
 		for (var i = 0; i < 11 ; ++i) {
 			var aThisInput = xpathRes.snapshotItem(i);
-			if (aThisInput.name.indexOf('troops') !== -1) {
-				var iTroopId = parseInt(aThisInput.name.substring(11));
-			} else {
-				var iTroopId = parseInt(aThisInput.name.substring(1));
+			if (aThisInput.name.indexOf('troop[t') !== -1) {
+				var iTroopId = parseInt(aThisInput.name.match(/troop\[t(\d+)\]/)[1]);
 			}
 			if ( isNaN(iTroopId) || iTroopId < 1 || iTroopId > 11 ) continue;
 			var tV = parseInt(aThisInput.value);
@@ -2102,9 +2101,9 @@ function attack(aTask) {
 	printMsg(aLangStrings[6] + " > 1<br><br>" + getTaskDetails(aTask));
 	if(aTask[5] != 'null') {  //multiple villages
 		//we need to switch village (while at the same time, setting the target destination)
-		get(fullName+"build.php?id=39&tt=2&newdid=" + aTask[5] + "&z=" + aTask[2], attack2, aTask);
+		get(fullName+"build.php?id=39&tt=2&newdid=" + aTask[5] + "&z=" + aTask[2] + "&gid=16", attack2, aTask);
 	} else {  //only 1 village. Perform attack immediately
-		post(fullName+"build.php?id=39&tt=2", "z=" + aTask[2], attack2, aTask);
+		post(fullName+"build.php?id=39&tt=2", "z=" + aTask[2] + "&gid=16", attack2, aTask);
 		_log(2, "The attack was requested.");
 	}
 	_log(1, "End attack("+aTask+")");
@@ -2142,19 +2141,16 @@ function attack2(httpRequest,aTask) {
 				for (var q = 0 ; q < k ; ++q ) {
 					t = tInputs[q].name;
 					if (t == 'villageName') continue;
-					if ( t.length == 2 || t.length == 3 ) {
-						sParams += t + "=" + aTroops[parseInt(t.replace("t",""))] + "&";
-					} else if (t.indexOf('troops') !== -1) {
-						var splittedStr = t.split('[t');
-						var troopsNr = aTroops[parseInt(splittedStr[splittedStr.length-1].replace("]",""))];
+					if (t.indexOf('troop[t') !== -1) {
+						var troopsNr = aTroops[parseInt(tInputs[q].name.match(/troop\[t(\d+)\]/)[1])];
 						if (troopsNr == 0 ) {
 							sParams += t + "=&";
 						} else {
 							sParams += t + "=" + troopsNr + "&";
 						}
-					} else if ( t == "c" ) {
+					} else if ( t == "eventType" ) {
 						if ( needC ) {
-							sParams += "c=" + aTroops[0] + "&";
+							sParams += "eventType=" + aTroops[0] + "&";
 							needC = false;
 						}
 					} else if ( t == "redeployHero" ) {
@@ -2163,9 +2159,9 @@ function attack2(httpRequest,aTask) {
 						sParams += t + "=" + tInputs[q].value + "&";
 					}
 				}
-				var okBtn = holder.getElementById("btn_ok");
+				var okBtn = holder.getElementById("ok");
 				sParams += okBtn.name + "=" + okBtn.value;
-				post(fullName+'build.php?id=39&tt=2', sParams, attack3, aTask);
+				post(fullName+'build.php?gid=16&tt=2', sParams, attack3, aTask);
 				return;
 			}
 			if ( reqVID != currentActiveVillage ) switchActiveVillage ( currentActiveVillage );
@@ -2229,9 +2225,9 @@ function attack3(httpRequest,aTask){
 						++q;
 					} else sParams += t + "=" + tInputs[q].value + "&";
 				}
-				var okBtn = holder.getElementById("btn_ok");
+				var okBtn = holder.getElementById("c");
 				sParams += okBtn.name + "=" + okBtn.value;
-				post(fullName+'build.php?id=39&tt=2', sParams, handleRequestAttack, aTask);
+				post(fullName+'build.php?gid=16&tt=2', sParams, handleRequestAttack, aTask);
 				return;
 			}
 			if ( reqVID != currentActiveVillage ) switchActiveVillage(currentActiveVillage);
@@ -3090,9 +3086,10 @@ function displayTimerForm(iTask, target, options, timestamp, taskindex, villaged
 			sMoreInfo = aLangStrings[35] + " " +target;
 			break;
 		case 2:  //Attack, Raid, Support
-			var iAttackType = parseInt(options[0]) + 18;
-			var bLetsSpy = (iAttackType > 20 && onlySpies(options));
-			sWhat = ( bLetsSpy ? aLangStrings[47] : aLangStrings[iAttackType] )+' >> <span id="ttq_placename_' +target+ '">' +getVillageNameZ(target)+ '</span>';
+			var iAttackType = parseInt(options[0]);
+			var langStringNo = iAttackType == 5 ? 20 : iAttackType == 3 ? 21 : 22;
+			var bLetsSpy = (iAttackType < 5 && onlySpies(options));
+			sWhat = ( bLetsSpy ? aLangStrings[47] : aLangStrings[langStringNo] )+' >> <span id="ttq_placename_' +target+ '">' +getVillageNameZ(target)+ '</span>';
 			var bCatapultPresent = (options[8] > 0) ? true : false;
 			if(options[11] == undefined) options[11] = 0;  //if no heros are specified, set them to zero
 			sMoreInfo = getTroopsInfo(options);
@@ -3169,7 +3166,7 @@ function displayTimerForm(iTask, target, options, timestamp, taskindex, villaged
 		var sTime = formatDate(yyyy, mm, dd, hh, min, sec);
 	// Allow target selection for catapults if this is Normal Attack and at least 1 cata is sent
 	var sCataTargets = '';
-	if(iTask == 2 && iAttackType == 21 && bCatapultPresent) {
+	if(iTask == 2 && iAttackType == 3 && bCatapultPresent) {
 		var sCataOptions = "";
 		for(var j=1; j < aLangBuildings.length; ++j) {
 			if (j==12 || j==23 || j==31 || j==32 || j==33 || j==34 || j==36 || j==42 || j==43) continue; //skip walls and untargetable buildings
