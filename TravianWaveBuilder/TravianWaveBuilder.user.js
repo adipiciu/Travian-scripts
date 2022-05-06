@@ -10,12 +10,12 @@
 // @include        *://*/*.travian.*/build.php*
 // @include        *://*/*.travian.*.*/build.php*
 
-// @version        2.1
+// @version        2.2
 // ==/UserScript==
 
 function allInOneOpera () {
 
-var version = '2.1';
+var version = '2.2';
 var scriptURL = 'https://github.com/adipiciu/Travian-scripts';
 var defInterval = 200;
 var sLang = detectLanguage();
@@ -122,7 +122,6 @@ function addWave () {
 	} else return;
 
 	var tInputs = $gt('INPUT',tForm);
-	var needC = true;
 	var sParams = '';
 	var cDescr = '';
 
@@ -132,23 +131,18 @@ function addWave () {
 			if( tInputs[i].checked ) {
 				sParams += "redeployHero=1&";
 			}
+		} else if ( t == "eventType" ) {
+			if( tInputs[i].checked ) {
+				sParams += "eventType=" + tInputs[i].value + "&";
+				cDescr = tInputs[i].parentNode.textContent.trim();
+			}
 		} else if ( /^t\d/.test(t) || /x|y/.test(t) ) {
 			sParams += t + "=" + $gn(t)[0].value + "&";
-		} else if ( t == "c" ) {
-			if ( needC ) {
-				var iAttackType = $gn('c');
-				for (var q = 0; q < iAttackType.length; q++)
-					if( iAttackType[q].checked ) {
-						sParams += "c=" + (q+2) + "&";
-						cDescr = iAttackType[q].parentNode.textContent.trim();
-					}
-				needC = false;
-			}
 		} else {
 			sParams += t + "=" + tInputs[i].value + "&";
 		}
 	}
-	var okBtn = $g('btn_ok');
+	var okBtn = $g('ok');
 	sParams += okBtn.name + "=" + okBtn.value;
 
 	ajaxRequest(fullName + a2bURL, "POST", sParams, function(ajaxResp) {
@@ -182,13 +176,11 @@ function addWave () {
 				tc[t.match(/\d+/)[0]] = tInputs[i].value;
 			} if( /\[t\d/.test(t) ) {
 				tc[t.match(/\[t(\d+)/)[1]] = tInputs[i].value;
-			} if( t == "c" ) {
-				needC = cDescr;
-			} if( /spy/.test(t) ) continue;
+			}
 			sParams += t + "=" + tInputs[i].value + "&";
 		}
 
-		var okBtn = $g('btn_ok',rpPage);
+		var okBtn = $g('c',rpPage);
 		sParams += okBtn.name + "=" + okBtn.value;
 
 		var remBtn = $a('-',[['href','#'],['title',langStrings[1]],['onclick',jsNone]]);
@@ -209,7 +201,7 @@ function addWave () {
 		for( i=1; i<12; i++ ) {
 			nrow.appendChild($c(tc[i]));
 		}
-		nrow.appendChild($c(needC,[['title',cDescr]]));
+		nrow.appendChild($c(cDescr,[['title',cDescr]]));
 		var nbody = $ee('TBODY',nrow);
 		tInputs = $gt('SELECT',bld);
 		tSpy = $gc('radio',bld);
@@ -269,7 +261,7 @@ function sendTroops (x) {
 	}
 	
 	if( x == wCount-1 ) {
-		setTimeout(function(){ document.location.href = fullName +'build.php?tt=1&id=39'; }, getRandom(2000));
+		setTimeout(function(){ document.location.href = fullName +'build.php?gid=16&tt=1'; }, getRandom(2000));
 	}
 	ajaxRequest(fullName + a2bURL, "POST", sParams, function(ar) { return function(x) { return logWaves(x,1); }(x+1); }, 
 		function(ar) { return function(x) { return logWaves(x,0); }(x+1); } );
@@ -289,16 +281,18 @@ function sendWaves () {
 }
 
 var build = $g('build');
-if( !(build) ) return;
+if( ! build ) return;
 if( build.getAttribute('class').indexOf('gid16') == -1 ) return;
 
-var snd = $gn('snd');
-if( $gn('snd').length === 0 ) return;
+var snd = $gc('a2b');
+if( $gc('a2b').length != 1 ) return;
+
+if( ! $g('troops') ) return;
 
 var nation = Math.floor(parseInt($gc('unit')[0].getAttribute('class').match(/\d+/)[0])/10);
 if( nation < 0 ) return;
 
-var a2bURL = "build.php?tt=2&id=39";
+var a2bURL = "build.php?gid=16&tt=2";
 var wCount = 0;
 var wNr = 0;
 var wlog = '';
@@ -319,7 +313,7 @@ for( var i=1; i<11; i++ ) {
 $am(hrow,[$c(trImg('unit uhero')),$c(langStrings[6])]);
 tbl.appendChild($ee('THEAD',hrow));
 
-var sendBtn = $g('btn_ok').cloneNode(true);
+var sendBtn = $g('ok').cloneNode(true);
 sendBtn.removeAttribute('name');
 sendBtn.removeAttribute('id');
 sendBtn.addEventListener('click',sendWaves,false);

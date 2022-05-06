@@ -10,5 +10,5 @@
 // @include        *://*/*.travian.*/build.php*
 // @include        *://*/*.travian.*.*/build.php*
 
-// @version        2.1
+// @version        2.2
 // ==/UserScript==
