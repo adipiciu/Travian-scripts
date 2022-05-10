@@ -32,14 +32,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.22.1
+// @version        2.22.2
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.22.1';
+var version = '2.22.2';
 
 notRunYet = false;
 
@@ -2597,26 +2597,21 @@ function getUserID() {
 	try {
 		var uName = $gc('playerName',$g('sidebarBoxActiveVillage'))[0].textContent.trim();
 	} catch(e) { return null }
-	worldId = detectWorldId();
-	if (worldId == null) return null;
 	var uidcookie = RB_getValue(crtName + '-TRBP-UID', "");
 	var uIDs = uidcookie.split("@@_");
 	for( var i = 0; i < uIDs.length; i++ ) {
 		var uID = uIDs[i].split("\/@_");
-		if (uID[0] == worldId) {
-			if (uID[1] == uName) {
-				return uID[2];
-			}
-		}
+		if (uID[0] == uName) { return uID[1] }
+		if (uID[1] == uName) { return uID[2] } //workaround for old worldid that was removed
 	}
 	function getID() {
-		ajaxRequest(fullName+'statistics', 'GET', null, function(ajaxResp) {
+		ajaxRequest(fullName+'statistics/player', 'GET', null, function(ajaxResp) {
 			var ad = ajaxNDIV(ajaxResp);
 			var aV = $xf('//td[contains(@class,"pla")]/a[contains(@href,"profile") and text() = "' + uName + '"]', 'f', ad);
 			ad = null;
 			if (aV) { 
 				var uId = aV.href.match(/profile\/(\d+)/)[1];
-				uidcookie += worldId + "\/@_" + uName +"\/@_"+ uId +"@@_";
+				uidcookie += uName +"\/@_"+ uId +"@@_";
 				RB_setValue(crtName + '-TRBP-UID', uidcookie);
 				return uId;
 			} else { return null }
@@ -2628,28 +2623,22 @@ function getUserID() {
 var initRes = true;
 function getResources () {
 	if( initRes ) {
-		try { var resources={};
-			var fullScr = $xf('//script[contains(text(),"var resources")]').innerHTML;
-			var r1 = fullScr.match(/resources\s=[\s\S]+};/);
-			eval(r1[0]);
+		try {
+			var aText = $xf('//script[contains(text(),"var resources")]').textContent;
+			if ( /production:\s*({.*}),/.test(aText) ) {
+				var production = JSON.parse(aText.match( /production:\s*({.*}),/)[1]);
+			}
+			if ( /maxStorage:\s*({.*})\s*/.test(aText) ) {
+				var maxStorage = JSON.parse(aText.match( /maxStorage:\s*({.*})\s*/)[1]);
+			}
 		} catch(e) { loadVCookie('vPPH', 'village_PPH'); }
 		for( var i = 0; i < 4; i++ ) {
 			var wholeRes = $g("l" + (1+i));
 			if( ! wholeRes ) return false;
-			if( typeof resources != 'undefined' ) {
-				income[i] = resources['production']['l'+(1+i)];
-			}
-			else {
-				var resT = $g('production');
-				if( resT ) {
-					income[i] = parseInt(resT.rows[1+i].cells[2].textContent.onlyText().trim().replace("−","-"));
-				} else {
-					income[i] = RB.village_PPH[i];
-				}
-			}
+			income[i] = production['l'+(1+i)];
 			incomepersecond[i] = income[i] / 3600;
 			iresNow[i] = parseInt(toNumber(wholeRes.textContent));
-			fullRes[i] = resources['maxStorage']['l'+(1+i)];
+			fullRes[i] = maxStorage['l'+(1+i)];
 		}
 		resNow = iresNow.slice();
 		initRes = false;
@@ -4387,7 +4376,7 @@ function incomeResourcesInRP34 () {
 function addARLinks(myVid, aDirect) {
 	var newLinks = $e('span');
 	var armStyle = aDirect == 0 ? allIDs[34]: allIDs[35];
-	var ref = $ee('a',trImg(armStyle),[['href','/build.php?id=39&tt=2&gid=16&z=' + myVid],['onclick','return false;']]);
+	var ref = $ee('a',trImg(armStyle),[['href','/build.php?gid=16&tt=2&targetMapId=' + myVid],['onclick','return false;']]);
 	ref.addEventListener('click', function(x) { return function() { sendArmy(x); }}(myVid), false);
 	newLinks.appendChild(ref);
 	if( aDirect < 2 ) {
@@ -4841,7 +4830,7 @@ function fillXYtoRP() {
 	fillXY();
 	var tt = $g('troops');
 	if( tt ) {
-		var ss = $g('btn_ok');
+		var ss = $g('ok');
 		if( ss ) {
 			//*Start detect Tribe
 			var troopImg = $xf('.//img[contains(@class,"unit u")]','f',tt);
@@ -4865,7 +4854,7 @@ function sendArmy( myVid ) {
 		showDistanceIn( 0 );
 	} else {
 		if( myVid != village_aid ) RB_setValue(GMcookieID + 'next', myVid);
-		document.location.href = '/build.php?id=39&tt=2&gid=16';
+		document.location.href = '/build.php?gid=16&tt=2';
 	}
 	return false;
 }
@@ -6841,7 +6830,7 @@ function a2bInfo () {
 	rT.appendChild($em('TR',[$c($e('i',[['class','r5']])),$c(humanRF(ts[5]),[['colspan','2']])]));
 	rT.appendChild($em('TR',[$c(trImg(allIDs[33])),$c(humanRF(ts[4]),[['colspan','2']])]));
 	rP.appendChild(rT);
-	if( $g('btn_ok') ) $g('btn_ok').parentNode.appendChild(rP);
+	if( $g('ok') ) $g('ok').parentNode.appendChild(rP);
 	else if( $g('raidListSlot') ) insertAfter(rP, $g('raidListSlot'));
 }
 
@@ -6880,26 +6869,20 @@ function detectEgyptiansAndHuns () {
 function detectMapSize () {
 	var aText = $xf('//script[contains(text(),"TravianDefaults")]');
 	if( aText ) {
-		eval(aText.textContent);
-		mapSize = window.TravianDefaults["Map"]["Size"]["width"];
-		RB.Setup[48] = mapSize;
-		saveCookie( 'RBSetup', 'Setup' );
+		if ( /{"Map":{"Size":{"width":(\d+),/.test(aText.textContent) ) {
+			mapSize = JSON.parse(aText.textContent.match(/{"Map":{"Size":{"width":(\d+),/)[1]);
+			RB.Setup[48] = mapSize;
+			saveCookie( 'RBSetup', 'Setup' );
+		}
 	}
 }
 
 function detectServerSpeed () {
-	var fullScr = $xf('//script[contains(text(),"Travian.Game.speed")]').innerHTML;
+	var fullScr = $xf('//script[contains(text(),"Travian.Game.speed")]').textContent;
 	if ( /Travian\.Game\.speed\s=\s(\d+);/.test(fullScr) ) {
 		RB.Setup[45] = fullScr.match(/Travian\.Game\.speed\s=\s(\d+);/)[1];
 		saveCookie( 'RBSetup', 'Setup' );
 	}
-}
-
-function detectWorldId () {
-	var fullScr = $xf('//script[contains(text(),"Travian.Game.worldId")]').innerHTML;
-	if ( /Travian\.Game\.worldId\s=\s'([^']+)';/.test(fullScr) ) {
-		return fullScr.match(/Travian\.Game\.worldId\s=\s'([^']+)';/)[1];
-	} else return null;
 }
 
 function show_alert () {
@@ -7327,7 +7310,7 @@ function cropFind () {
 	}
 	cfText.addEventListener('click', cropFindReq, false);
 	cfText2.addEventListener('click', cropFindReq2, false);
-	var XY = /[\?|&](d=|z=|x=)/.test(crtPath) ? id2xy(getVid(crtPath)): id2xy(village_aid);
+	var XY = /[\?|&](d=|z=|x=|targetMapId=)/.test(crtPath) ? id2xy(getVid(crtPath)): id2xy(village_aid);
 
 	function inps (val, iname) { return $e('INPUT',[['value',val],['name',iname],['id',iname],['class','text coordinates'],['type','text'],['style','width:4em;']]); }
 	function inpsC (id, check) {
@@ -8859,7 +8842,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Resource Bar+";
-		content.innerHTML = "What's new in Version "+version+" - May 3, 2021:<p></p><ui><li>Fixes for Travian hero fashion test server</li></ui>";
+		content.innerHTML = "What's new in Version "+version+" - May 10, 2021:<p></p><ui><li>Fixes for Travian hero new interface servers</li></ui>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
