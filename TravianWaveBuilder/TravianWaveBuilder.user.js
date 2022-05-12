@@ -10,12 +10,12 @@
 // @include        *://*/*.travian.*/build.php*
 // @include        *://*/*.travian.*.*/build.php*
 
-// @version        2.2
+// @version        2.3
 // ==/UserScript==
 
 function allInOneOpera () {
 
-var version = '2.2';
+var version = '2.3';
 var scriptURL = 'https://github.com/adipiciu/Travian-scripts';
 var defInterval = 200;
 var sLang = detectLanguage();
@@ -176,7 +176,7 @@ function addWave () {
 				tc[t.match(/\d+/)[0]] = tInputs[i].value;
 			} if( /\[t\d/.test(t) ) {
 				tc[t.match(/\[t(\d+)/)[1]] = tInputs[i].value;
-			}
+			} if (tInputs[i].className == "radio") continue;
 			sParams += t + "=" + tInputs[i].value + "&";
 		}
 
@@ -250,10 +250,10 @@ function sendTroops (x) {
 	var wBody = tbl.tBodies[x];
 	var sParams = $gt('INPUT',wBody)[0].value;
 	var	tInputs = $gt('SELECT',wBody);
-	sParams += tInputs.length>0 ? "&"+ tInputs[0].name +"="+ tInputs[0].value: '';
-	sParams += tInputs.length>1 ? "&"+ tInputs[1].name +"="+ tInputs[1].value: '';
+	sParams += tInputs.length>0 ? "&" + tInputs[0].name + "=" + tInputs[0].value : '';
+	sParams += tInputs.length>1 ? "&" + tInputs[1].name + "=" + tInputs[1].value : '';
 	var tSpy = $gc('radio',wBody);
-	sParams += tSpy.length>0 ? "&"+ tSpy[0].name.substring(0, tSpy[0].name.indexOf('twb')) + "="+ (tSpy[0].checked ? '1' : '2') : '';
+	sParams += tSpy.length>0 ? "&" + tSpy[0].name.substring(0, tSpy[0].name.indexOf('twb')) + "=" + (tSpy[0].checked ? '1' : '2') : '';
 
 	function logWaves (a,b) {
 		wlog += "<span style='color:"+(b?'green':'red')+"'> "+a+" </span>";
@@ -263,8 +263,8 @@ function sendTroops (x) {
 	if( x == wCount-1 ) {
 		setTimeout(function(){ document.location.href = fullName +'build.php?gid=16&tt=1'; }, getRandom(2000));
 	}
-	ajaxRequest(fullName + a2bURL, "POST", sParams, function(ar) { return function(x) { return logWaves(x,1); }(x+1); }, 
-		function(ar) { return function(x) { return logWaves(x,0); }(x+1); } );
+	ajaxRequest(fullName + a2bURL, "POST", sParams, function() { return function(x) { return logWaves(x,1); }(x+1); }, 
+		function() { return function(x) { return logWaves(x,0); }(x+1); } );
 }
 
 function sendWaves () {
@@ -299,7 +299,7 @@ var wlog = '';
 var cLog;
 var tForm = snd[0];
 var tFormFL = true;
-var fullName = window.location.href.match(/^.*\/\/.+\/+?/)[0];
+var fullName = window.location.origin + "/";
 
 // build table header
 var tbl = $e('TABLE');
