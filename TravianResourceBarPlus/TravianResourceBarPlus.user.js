@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           Travian Resource bar plus
 // @namespace      https://github.com/adipiciu/Travian-scripts
-// @description    Shows travian resources (for Travian Legends and Travian Shadow Empires)
+// @description    Shows travian resources (for Travian Legends and Travian Tides of Conquest)
 // @author         adipiciu (based on Travian Resource bar plus version 2.8.14 by Serj_LV)
 // @license        GPL version 3 or any later version; http://www.gnu.org/copyleft/gpl.html
 // @contributionURL https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR
@@ -32,14 +32,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.22.2
+// @version        2.22.3
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.22.2';
+var version = '2.22.3';
 
 notRunYet = false;
 
@@ -206,9 +206,14 @@ DICT = {
 		yourrace : "Your tribe",
 		sspeed : "Server speed",
 		sspeedh : "0 - auto, 1 (1x), 2 (2x), 3 (3x aka speed), ... etc.",
+		smapsize : "Map size",
+		smapsizeh : "Map size: 401 for 200x200 map, 801 for 400x400 map",
+		EgyptiansAndHuns : "Egyptians and Huns server",
+		EgyptiansAndHunso : ['update','true','false'],
+		EgyptiansAndHunsh : "Server with Egyptians and Huns tribes",
 		servertype : "Travian Server Type",
-		servertypeh : "Server types: Travian Legends, Travian Shadow Empires",
-		servertypeo : ['update','Shadow Empires','Legends'],
+		servertypeh : "Server types: Travian Legends, Travian Tides of Conquest",
+		servertypeo : ['update','Tides of Conquest','Legends'],
 		speedart : "Speed artefact",
 		racelist : ['Romans','Teutons','Gauls','Nature','Natars','Egyptians','Huns'],
 		cranny : "Yellow level of cranny (percent)",
@@ -1229,8 +1234,8 @@ DICT = {
 		sspeed : "Viteza server-ului",
 		sspeedh : "0 - auto, 1 (1x), 2 (2x), 3 (3x aka speed), ... etc.",
 		servertype : "Tipul serverului de Travian",
-		servertypeh : "Tipuri de servere: Travian Legends, Travian Shadow Empires",
-		servertypeo : ['update','Shadow Empires','Legends'],
+		servertypeh : "Tipuri de servere: Travian Legends, Travian Tides of Conquest",
+		servertypeo : ['update','Tides of Conquest','Legends'],
 		speedart : "Artefact de viteză",
 		racelist : ['Romani','Barbari','Daci','Natura','Natari','Egipteni','Huni','detectează'],
 		cranny : "Culoarea galbenă la beci (în procente)",
@@ -2313,8 +2318,8 @@ DICT = {
 		sspeed : "Kecepatan Server",
 		sspeedh : "0 - otomatis, 1 (1x), 2 (2x), 3 (3x als speed), ... dll.",
 		servertype : "Tipe Travian Server",
-		servertypeh : "Tipe Server: Travian Legends, Travian Shadow Empires",
-		servertypeo : ['pembaruan','Shadow Empires','Legends'],
+		servertypeh : "Tipe Server: Travian Legends, Travian Tides of Conquest",
+		servertypeo : ['pembaruan','Tides of Conquest','Legends'],
 		speedart : "Speed artefak",
 		racelist : ['Romawi','Teuton','Galia','Alam','Natar','Mesir','Mongol','deteksi'],
 		cranny : "Level kuning dari (persen)",
@@ -4991,6 +4996,8 @@ function rbSetup () {
 			['SEL', 1, gtext("scrlang")+(LC != 'en' ? ' / Language':''), langs],
 			['SEL', 2, gtext("yourrace"), gtext("racelist")],
 			['T', 45, gtext("sspeed"), gtext("sspeedh")],
+			['T', 48, gtext("smapsize"), gtext("smapsizeh")],
+			['SEL', 47, gtext("EgyptiansAndHuns"), gtext("EgyptiansAndHunso"),gtext("EgyptiansAndHunsh")],
 			['SEL', 46, gtext("servertype"), gtext("servertypeo"),gtext("servertypeh")],
 			['SEL', 3, gtext("speedart"), [gtext('none'),'x0.33','x0.5','x0.67','x1.5','x2','x3']],
 			['SEL', 9, arena, [gtext("auto"),0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]],
@@ -6660,9 +6667,9 @@ function scanTroopsData () {
 	}
 	RB.tropsI = [40,35,50,120,100,150,30,6*m,50,1,30,65,35,100,130,160,70,5*m,20,1,70,40,25,150,160,210,80,7*m,50,1,0,20,10,140,160,20,40,16*m,0,2,120,65,50,550,440,320,100,14*m,100,3,180,80,105,550,640,800,180,10*m,70,4,60,30,75,900,360,500,70,4*m,0,3,75,60,10,950,1350,600,90,3*m,0,6,50,40,30,30750,27200,45000,37500,4*m,0,5,0,80,80,4600,4200,5800,4400,5*m,3000,1,
 	             40,20,5,95,75,40,40,7*m,60,1,10,35,60,145,70,85,40,7*m,40,1,60,30,30,130,120,170,70,6*m,50,1,0,10,5,160,100,50,50,9*m,0,1,55,100,40,370,270,290,75,10*m,110,2,150,50,75,450,515,480,80,9*m,80,3,65,30,80,1000,300,350,70,4*m,0,3,50,60,10,900,1200,600,60,3*m,0,6,40,60,40,35500,26600,25000,27200,4*m,0,4,10,80,80,5800,4400,4600,5200,5*m,3000,1,
-				 15,40,50,100,130,55,30,7*m,35,1,65,35,20,140,150,185,60,6*m,45,1,0,20,10,170,150,20,40,17*m,0,2,90,25,40,350,450,230,60,19*m,75,2,45,115,55,360,330,280,120,16*m,35,2,140,60,165,500,620,675,170,13*m,65,3,50,30,105,950,555,330,75,4*m,0,3,70,45,10,960,1450,630,90,3*m,0,6,40,50,50,30750,45400,31000,37500,5*m,0,4,0,80,80,4400,5600,4200,3900,5*m,3000,1,
+				 15,40,50,100,130,55,30,7*m,35,1,65,35,20,140,150,185,60,6*m,45,1,0,20,10,170,150,20,40,17*m,0,2,100,25,40,350,450,230,60,19*m,75,2,45,115,55,360,330,280,120,16*m,35,2,140,60,165,500,620,675,170,13*m,65,3,50,30,105,950,555,330,75,4*m,0,3,70,45,10,960,1450,630,90,3*m,0,6,40,50,50,30750,45400,31000,37500,5*m,0,4,0,80,80,4400,5600,4200,3900,5*m,3000,1,
 				 10,30,20,45,60,30,15,7*m,15,1,30,55,40,115,100,145,60,6*m,50,1,65,50,20,170,180,220,80,7*m,45,1,0,20,10,170,150,20,40,16*m,0,2,50,110,50,360,330,280,120,15*m,50,2,110,120,150,450,560,610,180,10*m,70,3,55,30,95,995,575,340,80,4*m,0,3,65,55,10,980,1510,660,100,3*m,0,6,40,50,50,34000,50000,34000,42000,4*m,0,4,0,80,80,5040,6510,4830,4620,5*m,3000,1,
-				 35,40,30,130,80,40,40,6*m,50,1,50,30,10,140,110,60,60,6*m,30,1,0,20,10,170,150,20,40,19*m,0,2,120,30,15,290,370,190,45,16*m,75,2,115,80,70,320,350,330,50,16*m,105,2,180,60,40,450,560,610,140,14*m,80,3,65,30,90,1060,330,360,70,4*m,0,3,45,55,10,950,1280,620,60,3*m,0,6,50,40,30,37200,27600,25200,27600,5*m,0,4,10,80,80,6100,4600,4800,5400,5*m,3000,1];
+				 35,40,30,130,80,40,40,6*m,50,1,50,30,10,140,110,60,60,6*m,30,1,0,20,10,170,150,20,40,19*m,0,2,120,30,15,290,370,190,45,16*m,75,2,110,80,70,320,350,330,50,15*m,105,2,180,60,40,450,560,610,140,14*m,80,3,65,30,90,1060,330,360,70,4*m,0,3,45,55,10,950,1280,620,60,3*m,0,6,50,40,30,37200,27600,25200,27600,5*m,0,4,10,80,80,6100,4600,4800,5400,5*m,3000,1];
 	saveCookie('tropsI','tropsI');
 	RB.dictFL[13] = 2;
 	saveCookie( 'DictFL', 'dictFL' );
@@ -6878,9 +6885,8 @@ function detectMapSize () {
 }
 
 function detectServerSpeed () {
-	var fullScr = $xf('//script[contains(text(),"Travian.Game.speed")]').textContent;
-	if ( /Travian\.Game\.speed\s=\s(\d+);/.test(fullScr) ) {
-		RB.Setup[45] = fullScr.match(/Travian\.Game\.speed\s=\s(\d+);/)[1];
+	if (/\.x(\d+)\./.test(crtName)) {
+		RB.Setup[45] = crtName.match(/\.x(\d+)\./)[1];
 		saveCookie( 'RBSetup', 'Setup' );
 	}
 }
@@ -6962,7 +6968,7 @@ function buildDispatcher () {
 	} else if( gid == 'gid16' ) {
 		if( ! /tt=(99|100)/.test(crtPath) && !($g('raidList')) ) {
 			stopRP(); incomeResourcesInRP(); detectNameAttaker(); calcAllTroops(); rpFL = true;
-			if( $gn('snd') ) { fillXYtoRP(); rpDefaultAction(); getTroopNames(); }
+			if( $gc('a2b').length > 0 ) { fillXYtoRP(); rpDefaultAction(); getTroopNames(); }
 		} else {
 			goldClubInfo();
 		}
@@ -7556,12 +7562,12 @@ function returnQuickHelp () {
 }
 
 function rpDefaultAction () {
-	var nc = $xf('.//input[@name="c"]','l',cont);
+	var nc = $xf('.//input[@name="eventType"]','l',cont);
 	if( nc.snapshotLength < 3 ) return;
 	if( RB.Setup[27] > 0 ) if( typeof nc.snapshotItem(RB.Setup[27]).getAttribute('disabled') != "string" ) nc.snapshotItem(RB.Setup[27]).checked = true;
 	if( RB.dictFL[16] > 0 ) return;
 	for( var i=0; i<nc.snapshotLength; i++ ) {
-		RB.dictionary[16+i] = nc.snapshotItem(i).parentNode.innerHTML.onlyText().trim();
+		RB.dictionary[16+i] = nc.snapshotItem(i).parentNode.textContent.trim();
 	}
 	saveCookie( 'Dict', 'dictionary' );
 	RB.dictFL[16] = 1;
@@ -8842,7 +8848,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Resource Bar+";
-		content.innerHTML = "What's new in Version "+version+" - May 10, 2021:<p></p><ui><li>Fixes for Travian hero new interface servers</li></ui>";
+		content.innerHTML = "What's new in Version "+version+" - May 12, 2021:<p></p><ui><li>Fix rally point default action</li><li>Change server speed detection</li><li>Added 5 tribes, map size in settings</li><li>Updated Marksman and Teutates Thunder speed and attack strength</li><li>Fixed script not starting on new hero fashion servers</li></ui>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
@@ -8879,9 +8885,29 @@ function displayWhatIsNew () {
 
 	if( RB.Setup[2] == 3 || RB.Setup[2] == 4 || RB.Setup[2] > 6 ) { RB.Setup[2] = 0; saveCookie( 'RBSetup', 'Setup' ); }
 	if( RB.Setup[45] == 0 ) { detectServerSpeed(); }
+	var aText = $xf('//script[contains(@src, "/js/default/Travian/Variables.js")]');
+	if (aText) {
+		if (RB.Setup[48] === 0) {
+			ajaxRequest(aText.src, 'GET', null, function(ajaxResp) {
+				var ad = ajaxNDIV(ajaxResp);
+				T4_Variables = JSON.parse(ad.textContent.match(/Travian.Variables\s*=\s*(.*});/)[1]);
+				ad = null;
+				console.log(T4_Variables)
+				console.log(T4_Variables.feature_flags)
+				console.log(T4_Variables.feature_flags.territory)
+				console.log(T4_Variables.Map.Size)
+				if (RB.Setup[46] === 0) { RB.Setup[46] = T4_Variables.feature_flags.territory ? 1 : 2; }
+				if (RB.Setup[47] === 0) { RB.Setup[47] = 1; }
+				if (RB.Setup[48] === 0) { RB.Setup[48] = T4_Variables.Map.Size.width; }
+				saveCookie( 'RBSetup', 'Setup' );
+			});
+			return;
+		}
+	}
 	if (RB.Setup[46] == 0) { detectServerType(); }
 	if (RB.Setup[47] == 0) { detectEgyptiansAndHuns(); }
 	if (RB.Setup[48] == 0) { detectMapSize(); }
+
 	var mapWidth = RB.Setup[48];
 	var mapRadius = (mapWidth - 1) / 2;
 
