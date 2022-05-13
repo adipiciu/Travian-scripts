@@ -29,14 +29,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version     1.9.3
+// @version     1.9.4
 // ==/UserScript==
 
 (function () {
 
 function allInOneTTQ () {
 notRunYet = false;
-var sCurrentVersion = "1.9.3";
+var sCurrentVersion = "1.9.4";
 
 //find out if Server errors
 var strTitle = document.title;
@@ -96,6 +96,7 @@ function $at(aElem, att) {if (att !== undefined) {for (var xi = 0; xi < att.leng
 //function $a(iHTML, att) { return $ee('A',iHTML,att); }
 function $e(nElem, att) {var Elem = document.createElement(nElem); $at(Elem, att); return Elem;}
 function $ee(nElem, oElem, att) {var Elem = $e(nElem,att); if (oElem !== undefined) if( typeof(oElem) == 'object' ) Elem.appendChild(oElem); else Elem.innerHTML = oElem; return Elem;}
+function ajaxNDIV(aR) {var ad = $ee('div',aR.responseText,[['style','display:none;']]); return ad;}
 //function $em(nElem, mElem, att) {var Elem = document.createElement(nElem); if (mElem !== undefined) for(var i = 0; i < mElem.length; i++) { if( typeof(mElem[i]) == 'object' ) Elem.appendChild(mElem[i]); else Elem.appendChild($t(mElem[i])); } $at(Elem, att); return Elem;}
 //function $t(iHTML) {return document.createTextNode(iHTML);}
 
@@ -137,6 +138,7 @@ function get(url, callback, options) {
 	var httpRequest = new XMLHttpRequest();
 	if(callback) {
 		httpRequest.onreadystatechange = function() {
+			if( httpRequest.readyState == 4 && (httpRequest.status == 200 || httpRequest.status == 304))
 				callback(httpRequest, options);
 		};
 	}
@@ -193,18 +195,17 @@ function detectLanguage() {
 function detectMapSize () {
 	var mapSize = getOption("MAP_SIZE", 0, "integer");
 	if( mapSize !== 0 ) return mapSize;
-	var fullScr = xpath('//script[contains(text(),"TravianDefaults")]',document, true).textContent;
-	eval(fullScr);
-	mapSize = window.TravianDefaults["Map"]["Size"]["width"];
-	setOption("MAP_SIZE", mapSize);
-	return mapSize;
-}
-
-function detectWorldId () {
-	var fullScr = xpath('//script[contains(text(),"Travian.Game.worldId")]', document, true).innerHTML;
-	if ( /Travian\.Game\.worldId\s=\s'([^']+)';/.test(fullScr) ) {
-		return fullScr.match(/Travian\.Game\.worldId\s=\s'([^']+)';/)[1];
-	} else return null;
+	var aText = xpath('//script[contains(@src, "/js/default/Travian/Variables.js")]',document, true);
+	if (aText) {
+		get(aText.src, function(ajaxResp) {
+			var ad = ajaxNDIV(ajaxResp);
+			T4_Variables = JSON.parse(ad.textContent.match(/Travian.Variables\s*=\s*(.*});/)[1]);
+			ad = null;
+			mapSize = T4_Variables.Map.Size.width;
+			setOption("MAP_SIZE", mapSize);
+		}, null);
+		return 0;
+	}
 }
 
 function processSortedTaskList(element) { $id("ttq_tasklist").appendChild(element[1]); }
@@ -394,20 +395,14 @@ function initialize() {
 	try {
 		var uName = $gc('playerName',$id('sidebarBoxActiveVillage'))[0].textContent.trim();
 	} catch(e) { return false }
-	worldId = detectWorldId();
-	if (worldId == null) return false;
 	var uidcookie = TTQ_getValue(CURRENT_SERVER + 'TTQ-UID', "");
 	var uIDs = uidcookie.split("@@_");
 	for( var i = 0; i < uIDs.length; i++ ) {
 		var uID = uIDs[i].split("\/@_");
-		if (uID[0] == worldId) {
-			if (uID[1] == uName) {
-				myPlayerID = uID[2];
-				return true;
-			}
-		}
+		if (uID[0] == uName) { myPlayerID = uID[1]; return true; }
+		if (uID[1] == uName) { myPlayerID = uID[2]; return true; }				
 	}
-	get(fullName+'statistics', getuId, '');
+	get(fullName+'statistics/player', getuId, '');
 	function getuId(httpRequest) {
 		if (httpRequest.readyState == 4) {
 			if (httpRequest.status == 200 && httpRequest.responseText) {
@@ -416,7 +411,7 @@ function initialize() {
 				var aV = xpath('//td[contains(@class,"pla")]/a[contains(@href,"profile") and text() = "' + uName + '"]', holder, true);
 				if (aV) { 
 					var uId = aV.href.match(/profile\/(\d+)/)[1];
-					uidcookie += worldId + "\/@_" + uName +"\/@_"+ uId +"@@_";
+					uidcookie += uName +"\/@_"+ uId +"@@_";
 					TTQ_setValue(CURRENT_SERVER + 'TTQ-UID', uidcookie);
 					myPlayerID = uId;
 					return true;
@@ -1082,11 +1077,12 @@ function refreshTaskList(aTasks) {
 			case "2":  //attack
 				sTaskSubject = '>> <span id="ttq_placename_' +aThisTask[2]+ '">' +getVillageNameZ(aThisTask[2])+ '</span>';
 				var aTroops = aThisTask[3].split("_");
-				var iIndex = parseInt(aTroops[0]) + 18;
-				if ( (iIndex == 21 || iIndex == 22) && onlySpies(aTroops) ) {
+				var iIndex = parseInt(aTroops[0]);
+				var langStringNo = iIndex == 5 ? 20 : iIndex == 3 ? 21 : 22;
+				if ( (iIndex == 3 || iIndex == 4) && onlySpies(aTroops) ) {
 					sTask = aLangStrings[47];
 					sTaskSubject = " "+aTroops[14]+" "+sTaskSubject;
-				} else { sTask = aLangStrings[iIndex]; }
+				} else { sTask = aLangStrings[langStringNo]; }
 				sTaskMoreInfo = getTroopsInfo(aTroops);
 				break;
 			case "3":  //research
@@ -1399,11 +1395,12 @@ function makeHistoryRow(aTask, index/*, iServerTimeOffset*/) {
 			case "2":  //attack
 				sTaskSubject = ' >> <span id="ttq_placename_history_' +aTask[2]+ '">' +getVillageNameZ(aTask[2])+ '</span>';
 				var aTroops = aTask[3].split("_");
-				var iIndex = parseInt(aTroops[0]) + 18;
-				if((iIndex == 21 || iIndex == 22) && onlySpies(aTroops) ) {
+				var iIndex = parseInt(aTroops[0]);
+				var langStringNo = iIndex == 5 ? 20 : iIndex == 3 ? 21 : 22;
+				if((iIndex == 3 || iIndex == 4) && onlySpies(aTroops) ) {
 					sTaskSubject = " "+aTroops[14]+" "+sTaskSubject;
 					sTask = aLangStrings[47];
-				} else { sTask = aLangStrings[iIndex]; }
+				} else { sTask = aLangStrings[langStringNo]; }
 				sTaskMoreInfo = getTroopsInfo(aTroops);
 				break;
 			case "3":  //research
@@ -3367,11 +3364,12 @@ function setTask(iTask, iWhen, target, options, taskindex, villagedid, refreshTa
 		case "2":  //attack
 			sTaskSubject = ' >> <span id="ttq_placename_' +target+ '">' +getVillageNameZ(target)+ '</span>';
 			var aTroops = options.split("_");
-			var iIndex = parseInt(aTroops[0]) + 18;
-			if((iIndex == 21 || iIndex == 22) && onlySpies(aTroops) ) {
+			var iIndex = parseInt(aTroops[0]);
+			var langStringNo = iIndex == 5 ? 20 : iIndex == 3 ? 21 : 22;
+			if((iIndex == 3 || iIndex == 4) && onlySpies(aTroops) ) {
 				sTask = aLangStrings[47];
 				sTaskSubject = " "+aTroops[14]+" "+sTaskSubject;
-			} else { sTask = aLangStrings[iIndex]; }
+			} else { sTask = aLangStrings[langStringNo]; }
 			break;
 		case "3":  //research
 			var aOptions = options.split("_");
@@ -3525,7 +3523,7 @@ function getSiteId() {
 		return -6;
 	}
 	_log(3,"getSiteId> Trying from URL...");
-	var re = /.*build\.php\?([a-z=0-9&]*&)?id=([0-9]{1,2})/i;
+	var re = /.*build\.php\?([a-z=0-9&]*&)?g?id=([0-9]{1,2})/i;
 	var tSiteId = window.location.href.match(re);
 	if(tSiteId != null) {
 		tSiteId = parseInt(tSiteId[2]);
@@ -3604,9 +3602,10 @@ function getTaskDetails(aTask) {
 			return getVillageName(aTask[5]) + " : " + aLangTasks[1] + " " + aTask[3].split("_")[1] + "<br>(" + aLangStrings[35] + " " + aTask[2] + ")";
 		case "2": //send attack
 			var aTroops = aTask[3].split("_");
-			var iIndex = parseInt(aTroops[0]) + 18;
-			if ( (iIndex == 21 || iIndex == 22) && onlySpies(aTroops) ) var sTask = aLangStrings[47]+" "+aTroops[14]+" ";
-			else var sTask = aLangStrings[iIndex];
+			var iIndex = parseInt(aTroops[0]);
+			var langStringNo = iIndex == 5 ? 20 : iIndex == 3 ? 21 : 22;
+			if ( (iIndex == 3 || iIndex == 4) && onlySpies(aTroops) ) var sTask = aLangStrings[47]+" "+aTroops[14]+" ";
+			else var sTask = aLangStrings[langStringNo];
 			return getVillageName(aTask[5]) + " : " + sTask + " >> " + getVillageNameZ(aTask[2]) + "<br>(" + getTroopsInfo(aTroops) + ")";
 		case "3": //research
 			var aOptions = aTask[3].split("_");
