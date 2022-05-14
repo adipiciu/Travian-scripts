@@ -32,14 +32,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.22.3
+// @version        2.22.4
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.22.3';
+var version = '2.22.4';
 
 notRunYet = false;
 
@@ -207,7 +207,7 @@ DICT = {
 		sspeed : "Server speed",
 		sspeedh : "0 - auto, 1 (1x), 2 (2x), 3 (3x aka speed), ... etc.",
 		smapsize : "Map size",
-		smapsizeh : "Map size: 401 for 200x200 map, 801 for 400x400 map",
+		smapsizeh : "Map size: 0 for autodetect, 401 for 200x200 map, 801 for 400x400 map",
 		EgyptiansAndHuns : "Egyptians and Huns server",
 		EgyptiansAndHunso : ['update','true','false'],
 		EgyptiansAndHunsh : "Server with Egyptians and Huns tribes",
@@ -4787,35 +4787,61 @@ function distanceToMyVillages() {
 }
 
 function distanceToTargetVillages() {
+	var herofashion = false;
 	var vtLink;
 	var vtable = $g("villages");
-	if ( ! vtable ) return;
-	var fl = false;
-	// fill rows
-	var vtrows = vtable.tBodies[0].rows;
-	for (var mr = 0; mr < vtrows.length; mr++)
-	{
-		var vName = $gc('name',vtrows[mr]);
-		if ( vName.length > 0 ) {
-			vtLink = $gt('a',vName[0]);
+	if ( ! vtable ) {
+		herofashion = true;
+		var target = $g('playerProfile');
+		var MutationObserver = window.MutationObserver;
+		var observer = new MutationObserver(function(mutations) {
+			mutations.forEach(function(mutation) {
+				if (mutation.type === 'childList') {
+					vtable = $gc("villages");
+					if ( vtable.length == 1 ) {
+						vtable = vtable[0];
+						fdistance();
+						observer.disconnect();
+					}
+				}
+			});
+		});
+		var config = { childList: true, subtree: true };
+		observer.observe(target, config);
+	} else fdistance();
+
+	function fdistance() {
+		var fl = false;
+		// fill rows
+		var vtrows = vtable.tBodies[0].rows;
+		for (var mr = 0; mr < vtrows.length; mr++)
+		{
+			var vName = $gc('name',vtrows[mr]);
+			if ( vName.length > 0 ) {
+				vtLink = $gt('a',vName[0]);
+			}
+			if( vtLink.length > 0 ) {
+				vtLink = vtLink[0];
+				if (herofashion) {
+					vtLink.parentNode.className = "";
+					if (vtLink.nextElementSibling) vtLink.nextElementSibling.style.display = "block";
+				}
+				var vURL = vtLink.getAttribute("href");
+				distanceTooltip(vtLink,0);
+				sendResTropAdd(vtLink, 1);
+				linkHint(vtLink);
+				var Rej = /d=(\d+)/i;
+				var vID = Rej.exec(vURL)[1];
+				var distance = parseFloat(calcDistance( vID, village_aid ).toFixed(1));
+				vtrows[mr].appendChild($c(distance));
+				fl = true;
+			}
 		}
-		if( vtLink.length > 0 ) {
-			vtLink = vtLink[0];
-			var vURL = vtLink.getAttribute("href");
-			distanceTooltip(vtLink,0);
-			sendResTropAdd(vtLink, 1);
-			linkHint(vtLink);
-			var Rej = /d=(\d+)/i;
-			var vID = Rej.exec(vURL)[1];
-			var distance = parseFloat(calcDistance( vID, village_aid ).toFixed(1));
-			vtrows[mr].appendChild($c(distance));
-			fl = true;
+		if( fl ) {
+			// add additional field
+			var vtrows = vtable.tHead.rows;
+			vtrows[0].appendChild($c('&lt;-&gt;',[['style','width:10%;']]));
 		}
-	}
-	if( fl ) {
-		// add additional field
-		var vtrows = vtable.tHead.rows;
-		vtrows[0].appendChild($c('&lt;-&gt;',[['style','width:10%;']]));
 	}
 }
 
@@ -5854,7 +5880,32 @@ function ActivityInfo ( id, user ) {
 	newT = $ee('TABLE',newR,[['class',allIDs[21]]]);
 	var newP = $ee('P',newT);
 	var lastT = $gt('TABLE',cont);
-	if (lastT.length>0) insertAfter(newP, lastT[lastT.length-1]);
+	if (lastT.length>0) {
+		insertAfter(newP, lastT[lastT.length-1]);
+	} else {
+		var once = false;
+		var MutationObserver = window.MutationObserver;
+		var observer = new MutationObserver(function(mutations) {
+			mutations.forEach(function(mutation) {
+				if (mutation.type === 'childList') {
+					var vtable = $gc("villages", cont);
+					if ( vtable.length == 1 ) {
+						addStats();
+						once = true;
+						observer.disconnect();
+					}
+				}
+			});
+		});
+		var config = { childList: true, subtree: true };
+		observer.observe(cont, config);
+	}
+	function addStats () {
+		if (once) return;
+		var lastT = $gt('TABLE',cont);
+		insertAfter(newP, lastT[lastT.length-1]);
+	}
+	
 }
 function userActivityInfo() {
 	// Get user id
@@ -8247,30 +8298,83 @@ function saveHeroPower () {
 			RB.dictFL[17] = pw[0].textContent.onlyText().trim();
 			saveCookie( 'DictFL', 'dictFL' );
 		}
-	}	
+	}
+	if ( /hero/.test(crtPath)) {
+		var MutationObserver = window.MutationObserver;
+		var observer = new MutationObserver(function(mutations) {
+			mutations.forEach(function(mutation) {
+				if (mutation.type === 'childList') {
+					checkHeroPower();
+					checkHeroSpeed();
+				}
+			});
+		});
+		observer.observe(cont, { childList: true, subtree: true });
+	}
+	function checkHeroPower () {
+		var heroattr = $gc('heroAttributes',cont);
+		if (heroattr.length > 0) {
+			RB.dictFL[17] = $gc("value", heroattr[0])[0].textContent.onlyText().trim();
+			saveCookie( 'DictFL', 'dictFL' );
+		}
+	}
+	function checkHeroSpeed () {
+		var heroattr = $gc('speedValue',cont);
+		if (heroattr.length > 0) {
+			RB.dictFL[19] = heroattr[0].textContent.match(/\d+/)[0];
+			saveCookie( 'DictFL', 'dictFL' );
+		}
+	}
+	
 }
 
 function saveHeroMount () {
 	var hr = $g('horse');
-	if ( !hr ) return;
-	checkHeroMount();
-	var MutationObserver = window.MutationObserver;
-	var observer = new MutationObserver(function(mutations) {
-		mutations.forEach(function(mutation) {
-			if (mutation.type === 'childList') {
-				checkHeroMount();
-			}
+	if ( hr ) {
+		checkHeroMount();
+		var MutationObserver = window.MutationObserver;
+		var observer = new MutationObserver(function(mutations) {
+			mutations.forEach(function(mutation) {
+				if (mutation.type === 'childList') {
+					checkHeroMount();
+				}
+			});
 		});
-	});
-	observer.observe(hr, { childList: true, subtree: true });
-
-	function checkHeroMount () {
-		if( hr.hasChildNodes() ) {
-			RB.dictFL[18] = 1;
-			saveCookie( 'DictFL', 'dictFL' );
-		} else {
-			RB.dictFL[18] = 0;
-			saveCookie( 'DictFL', 'dictFL' );
+		observer.observe(hr, { childList: true, subtree: true });
+	
+		function checkHeroMount () {
+			if( hr.hasChildNodes() ) {
+				RB.dictFL[18] = 1;
+				saveCookie( 'DictFL', 'dictFL' );
+			} else {
+				RB.dictFL[18] = 0;
+				saveCookie( 'DictFL', 'dictFL' );
+			}
+		}
+	} else {
+		var MutationObserver = window.MutationObserver;
+		var observer = new MutationObserver(function(mutations) {
+			mutations.forEach(function(mutation) {
+				if (mutation.type === 'childList') {
+					vtable = $gc("equipmentSlots");
+					if (vtable.length == 1) {
+						checkHeroMount();
+					}
+				}
+			});
+		});
+		observer.observe(cont, { childList: true, subtree: true });
+		function checkHeroMount () {
+			var chorse = $gc('horse',vtable[0]);
+			if (chorse.length > 0) {
+				if (chorse[0].classList.contains("empty")) {
+					RB.dictFL[18] = 0;
+					saveCookie( 'DictFL', 'dictFL' );
+				} else {
+					RB.dictFL[18] = 1;
+					saveCookie( 'DictFL', 'dictFL' );
+				}
+			}
 		}
 	}
 }
@@ -8520,50 +8624,72 @@ function stopRP () {
 }
 
 function spielerSort() {
+	var once = false;
 	var vtable = $g("villages");
-	if ( ! vtable ) return;
+	if ( ! vtable ) {
+		var target = $g('playerProfile');
+		var MutationObserver = window.MutationObserver;
+		var observer = new MutationObserver(function(mutations) {
+			mutations.forEach(function(mutation) {
+				if (mutation.type === 'childList') {
+					vtable = $gc("villages");
+					if ( vtable.length == 1 ) {
+						vtable = vtable[0];
+						sortTable();
+						once = true;
+						observer.disconnect();
+					}
+				}
+			});
+		});
+		var config = { childList: true, subtree: true };
+		observer.observe(target, config);
+	} else sortTable();
 
-	function aSort(a, b) {
-		var a = a[lastSC];
-		var b = b[lastSC];
-		var aa = parseFloat(a.replace(/,/, '.'));
-		var bb = parseFloat(b.replace(/,/, '.'));
-		if ( isNaN(aa) || isNaN(bb) ) return a < b ? -1: a > b ? 1: 0;
-		else return aa - bb;
-	}
-
-	function sortSpieler (sc) {
-		if( lastSC == sc ) lastSD = 1 - lastSD;
-		lastSC = sc;
-		vtArr.sort(aSort);
-		if( lastSD == 1 ) vtArr.reverse();
-		for( var i = 0; i < vtCount; i++ ) {
-			vtable.tBodies[0].appendChild(vtArr[i][4]);
+	function sortTable () {
+		if (once) return;
+		function aSort(a, b) {
+			var a = a[lastSC];
+			var b = b[lastSC];
+			var aa = parseFloat(a.replace(/,/, '.'));
+			var bb = parseFloat(b.replace(/,/, '.'));
+			if ( isNaN(aa) || isNaN(bb) ) return a < b ? -1: a > b ? 1: 0;
+			else return aa - bb;
 		}
-	}
-
-	var vtrows = vtable.tHead.rows[0];
-	var sortCell = (RB.Setup[46]!=1) ? [0,2,4] : [1,3,5,6];
-	for( var i=0; i<4; i++ ) {
-		if (RB.Setup[46] != 1 && i==3) continue;
-		var newSL = $a(vtrows.cells[sortCell[i]].innerHTML,[['href',jsVoid]]);
-		newSL.addEventListener('click', function(x) { return function() { sortSpieler(x); }}(i), false);
-		vtrows.cells[sortCell[i]].textContent = "";
-		vtrows.cells[sortCell[i]].appendChild(newSL);
-	}
-
-	var lastSD = 1;
-	var lastSC = 0;
-	var vtrows = vtable.tBodies[0].rows;
-	var vtCount = vtrows.length;
-	var vtArr = [];
-	for (var i = 0; i < vtCount; i++) {
-		vtArr[i] = [];
-		for( var t=0; t < 4; t++ ) {
-			if (RB.Setup[46] != 1 && t==3) continue;
-			vtArr[i][t] = vtrows[i].cells[sortCell[t]].innerHTML.onlyText();
+	
+		function sortSpieler (sc) {
+			if( lastSC == sc ) lastSD = 1 - lastSD;
+			lastSC = sc;
+			vtArr.sort(aSort);
+			if( lastSD == 1 ) vtArr.reverse();
+			for( var i = 0; i < vtCount; i++ ) {
+				vtable.tBodies[0].appendChild(vtArr[i][4]);
+			}
 		}
-		vtArr[i][4] = vtrows[i];
+
+		var vtrows = vtable.tHead.rows[0];
+		var sortCell = (RB.Setup[46]!=1) ? [0,2,4] : [1,3,5,6];
+		for( var i=0; i<4; i++ ) {
+			if (RB.Setup[46] != 1 && i==3) continue;
+			var newSL = $a(vtrows.cells[sortCell[i]].innerHTML,[['href',jsVoid]]);
+			newSL.addEventListener('click', function(x) { return function() { sortSpieler(x); }}(i), false);
+			vtrows.cells[sortCell[i]].textContent = "";
+			vtrows.cells[sortCell[i]].appendChild(newSL);
+		}
+	
+		var lastSD = 1;
+		var lastSC = 0;
+		var vtrows = vtable.tBodies[0].rows;
+		var vtCount = vtrows.length;
+		var vtArr = [];
+		for (var i = 0; i < vtCount; i++) {
+			vtArr[i] = [];
+			for( var t=0; t < 4; t++ ) {
+				if (RB.Setup[46] != 1 && t==3) continue;
+				vtArr[i][t] = vtrows[i].cells[sortCell[t]].textContent.onlyText();
+			}
+			vtArr[i][4] = vtrows[i];
+		}
 	}
 }
 
@@ -8848,7 +8974,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Resource Bar+";
-		content.innerHTML = "What's new in Version "+version+" - May 12, 2021:<p></p><ui><li>Fix rally point default action</li><li>Change server speed detection</li><li>Added 5 tribes, map size in settings</li><li>Updated Marksman and Teutates Thunder speed and attack strength</li><li>Fixed script not starting on new hero fashion servers</li></ui>";
+		content.innerHTML = "What's new in Version "+version+" - May 14, 2021:<p></p><ui><li>Fix rally point default action</li><li>Change server speed detection</li><li>Added 5 tribes, map size in settings</li><li>Updated Marksman and Teutates Thunder speed and attack strength</li><li>Fixed script not starting on new hero fashion servers</li><li>Fixed player profile village distance and village sort</li><li>Fixed player statistics</li><li>Fixed detecting hero speed, strength and horse</li></ui>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
@@ -8887,18 +9013,14 @@ function displayWhatIsNew () {
 	if( RB.Setup[45] == 0 ) { detectServerSpeed(); }
 	var aText = $xf('//script[contains(@src, "/js/default/Travian/Variables.js")]');
 	if (aText) {
-		if (RB.Setup[48] === 0) {
+		if (RB.Setup[46] == 0 || RB.Setup[47]  == 0 || RB.Setup[48] == 0) {
 			ajaxRequest(aText.src, 'GET', null, function(ajaxResp) {
 				var ad = ajaxNDIV(ajaxResp);
 				T4_Variables = JSON.parse(ad.textContent.match(/Travian.Variables\s*=\s*(.*});/)[1]);
 				ad = null;
-				console.log(T4_Variables)
-				console.log(T4_Variables.feature_flags)
-				console.log(T4_Variables.feature_flags.territory)
-				console.log(T4_Variables.Map.Size)
-				if (RB.Setup[46] === 0) { RB.Setup[46] = T4_Variables.feature_flags.territory ? 1 : 2; }
-				if (RB.Setup[47] === 0) { RB.Setup[47] = 1; }
-				if (RB.Setup[48] === 0) { RB.Setup[48] = T4_Variables.Map.Size.width; }
+				if (RB.Setup[46] == 0) { RB.Setup[46] = T4_Variables.feature_flags.territory ? 1 : 2; }
+				if (RB.Setup[47] == 0) { RB.Setup[47] = 1; }
+				if (RB.Setup[48] == 0) { RB.Setup[48] = T4_Variables.Map.Size.width; }
 				saveCookie( 'RBSetup', 'Setup' );
 			});
 			return;
