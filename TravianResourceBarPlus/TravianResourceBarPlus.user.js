@@ -32,19 +32,19 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.22.4
+// @version        2.22.5
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.22.4';
+var version = '2.22.5';
 
 notRunYet = false;
 
 var homepageurl = 'https://github.com/adipiciu/Travian-scripts';
-var audiofile = 'http://soundsplanet.com/authors/1001/tracks/touch_tone1.mp3';
+var audiofile = 'https://soundsplanet.com/authors/1001/tracks/touch_tone1.mp3';
 var bgcolor = ['#66ff66','yellow','red']; //resource bar colors
 var vHColor = '#777777'; //hints (second name) color
 var cnColors = ['#F8FFD8','#FFE85B','#FF8888','#F0B8FF','#A0F0A0']; //Center Number colors
@@ -101,7 +101,6 @@ var pageElem = pageElem42.slice();
 
 var docDir = ['left', 'right'];
 var ltr = true;
-//if (document.defaultView.getComputedStyle(document.body, null).getPropertyValue("direction") == 'rtl') { docDir = ['right', 'left']; ltr = false; }
 if (document.body.className.includes('rtl')) { docDir = ['right', 'left']; ltr = false; }
 
 var sK = 0;
@@ -2814,7 +2813,7 @@ acss = "table#"+allIDs[0]+" {width:100%; border-collapse:collapse; font-size:8pt
 	"."+allIDs[25]+" { position:absolute; top:0px; left:0px; visibility:visible; display:block; width:100%; height:100%; background-color: black; z-index: 20000; opacity:0.7; padding-top: 20%; }" +
 	"."+allIDs[26]+" { text-align:center; width:66%; background-color:#000015; color:white; font-size:large; border:dashed 2px #FF00AA; padding:9px; } ."+allIDs[26]+" button {color:white;}" +
 	"span."+allIDs[29]+" { visibility:hidden; display:none; }" +
-	"."+allIDs[42]+" { border: thin solid grey; text-align: center; border-radius: 2em; width: 22px; height: 22px; }" +
+	"."+allIDs[42]+" { border: 1px solid rgba(0,0,0,.7); text-align: center; border-radius: 50%; width: 21px; height: 21px; line-height: 23px; position: absolute; }" +
 	"table#"+allIDs[31]+" td a {color:black;font-weight:normal;}" +
  	"."+allIDs[32]+" { padding:0px 2px;cursor:pointer;height:11px;width:12px;background: url("+img_hide+") no-repeat 0px 0px; }" +
 	"."+allIDs[33]+" { height:12px !important;width:18px !important;background: url("+img_car+") no-repeat 0px 0px !important; }" +
@@ -3100,15 +3099,15 @@ function neededResAdd () {
 		if ( ! />(\d+).+?>(\d+).+?>(\d+).+?>(\d+)/.test(base.innerHTML) ) break;
 		var newD = needed_show( base.innerHTML );
 		if (base.parentNode.classList.contains("contractWrapper") || base.parentNode.classList.contains("information") || base.parentNode.classList.contains("details") || (/hero/.test(crtPath))) {
-			if ( !wfl && base.parentNode.getAttribute("class") == "information" ) continue;
-			if ( !wfl && base.parentNode.getAttribute("class") == "details" ) continue;
+			addNPC(base.parentNode);
+			if ( base.parentNode.getAttribute("class") == "information" ) continue;
+			if ( base.parentNode.getAttribute("class") == "details" ) continue;
 			base.parentNode.insertBefore(newD, base.nextSibling);
 			var tr = base.parentNode.parentNode.parentNode;
-			if (wfl && tr.classList.contains("action")) {
+			if (tr.classList.contains("action")) {
 				offsetHeight = tr.firstElementChild.offsetHeight;
 				if (offsetHeight > 150 ) tr.style.height = offsetHeight + "px";
 			}
-			addNPC(base.parentNode);
 		}
 	}
 
@@ -4310,7 +4309,9 @@ function distanceTooltip(target, tp) {
 function addShowDistanceIn( ss, vt ) {
 	var newP = $g(allIDs[0]);
 	if( !(newP) ) newP = $e('DIV',[['style','float:'+docDir[1]+';'],['id',allIDs[0]]]);
+	var clear = $e('DIV',[['style','clear:both;']]);
 	ss.parentNode.insertBefore(newP, ss);
+	ss.parentNode.appendChild(clear);
 	$gn('x')[0].addEventListener('keyup', function() { showDistanceIn( vt ) }, false);
 	$gn('y')[0].addEventListener('keyup', function() { showDistanceIn( vt ) }, false);
 	lastTimerP[2] = lastTimerP[0];
@@ -5041,7 +5042,7 @@ function rbSetup () {
 			['CB',15, gtext("sendres")],
 			['CB',18, gtext("sendmess")],
 			['SEL',19, gtext("analyzer"), analyzers],
-			['B', 0, gtext("analyzer"), [gtext('settings'),'analyzerSetup']],
+			['B', 0, gtext("analyzer"), [gtext('settings'),analyzerSetup]],
 			['SEL',16, gtext("bigicon"), gtext('addvtableo')],
 			['SEL',21, gtext("addvtable"), gtext('addvtableo')],
 			['CB',17, gtext("opennote")],
@@ -5069,7 +5070,7 @@ function rbSetup () {
 		['I', 0, gtext("notifi"), gtext("notification")],
 			['SEL',28, gtext("method"), [gtext('none'),'Alert pop-up','HTML5 Audio']],
 			['T', 29, gtext("audiourl"), 'https://... .mp3 .ogg .wav'],
-			['B', 0, gtext("audiotest"), ['test','testAudio']],
+			['B', 0, gtext("audiotest"), ['test',testAudio]],
 		['I', 0, gtext("colorCustomize"), gtext("colorHint")],
 			['T', 40, gtext("color0")],
 			['T', 41, gtext("color1")],
@@ -5077,7 +5078,7 @@ function rbSetup () {
 			['T', 43, gtext("color3")],
 			['T', 44, gtext("color4")],
 		['I', 0, gtext("savedd"), gtext("saveddh")],
-			['B', 0, gtext("savedelall"), [gtext("del"),'allStorageDelete']],
+			['B', 0, gtext("savedelall"), [gtext("del"),allStorageDelete]],
 		['I', 0, '']
 	];
 
@@ -5134,7 +5135,7 @@ function rbSetup () {
 					newO.selected = vN; newO.value = parseInt(vN); break;
 				case 'SP': var newO = $ee('SPAN',vN); break;
 				case 'B': var newO = $ee('BUTTON',aRBS[i][3][0],[['class',allIDs[15]],['type', 'BUTTON'],['onclick',jsNone]]);
-					newO.addEventListener('click', eval(aRBS[i][3][1]), true);
+					newO.addEventListener('click', aRBS[i][3][1], true);
 					break;
 			}
 			$at(newO, [['name', aRBS[i][1]]]);
@@ -6952,7 +6953,7 @@ function show_alert () {
 			alert('ding ding');
 			break;
 		case 2: // HTML5 audio
-			cont.appendChild($e('AUDIO',[['id',allIDs[22]],['src',RB.Setup[29]],['autoplay','true']]));
+			document.body.appendChild($e('AUDIO',[['id',allIDs[22]],['src',RB.Setup[29]],['autoplay','true']]));
 			break;
 	}
 	lastAlert = nt;
@@ -7230,7 +7231,7 @@ function cropFind () {
 		} else {
 			param = '{"x":'+x[0]+',"y":'+x[1]+'}';
 			ajaxRequest(fullName+'api/v1/map/tile-details', 'POST', param, function(ajaxResp) {
-				var mapData = eval('(' + ajaxResp.responseText + ')');
+				var mapData = JSON.parse(ajaxResp.responseText);
 				var adv = $ee('DIV',mapData.html,[['style','display:none;']]);
 				ad = $xf('.//table[@id="troop_info"]','f',adv);
 				if( ad ) {
@@ -7319,7 +7320,7 @@ function cropFind () {
 	function cropFindGetMap ( a ) {
 		param = '{"data":{"x":'+a.rX+',"y":'+a.rY+',"zoomLevel":2,"ignorePositions":[]}}';
 		ajaxRequest(fullName+'api/v1/map/position', 'POST', param, function(ajaxResp) {
-			var mapData = eval('(' + ajaxResp.responseText + ')');
+			var mapData = JSON.parse(ajaxResp.responseText);
 			var pRules = [[/{k.f1}/,'Crop 9:',c9],[/{k.f6}/,'Crop 15:',c15],[/{k.f7}/,'4-4-3-7:',c7],[/{k.f8}/,'3-4-4-7:',c7],[/{k.f9}/,'4-3-4-7:',c7]];
 			for( var i=0; i < mapData.tiles.length; i++ ) {
 				if (typeof mapData.tiles[i].title != 'undefined') {
@@ -7953,18 +7954,11 @@ fieldsOfVillage = {
 function TM_ShowMainBuildingNumbers(){
 	var gid, dorf;
 	var countArray;
-	var BuildingLevel, smallDIV, doubleFL;
+	var BuildingLevel, smallDIV;
 	var levels;
 	var mapOffset = 1;
+	var underConstruction = false;
 	// ›› Map1 holds building names, level and building spot IDs in area elements (2 are duplicate walls to be ignored).
-
-	// active buildings
-	var bldText = $xf('.//script[contains(text(),"bld=")]','f',cont);
-	var bldArr = new Array(45);
-	if( bldText ) {
-		eval(bldText.textContent);
-		for( var i=0; i<bld.length; i++ ) bldArr[bld[i]['aid']] = bld[i]['stufe'];
-	}
 
 	var mapInfo = $g('villageContent');
 	var mapInfo2 = $g('resourceFieldContainer');
@@ -8013,6 +8007,7 @@ function TM_ShowMainBuildingNumbers(){
 			aid = i+mapOffset;
 			smallDIV = levels.snapshotItem(i);
 			if (lswitch) smallDIV.className += ' '+allIDs[42];
+			if ( /underConstruction/.test(levels.snapshotItem(i).parentNode.getAttribute('class')) ) underConstruction = true; else underConstruction = false;
 		}
 
 		if (dorf == 2) {
@@ -8028,14 +8023,15 @@ function TM_ShowMainBuildingNumbers(){
 				aid = parseInt(/(\d+)/.exec(imageElements.snapshotItem(i).previousElementSibling.getAttribute('class'))[1]);
 			}
 			smallDIV = levels.snapshotItem(lRef++);
+			if ( /underConstruction/.test(imageElements.snapshotItem(i).previousElementSibling.getAttribute('class')) ) underConstruction = true; else underConstruction = false;
 		}
 
-		if( bldArr[aid] ) {
+		if (underConstruction) {
 			setInterval(function(x){return function(){
 				x.style.color = x.style.color=='white'?'black':'white';}
 			}(smallDIV),800);
 			if( BuildingLevel==0 ) smallDIV.textContent='0 ';
-			BuildingLevel = bldArr[aid];
+			BuildingLevel += 1;
 		}
 
 		try {
@@ -8423,7 +8419,7 @@ function goldClubInfo () {
 		getAjaxToken();
 		param = '{"x":'+xy[0]+',"y":'+xy[1]+'}';
 		ajaxRequest(fullName+'api/v1/map/tile-details', 'POST', param, function(ajaxResp) {
-			var mapData = eval('(' + ajaxResp.responseText + ')');
+			var mapData = JSON.parse(ajaxResp.responseText);
 			var adv = $ee('DIV',mapData.html,[['style','display:none;']]);
 			ad = $xf('.//table[@id="troop_info"]','f',adv);
 			if( ad ) {
@@ -8974,7 +8970,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Resource Bar+";
-		content.innerHTML = "What's new in Version "+version+" - May 14, 2021:<p></p><ui><li>Fix rally point default action</li><li>Change server speed detection</li><li>Added 5 tribes, map size in settings</li><li>Updated Marksman and Teutates Thunder speed and attack strength</li><li>Fixed script not starting on new hero fashion servers</li><li>Fixed player profile village distance and village sort</li><li>Fixed player statistics</li><li>Fixed detecting hero speed, strength and horse</li></ui>";
+		content.innerHTML = "What's new in Version "+version+" - May 23, 2021:<p></p><ui><li>Fixed under construction bulding level blink</li><li>Add npc for troops everywhere</li><li>Fixed some compatibilities with extensions manifest v3</li></ui>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
