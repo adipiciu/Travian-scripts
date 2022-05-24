@@ -29,14 +29,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version     1.9.4
+// @version     1.9.5
 // ==/UserScript==
 
 (function () {
 
 function allInOneTTQ () {
 notRunYet = false;
-var sCurrentVersion = "1.9.4";
+var sCurrentVersion = "1.9.5";
 
 //find out if Server errors
 var strTitle = document.title;
@@ -1951,9 +1951,7 @@ function createAttackLinks() {
 		var SndLtrBtn = generateButton(aLangStrings[16], scheduleAttack);
 	}
 	var oOkBtn = $id('ok');
-	var obp = oOkBtn.parentNode;
-	if (obp.childNodes.length < 14 ) obp.appendChild(SndLtrBtn);
-	else oOkBtn.parentNode.appendChild(SndLtrBtn, obp.childNodes[13]);
+	oOkBtn.after(SndLtrBtn);
 	_log(3, "End createAttackLinks()");
 }
 
