@@ -32,14 +32,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.22.5
+// @version        2.22.6
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.22.5';
+var version = '2.22.6';
 
 notRunYet = false;
 
@@ -3100,11 +3100,11 @@ function neededResAdd () {
 		var newD = needed_show( base.innerHTML );
 		if (base.parentNode.classList.contains("contractWrapper") || base.parentNode.classList.contains("information") || base.parentNode.classList.contains("details") || (/hero/.test(crtPath))) {
 			addNPC(base.parentNode);
-			if ( base.parentNode.getAttribute("class") == "information" ) continue;
-			if ( base.parentNode.getAttribute("class") == "details" ) continue;
+			if ( !wfl && base.parentNode.getAttribute("class") == "information" ) continue;
+			if ( !wfl && base.parentNode.getAttribute("class") == "details" ) continue;
 			base.parentNode.insertBefore(newD, base.nextSibling);
 			var tr = base.parentNode.parentNode.parentNode;
-			if (tr.classList.contains("action")) {
+			if (wfl && tr.classList.contains("action")) {
 				offsetHeight = tr.firstElementChild.offsetHeight;
 				if (offsetHeight > 150 ) tr.style.height = offsetHeight + "px";
 			}
@@ -3150,7 +3150,7 @@ function convertCoordsInMessagesToLinks() {
 			if( /^[\/:]/.test(arXY[0]) ) continue;
 			if( ! ( arXY[2] != undefined || arXY[3] < 0 )) continue;
 			if( Math.abs(arXY[1]) > mapRadius || Math.abs(arXY[3]) > mapRadius ) continue;
-			villageLink[j] = "<span><a href='karte.php?x="+arXY[1]+"&y="+arXY[3] +"'>"+ arXY[0] +"</a></span>";
+			villageLink[j] = "<span><a href='/karte.php?x="+arXY[1]+"&y="+arXY[3] +"'>"+ arXY[0] +"</a></span>";
 			iHTML2 = iHTML2.replace(arXY[0], "<#!" + (j++) + "/>");
 		}
 		for( var i = 0; i < j ; i++ ) {
@@ -5871,7 +5871,7 @@ function ActivityInfo ( id, user ) {
 	var newR = $ee('TR',$c($e('IMG',[['src',img_stat]]),[['style','width:55px;']]));
 	var newD = $c('',[['style','text-align:'+docDir[0]+';']]);
 	for( var i = 1; i <= serversAC; i++ ) {
-		if ( i==2 || i==3 ) continue; //don't show old analyzer sites
+		if ( i==2 || i==3 || i==4 ) continue; //don't show old analyzer sites
 		var alink = userActivityServers( i, id, user );
 		newD.appendChild($a(alink[0],[['href',alink[1]],['target','_blank']]));
 		newD.appendChild($e('BR'));
@@ -8970,7 +8970,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Resource Bar+";
-		content.innerHTML = "What's new in Version "+version+" - May 23, 2021:<p></p><ui><li>Fixed under construction bulding level blink</li><li>Add npc for troops everywhere</li><li>Fixed some compatibilities with extensions manifest v3</li></ui>";
+		content.innerHTML = "What's new in Version "+version+" - May 24, 2021:<p></p><ui><li>Fixed under construction bulding level blink</li><li>Add npc for troops everywhere</li><li>Fixed some compatibilities with extensions manifest v3</li><li>Fixed links in messages bug</li><li>Removed old travianstats.de statistics website</li></ui>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
