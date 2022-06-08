@@ -32,14 +32,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.22.6
+// @version        2.22.7
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.22.6';
+var version = '2.22.7';
 
 notRunYet = false;
 
@@ -5161,12 +5161,15 @@ function allStorageDelete () {
 }
 
 function parseSpieler () {
-	var Rej = new RegExp('/profile/' + userID);
-	var aLink = $xf('.//div[contains(@class,"content")]/a','f',$g('content'));
-	if (aLink && Rej.test(aLink.href)) {
+	var uName = $gc('playerName',$g('sidebarBoxActiveVillage'))[0].textContent.trim();
+	var playerName = $gc('titleInHeader',$g('content'))[0].textContent.trim();
+	var villageTable = $gc("villages")
+	if (uName == playerName && villageTable.length > 0) {
 		try {
-			var capitalS = $xf('./tbody/tr/td/span[not(./a)]','f',$g('villages'));
-			var capital = capitalS.parentNode.getElementsByTagName('A')[0].getAttribute('href').match(/d=(\d+)/)[1];
+			var capitalS = $gc("additionalInfo");
+			if ( capitalS.length > 0 ) {
+				var capital = capitalS[0].parentNode.getElementsByTagName('A')[0].getAttribute('href').match(/d=(\d+)/)[1];
+			}
 		} catch(err) {
 			var capital = 0;
 		}
@@ -5183,7 +5186,7 @@ function parseSpieler () {
 			aID = 0;
 		}
 		if( RB.dictionary[0] != capital || RB.dictFL[1] == 0 || fl ) {
-			var ally = $xf('.//table[@id="details"]//tr','l',cont).snapshotItem(2).innerHTML.match(/>(.+?):?</)[1];
+			var ally = $xf('.//div["playerProfile"]//table//tr','l',cont).snapshotItem(2).innerHTML.match(/>(.+?):?</)[1];
 			RB.dictionary[0] = capital;
 			RB.dictionary[1] = ally;
 			saveCookie( 'Dict', 'dictionary' );
@@ -7811,7 +7814,8 @@ function analyzerSetup () {
 	var inp = [];
 	for( var i=0; i<serversAC; i++ ) {
 		var ps = userActivityServers(i+1)[2].split('###');
-		inp[i] = $e('INPUT',[['type','text'],['value',ps[1]],['size',(ps[1].length+1)]])
+		inp[i] = $e('INPUT',[['type','text'],['value',ps[1]],['size',(ps[1].length+1)]]);
+		if ( i==1 || i==2 || i==3 ) continue; //don't show old analyzer sites
 		newT.appendChild($ee('TR',$em('TD',[ps[0],inp[i],ps[2]],[['style','direction:ltr;']])));
 	}
 	newT.appendChild($ee('TR',okTD(okAnalyzer,cancelAnalyzer)));
@@ -8632,6 +8636,7 @@ function spielerSort() {
 					if ( vtable.length == 1 ) {
 						vtable = vtable[0];
 						sortTable();
+						parseSpieler();
 						once = true;
 						observer.disconnect();
 					}
@@ -8970,7 +8975,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Resource Bar+";
-		content.innerHTML = "What's new in Version "+version+" - May 24, 2021:<p></p><ui><li>Fixed under construction bulding level blink</li><li>Add npc for troops everywhere</li><li>Fixed some compatibilities with extensions manifest v3</li><li>Fixed links in messages bug</li><li>Removed old travianstats.de statistics website</li></ui>";
+		content.innerHTML = "What's new in Version "+version+" - Jun 8, 2022:<p></p><ui><li>Fixed under construction bulding level blink</li><li>Add npc for troops everywhere</li><li>Fixed some compatibilities with extensions manifest v3</li><li>Fixed links in messages bug</li><li>Removed old travianstats.de statistics website</li><li>Fixed capital village detection</li></ui>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
