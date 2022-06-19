@@ -32,14 +32,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.22.7
+// @version        2.22.8
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.22.7';
+var version = '2.22.8';
 
 notRunYet = false;
 
@@ -235,6 +235,8 @@ DICT = {
 		buildands : ['off','on','wide'],
 		sendres : "Show &laquo;send resource/troops&raquo; icons",
 		sendmess : "Show &laquo;send message&raquo; icons",
+		dorf12links : "Show &laquo;village inside and outside&raquo; icons",
+		vtcoords : "Show village coordinates in village table",
 		analyzer : "World analyzer",
 		bigicon : "Show Rally Point icon",
 		addvtable : "Show additional village table",
@@ -2823,7 +2825,7 @@ acss = "table#"+allIDs[0]+" {width:100%; border-collapse:collapse; font-size:8pt
 	"."+allIDs[37]+" { height:10px;width:12px;background: url("+img_info+") no-repeat 0px 0px;margin:0px 3px; }" +
 	"."+allIDs[38]+" { height:12px;width:16px;background: url("+img_edit+") no-repeat 0px 0px;cursor:pointer; }" +
 	"."+allIDs[39]+" { height:12px;width:16px;background: url("+img_del+") no-repeat 0px 0px;cursor:pointer; }" +
-	"."+allIDs[47]+" { height:12px;width:12px;background: url("+img_tinfo+") no-repeat 0px 0px;margin:0px 5px; }" +
+	"."+allIDs[47]+" { height:12px;width:12px;background: url("+img_tinfo+") no-repeat 0px 0px;margin:0px 5px; display: inline-block; }" +
 	"img."+allIDs[45]+" {margin:0px 5px;} ."+allIDs[46]+" * {background-color:#ECECEC !important;} ";	
 
 if( /karte|position/.test(crtPath) ) acss += "."+allIDs[40]+" { height:12px;width:16px;background: url("+img_clipIn+") no-repeat 0px 0px;cursor:pointer; }"+
@@ -2837,9 +2839,11 @@ acss += "table#vlist td{padding:0;line-height:16px;text-align:"+docDir[0]+";whit
 	"div.subjectWrapper {width:95% !important; margin-"+docDir[0]+";"+docDir[0]+":16px;} div.reports table#overview td.sub .iReport {position:relative;"+docDir[0]+":-4px;}" +
 	"td.coords,th.coords a{white-space:normal !important;} #side_info .listing ul li:hover a {background-color:white;} #side_info .listing ul {padding-"+docDir[1]+":16px;}";
 
-	acss += "span."+allIDs[48]+" {position:absolute;"+docDir[0]+":122px !important;width:36px !important;}"+
+	acss += "span."+allIDs[48]+" {position:absolute;"+docDir[0]+":125px !important;width:36px !important; display: inline-flex; }"+
 	"span."+allIDs[48]+" a {display:inline !important;margin:0px !important;padding:0px !important;width:18px !important;left:auto !important;position:relative;}"+
-	"span."+allIDs[48]+" img {left:0 !important;top:0 !important;position:relative !important;}"+
+	"span."+allIDs[48]+" img {left:0 !important;top:0 !important;position:relative !important;display:inline !important;}"+
+	"span."+allIDs[49]+" {position:absolute;"+docDir[0]+":85px !important;width:36px !important; display: inline-flex; }"+
+	"span."+allIDs[49]+" img {left:0 !important;top:0 !important;position:relative !important;display:inline !important;}"+
 	" div.name {white-space:nowrap}";
 
 /*************tooltips elements*****************/
@@ -3054,7 +3058,7 @@ function needed_show( base ) {
 		if (wantsResP < 0) wantsResMemP[e] = Math.abs(wantsResP);
 		forNPC[0] += wantsRes;
 		forNPC[1] += incomepersecond[e];
-		beforeThis.appendChild($e('i',[['class','r'+(e+1)]]));
+		beforeThis.appendChild($e('i',[['class','r'+(e+1)],['style','display:inline-block;']]));
 		if (wantsRes >= 0) {
 			if( income[e] < 0 )
 				beforeThis.appendChild($em('SPAN',['+'+ wantsRes+ ' (',showPlusTimer(),') '],[['style','color:green;']]));
@@ -4431,6 +4435,11 @@ function vlist_addButtonsT4 () {
 			linkHint($gc('name',linkEl)[0], myVid);
 			villages_count++;
 			if( RB.Setup[21] != 2 && RB.Setup[15] > 0 ) {
+				if( RB.Setup[39] != 0 ) {
+					var f12Links = addDorf12Links(linkVSwitch[vn],0);
+					f12Links.setAttribute('class',allIDs[49]);
+					insertAfter(f12Links,$gc('name',linkEl)[0]);
+				}
 				var newAR = addARLinks(villages_id[vn],0);
 				newAR.setAttribute('class',allIDs[48]);
 				insertAfter(newAR,$gc('name',linkEl)[0]);
@@ -4453,7 +4462,7 @@ function vlist_addButtonsT4 () {
 		for( var i=0; i<villages.length; i++) {
 			vLink[i] = $a($gc("name",villages[i])[0].innerHTML,[['href',linkVSwitch[i]]]);
 			var cl = villages_id[i]==village_aid?"dot hl":"dot";
-			vilB.appendChild($em('TR',[$c('&#x25CF;',[['class',cl]]),$c($ee('DIV',vLink[i])),$c($a(printCoords(villages_id[i]),[['href',linkVSwitch[i]]])),$c(addDorf12Links(linkVSwitch[i],0)),$c(addARLinks(villages_id[i],0))]));
+			vilB.appendChild($em('TR',[$c('&#x25CF;',[['class',cl]]),$c($ee('DIV',vLink[i])),RB.Setup[38] != 0 ? $c($a(printCoords(villages_id[i]),[['href',linkVSwitch[i]]])) : '',$c(addDorf12Links(linkVSwitch[i],0)),$c(addARLinks(villages_id[i],0))]));
 		}
 		vilT.appendChild(vilB);
 		if( RB.Setup[21] == 1 ) makeFloatD(vilT,7);
@@ -4772,7 +4781,7 @@ function distanceToMyVillages() {
 	var sO3 = [gtext('none'),'x0.33','x0.5','x0.67','x1.5','x2','x3'];
 	for( var j = 0; j < sO3.length; j++ ) newOption(sel3, sO3[j], j);
 	sel3.selected = RB.Setup[3]; sel3.value = RB.Setup[3];
-	var artSp = $ee('div',$em('div',[' , ',$e('img',[['class','artefactIcon type4'],['src','/img/x.gif'],['title',gtext("speedart")]]),' ',sel3],[['class','artefacts'],['style','width:100%;padding:0px;']]),[['id','build'],['class','gid27'],['style','display:inline-block;']]);
+	var artSp = $ee('div',$em('div',[' , ',trImg('artefactIcon type4',gtext("speedart")),' ',sel3],[['class','artefacts'],['style','width:100%;padding:0px;']]),[['id','build'],['class','gid27'],['style','display:inline-block;']]);
 
 	var pp = $em('P',[arena + ': ',sel,t4P,t4L,artSp,' ',kirURL, attbl],[['style','margin:20px 20px 0px;']]);
 	cont.appendChild(pp);
@@ -5041,10 +5050,12 @@ function rbSetup () {
 			['SEL',14, gtext("buildand"), gtext('buildands'), gtext("buildandh")],
 			['CB',15, gtext("sendres")],
 			['CB',18, gtext("sendmess")],
+			['CB',39, gtext("dorf12links")],
 			['SEL',19, gtext("analyzer"), analyzers],
 			['B', 0, gtext("analyzer"), [gtext('settings'),analyzerSetup]],
 			['SEL',16, gtext("bigicon"), gtext('addvtableo')],
 			['SEL',21, gtext("addvtable"), gtext('addvtableo')],
+			['CB',38, gtext("vtcoords")],
 			['CB',17, gtext("opennote")],
 			['SEL',35, gtext("notesize"), ['40x15','55x20','70x30','60x45','40x8','30х34']],
 			['CB',34, gtext("openoview")],
@@ -5268,7 +5279,7 @@ function overviewWarehouse () {
 }
 
 function trImg ( cl, et ) {
-	var ecl = [['class', cl],['src', '/img/x.gif']];
+	var ecl = [['class', cl],['src', '/img/x.gif'],['style','display: inline-block;']];
 	if( typeof et != 'undefined' ) ecl.push(['title',et]);
 	return $e('IMG',ecl);
 }
@@ -7441,7 +7452,7 @@ function npcForTroops () {
 
 function analyzerBattle () {
 	if( RB.Setup[25] == 0 || RB.dictFL[13] < 2 ) return;
-	report = $g("reportWrapper");
+	var report = $g("reportWrapper");
 	if (! report) return;
 	if (! $g('defender')) return;
 	if (! $g('attacker')) return;
@@ -7496,11 +7507,14 @@ function analyzerBattle () {
 	atS[0][1] -= atS[1][1];
 	var goods = $gc('res',tt[1]);
 	var ress = [0,0,0,0,0];
-	var sp = $gt('span',goods[0]);
-	for( var i=0; i < sp.length; i++ ) {
-		ress[i] = sp[i].textContent;
+	var resp = [0,0,0,0];
+	for( var res=0; res < goods.length; res++ ) {
+		var sp = $gt('span',goods[res]);
+		for( var i=0; i < sp.length; i++ ) {
+			resp[i] = resp[i] + parseInt(sp[i].textContent);
+		}
+		ress = [0,resp[0],resp[1],resp[2],resp[3]];
 	}
-	ress = [0,parseInt(ress[0]),parseInt(ress[1]),parseInt(ress[2]),parseInt(ress[3])];
 
 	if( goods.length > 1) {
 		var crC = parseInt( goods[1].innerHTML.onlyText() );
@@ -7536,6 +7550,7 @@ function analyzerBattle () {
 		if( dRow.length < 2 ) continue;
 		kirillS = '';
 		var dfS = parseTroops( dRow, dRU, dfS );
+		if (tt.length = 4 && $gc('u31',tt[dTc]).length>0) { dfS[0][0] = dfS[0][0] + 10; dfS[0][1] = dfS[0][1] + 10; } //add oasis defense +10
 		kirillSd += kirillS+'U#';
 	}
 	kirilloid += kirillSd.substring(0,2)+('#')+kirillSd;
@@ -8131,7 +8146,7 @@ function cultureCalc () {
 				((calcB(bid,blevel+1,'cp')-calcB(bid,blevel,'cp'))!=0)?Math.round((resneed[0]+resneed[1]+resneed[2]+resneed[3])/(calcB(bid,blevel+1,'cp')-calcB(bid,blevel,'cp'))).toLocaleString():'-'],
 				[['style','white-space:nowrap;']]);
 		} else {
-			return $em('DIV',[' ',$e('i',[['class','rAll']]),'/',$e('i',[['class','culturePoints_medium'],['title',RB.dictionary[19]]]),' ',
+			return $em('DIV',[' ',$e('i',[['class','rAll'],['style','display:inline-block;']]),'/',$e('i',[['class','culturePoints_medium'],['style','display:inline-block;'],['title',RB.dictionary[19]]]),' ',
 				((calcB(bid,blevel+1,'cp')-calcB(bid,blevel,'cp'))!=0)?Math.round((resneed[0]+resneed[1]+resneed[2]+resneed[3])/(calcB(bid,blevel+1,'cp')-calcB(bid,blevel,'cp'))).toLocaleString():'-'],
 				[['style','white-space:nowrap;']]);
 		}
@@ -8975,7 +8990,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Resource Bar+";
-		content.innerHTML = "What's new in Version "+version+" - Jun 8, 2022:<p></p><ui><li>Fixed under construction bulding level blink</li><li>Add npc for troops everywhere</li><li>Fixed some compatibilities with extensions manifest v3</li><li>Fixed links in messages bug</li><li>Removed old travianstats.de statistics website</li><li>Fixed capital village detection</li></ui>";
+		content.innerHTML = "What's new in Version "+version+" - Jun 19, 2022:<p></p><ui><li>Added option to show village inside/outside links</li><li>Added option to hide village coords in village window</li><li>Fixed resource calculation in battle analyzer</li><li>Added oasis defense in battle analyzer</li><li>Fixed icons display for travian PTR server</li></ui>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
