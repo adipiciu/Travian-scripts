@@ -32,14 +32,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.22.8
+// @version        2.22.9
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.22.8';
+var version = '2.22.9';
 
 notRunYet = false;
 
@@ -4394,9 +4394,7 @@ function addARLinks(myVid, aDirect) {
 		ref.addEventListener('click', function(x) { return function() { sendResourses(x); }}(myVid), false);
 		newLinks.appendChild(ref);
 	}
-	if (screen.width <= 1024) {
-		newLinks.style.height = "36px";
-	}
+	if (screen.width <= 1024) { newLinks.style.height = "24px"; }
 	return newLinks;
 }
 
@@ -4406,6 +4404,7 @@ function addDorf12Links(myVid) {
 	var dorf2 = $ee('a',$e('IMG',[['src',img_in],['style','padding:0px 2px;cursor:pointer;']]),[['href',fullName + 'dorf2.php' + myVid]]);
 	newLinks.appendChild(dorf1);
 	newLinks.appendChild(dorf2);
+	if (screen.width <= 1024) { newLinks.style.height = "26px"; }
 	return newLinks;
 }
 
@@ -4443,7 +4442,6 @@ function vlist_addButtonsT4 () {
 				var newAR = addARLinks(villages_id[vn],0);
 				newAR.setAttribute('class',allIDs[48]);
 				insertAfter(newAR,$gc('name',linkEl)[0]);
-				if (screen.width <= 1024) linkEl.parentNode.style.height = "36px";
 			}
 		}
 	} else {
@@ -4540,7 +4538,7 @@ if( RB.bodyH[0] == 1 ) {
 		timerN[j].resotime = timerRB[j].val.cloneNode(true);
 		timerN[j].perreso = $e('span');
 		timerN[j].divme1 = $ee('div',$em('span',[timerN[j].resotime,' ',timerN[j].perreso],[['style',"white-space:nowrap;"]]),
-			[['style','position:absolute;top:34px;left:'+rect[j]+'px;text-align:center;width:86px;background-color:#fef0ce;border-radius:5px;']]);
+			[['style','position:absolute;top:33px;left:'+rect[j]+'px;text-align:center;width:86px;background-color:#fef0ce;border-radius:5px;']]);
 		$g('stockBar').appendChild(timerN[j].divme1);
 	}
 
@@ -8140,9 +8138,9 @@ function cultureCalc () {
 			cu = cu + calcB(bid,i,'cu');
 		}
 		if (newB == 1) {
-			return $em('DIV',[' ',$e('IMG',[['src',img_cp],['title',RB.dictionary[19]]]),' '+calcB(bid,blevel,'cp')+' -> '+calcB(bid,blevel+1,'cp')+' ',
-				$e('i',[['class','r5'],['title',RB.dictionary[20]]]),' '+cu+' -> '+(cu + calcB(bid,blevel+1,'cu'))+' ',
-				$e('IMG',[['src',img_car]]),'/',$e('IMG',[['src',img_cp],['title',RB.dictionary[19]]]),' ',
+			return $em('DIV',[' ',$e('IMG',[['src',img_cp],['title',RB.dictionary[19]],['style','display:inline-block;']]),' '+calcB(bid,blevel,'cp')+' -> '+calcB(bid,blevel+1,'cp')+' ',
+				$e('i',[['class','r5'],['title',RB.dictionary[20]],['style','display:inline-block;']]),' '+cu+' -> '+(cu + calcB(bid,blevel+1,'cu'))+' ',
+				$e('IMG',[['src',img_car],['style','display:inline-block;']]),'/',$e('IMG',[['src',img_cp],['title',RB.dictionary[19]],['style','display:inline-block;']]),' ',
 				((calcB(bid,blevel+1,'cp')-calcB(bid,blevel,'cp'))!=0)?Math.round((resneed[0]+resneed[1]+resneed[2]+resneed[3])/(calcB(bid,blevel+1,'cp')-calcB(bid,blevel,'cp'))).toLocaleString():'-'],
 				[['style','white-space:nowrap;']]);
 		} else {
@@ -8155,7 +8153,6 @@ function cultureCalc () {
 	if( blevel.length > 0 ) {
 		var contr = $g('contract');
 		if( ! contr ) return;
-		if( $gt('INPUT',contr).length > 0 ) return;
 		blevel = parseInt(blevel[0].innerHTML.match(/\d+/)[0]);
 		var bid = parseInt($g('build').getAttribute('class').match(/\d+/)[0]);
 		var clocks = $gc('culturePointsAndPopulation',contr.parentNode);
@@ -8184,7 +8181,7 @@ function cultureCalc () {
 }
 
 if( /dorf[1,2]\.php/.test(crtPath) ) TM_ShowMainBuildingNumbers();
-if( /build/.test(window.location.href) ) cultureCalc();
+if( /^\/build/.test(relName) ) cultureCalc();
 }
 /****************************** end Center Number ****************************/
 
