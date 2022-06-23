@@ -10,12 +10,12 @@
 // @include        *://*/*.travian.*/build.php*
 // @include        *://*/*.travian.*.*/build.php*
 
-// @version        2.3
+// @version        2.4
 // ==/UserScript==
 
 function allInOneOpera () {
 
-var version = '2.3';
+var version = '2.4';
 var scriptURL = 'https://github.com/adipiciu/Travian-scripts';
 var defInterval = 200;
 var sLang = detectLanguage();
@@ -180,7 +180,8 @@ function addWave () {
 			sParams += t + "=" + tInputs[i].value + "&";
 		}
 
-		var okBtn = $g('c',rpPage);
+		var okBtn = $g('checksum',rpPage);
+		if (!okBtn) { okBtn = $g('c',rpPage); }
 		sParams += okBtn.name + "=" + okBtn.value;
 
 		var remBtn = $a('-',[['href','#'],['title',langStrings[1]],['onclick',jsNone]]);
