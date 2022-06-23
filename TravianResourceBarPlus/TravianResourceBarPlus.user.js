@@ -32,14 +32,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.22.9
+// @version        2.22.10
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.22.9';
+var version = '2.22.10';
 
 notRunYet = false;
 
@@ -2843,8 +2843,7 @@ acss += "table#vlist td{padding:0;line-height:16px;text-align:"+docDir[0]+";whit
 	"span."+allIDs[48]+" a {display:inline !important;margin:0px !important;padding:0px !important;width:18px !important;left:auto !important;position:relative;}"+
 	"span."+allIDs[48]+" img {left:0 !important;top:0 !important;position:relative !important;display:inline !important;}"+
 	"span."+allIDs[49]+" {position:absolute;"+docDir[0]+":85px !important;width:36px !important; display: inline-flex; }"+
-	"span."+allIDs[49]+" img {left:0 !important;top:0 !important;position:relative !important;display:inline !important;}"+
-	" div.name {white-space:nowrap}";
+	"span."+allIDs[49]+" img {left:0 !important;top:0 !important;position:relative !important;display:inline !important;}";
 
 /*************tooltips elements*****************/
 function makeTooltip( ttObj ) {
@@ -7503,11 +7502,12 @@ function analyzerBattle () {
 	kirilloid += kirillS+'Ub#d:'+((RB.Setup[46]==1)?'m9':'');
 	kirilloid = kirilloid.replace(/r0(uUb)?/g,'');
 	atS[0][1] -= atS[1][1];
-	var goods = $gc('res',tt[1]);
+	var res = $gc('res',tt[1]);
+	var goods = $gc('goods',tt[1]);
 	var ress = [0,0,0,0,0];
 	var resp = [0,0,0,0];
-	for( var res=0; res < goods.length; res++ ) {
-		var sp = $gt('span',goods[res]);
+	for( var k=0; k < res.length; k++ ) {
+		var sp = $gt('span',res[k]);
 		for( var i=0; i < sp.length; i++ ) {
 			resp[i] = resp[i] + parseInt(sp[i].textContent);
 		}
@@ -7515,7 +7515,7 @@ function analyzerBattle () {
 	}
 
 	if( goods.length > 1) {
-		var crC = parseInt( goods[1].innerHTML.onlyText() );
+		var crC = parseInt( res[1].innerHTML.onlyText() );
 		if( ! isNaN(crC) ) {
 			var pbonus = 0;
 			for( var i=1; i<5; i++ ) {
@@ -7534,7 +7534,7 @@ function analyzerBattle () {
 				pbonusS.addEventListener("mouseover", function () { makeTooltip(newT); }, false);
 				pbonusS.addEventListener("mouseout", removeTooltip, false);
 			}
-			goods[1].firstElementChild.appendChild(pbonusS)
+			res[1].firstElementChild.appendChild(pbonusS)
 		}
 	}
 
@@ -8987,7 +8987,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Resource Bar+";
-		content.innerHTML = "What's new in Version "+version+" - Jun 19, 2022:<p></p><ui><li>Added option to show village inside/outside links</li><li>Added option to hide village coords in village window</li><li>Fixed resource calculation in battle analyzer</li><li>Added oasis defense in battle analyzer</li><li>Fixed icons display for travian PTR server</li></ui>";
+		content.innerHTML = "What's new in Version "+version+" - Jun 23, 2022:<p></p><ui><li>Added option to show village inside/outside links</li><li>Added option to hide village coords in village window</li><li>Fixed resource calculation in battle analyzer</li><li>Added oasis defense in battle analyzer</li><li>Fixed icons display for travian PTR server</li><li>Minor fixes</li></ui>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
