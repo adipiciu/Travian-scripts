@@ -29,14 +29,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version     1.9.5
+// @version     1.9.6
 // ==/UserScript==
 
 (function () {
 
 function allInOneTTQ () {
 notRunYet = false;
-var sCurrentVersion = "1.9.5";
+var sCurrentVersion = "1.9.6";
 
 //find out if Server errors
 var strTitle = document.title;
@@ -1049,6 +1049,7 @@ function refreshTaskList(aTasks) {
 		oDeleteImg.src = sDeleteBtn;
 		oDeleteImg.alt = 'X';
 		oDeleteImg.style.verticalAlign = 'middle';
+		oDeleteImg.style.display = 'inline-block';
 		oDeleteLink.appendChild(oDeleteImg);
 		oDeleteLink.title = aLangStrings[15];
 		oDeleteLink.setAttribute("itaskindex", i);
@@ -1459,6 +1460,7 @@ function makeHistoryRow(aTask, index/*, iServerTimeOffset*/) {
 		oDeleteImg.src = sDeleteBtn;
 		oDeleteImg.alt = 'X';
 		oDeleteImg.style.verticalAlign = 'middle';
+		oDeleteImg.style.display = 'inline-block';
 		oDeleteLink.appendChild(oDeleteImg);
 		oDeleteLink.title = aLangStrings[15];
 		oDeleteLink.setAttribute("itaskindex", index);
@@ -2220,7 +2222,8 @@ function attack3(httpRequest,aTask){
 						++q;
 					} else sParams += t + "=" + tInputs[q].value + "&";
 				}
-				var okBtn = holder.getElementById("c");
+				var okBtn = holder.getElementById("checksum");
+				if (!okBtn) { okBtn = holder.getElementById('c'); }note
 				sParams += okBtn.name + "=" + okBtn.value;
 				post(fullName+'build.php?gid=16&tt=2', sParams, handleRequestAttack, aTask);
 				return;
@@ -2331,7 +2334,7 @@ function sendGoldClub1(httpRequest,aTask) {
 	if (httpRequest.readyState == 4) {
 		printMsg(aLangStrings[6] + " > 1 > 2<br><br>" + getTaskDetails(aTask));
 		if (httpRequest.status == 200 && httpRequest.responseText) {
-			data = eval("(" + httpRequest.responseText + ")");
+			data = JSON.parse(httpRequest.responseText);
 			/*
 			var strError = data.errorMsg;
 			if ( data.error == true ) {
@@ -2353,11 +2356,16 @@ function sendGoldClub2(httpRequest,aTask) {
 	if (httpRequest.readyState == 4) {
 		printMsg(aLangStrings[6] + " > 1 > 2<br><br>" + getTaskDetails(aTask));
 		if (httpRequest.status == 200 && httpRequest.responseText) {
+			var parser = new DOMParser();
+			var holderFarm = parser.parseFromString(httpRequest.responseText, "text/html");
 			var holder = document.createElement('div');
 			holder.innerHTML = data.lists[0].html;
 			var tInputs = holder.getElementsByTagName('input');
-			if (tInputs.length > 5 ) {
+			var checksum = xpath("//script[contains(text(),'Travian.Game.RaidList.checksum')]", holderFarm, true);
+			if (tInputs.length > 4 ) {
 				var sParams = {};
+				sParams["action"] = "raidList";
+				if( checksum ) sParams["checksum"] = checksum.textContent.match(/Travian.Game.RaidList.checksum\s*=\s*'(.*)'/)[1];
 				sParams["method"] = "ActionStartRaid";
 				sParams["listId"] = parseInt(aTask[3]);
 				sParams["loadedLists"] = [aTask[3]];
@@ -2397,7 +2405,7 @@ function sendGoldClubConfirmation (httpRequest, aTask) {
 		if (httpRequest.readyState == 4 ){
 		printMsg(aLangStrings[6] + " > 1 > 2<br><br>" + getTaskDetails(aTask));
 		if ( httpRequest.status == 200 && httpRequest.responseText ) {
-			data = eval("(" + httpRequest.responseText + ")");
+			data = JSON.parse(httpRequest.responseText);
 			if ( data.startedRaids ) {
 				_log(1, "I think those troops were sent.");
 				printMsg(aLangStrings[18]+", "+aTask[2]);
@@ -2921,6 +2929,7 @@ function handleMerchantRequest1(httpRequest, aTask) {
 				aTask[3] = opts.join("_");
 				aTask[5] = reqVID;
 				_log(3,"sParams:"+sParams);
+				return
 				post(fullName+'api/v1/marketplace/prepare', JSON.stringify(sParams), handleMerchantRequest2, aTask);
 				return;
 			}
@@ -2951,7 +2960,8 @@ function handleMerchantRequest2(httpRequest, aTask) {
 		if (httpRequest.status == 200 && httpRequest.responseText) { // ok
 			var sParams = {};
 			var holder = document.createElement('div');
-			var marketData = eval('(' + httpRequest.responseText + ')');
+			var marketData = JSON.parse(httpRequest.responseText);
+
 			var reqVID = aTask[5];
 			var tTime = marketData["errorMessage"];
 			if ( tTime.length > 0 ) {
@@ -3011,7 +3021,7 @@ function handleMerchantRequestConfirmation(httpRequest, options) {
 		if ( isNaN(oldVID) ) oldVID = -2;
 		if (httpRequest.status == 200 && httpRequest.responseText ) { // ok
 			var holder = document.createElement('div');
-			var marketData = eval('(' + httpRequest.responseText + ')');
+			var marketData = JSON.parse(httpRequest.responseText);
 			holder.innerHTML = marketData["formular"];
 			var reqVID = aTask[5];
 			if ( reqVID != currentActiveVillage ) switchActiveVillage(currentActiveVillage);
