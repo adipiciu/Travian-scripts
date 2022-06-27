@@ -29,14 +29,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version     1.9.6
+// @version     1.9.7
 // ==/UserScript==
 
 (function () {
 
 function allInOneTTQ () {
 notRunYet = false;
-var sCurrentVersion = "1.9.6";
+var sCurrentVersion = "1.9.7";
 
 //find out if Server errors
 var strTitle = document.title;
@@ -2480,16 +2480,12 @@ function scheduleTraining(e) {
 		return false;
 	}
 
-	//get the code
-	var iCode = xpath("//form//input[@name='z']");
+	//get the checksum
+	var iCode = xpath("//form//input[@name='checksum']");
 	if(iCode.snapshotLength > 0) { aTroops[0] = iCode.snapshotItem(0).value; }
 	else {
-		var iCode = xpath("//form//input[@name='c']");
-		if(iCode.snapshotLength > 0) { aTroops[0] = iCode.snapshotItem(0).value; }
-		else {
-			_log(3, "ScheduleTraining> No code available. Exiting.");
-			return false;
-		}
+		_log(3, "ScheduleTraining> No code available. Exiting.");
+		return false;
 	}
 
 	//currently, only 1 kind of troop can be trained at once - null all elements except for the oth one (code) and the first non-zero value
@@ -2875,9 +2871,10 @@ function handleMerchantRequest1(httpRequest, aTask) {
 				_log(3,"Resources available:"+resNow.join(','));
 				var opts = aTask[3].split("_");
 				var tX = 0;
+				sParams["x2"] = 1;
 				for (var q = 0 ; q < tInputs.length ; ++q) {
 					switch ( tInputs[q].id ) {
-						case "r1":		if ( opts[2] ) {
+						case "r1":		if ( parseInt(opts[2]) ) {
 											tY = parseInt(opts[2]);
 											if( tY > resNow[0] ) tY = resNow[0];
 											if( tY + tX > maxC ) tY = maxC - tX;
@@ -2887,7 +2884,7 @@ function handleMerchantRequest1(httpRequest, aTask) {
 											sParams["r1"] = "";
 										}
 										break;
-						case "r2":		if ( opts[3] ) {
+						case "r2":		if ( parseInt(opts[3]) ) {
 											tY = parseInt(opts[3]);
 											if( tY > resNow[1] ) tY = resNow[1];
 											if( tY + tX > maxC ) tY = maxC - tX;
@@ -2897,7 +2894,7 @@ function handleMerchantRequest1(httpRequest, aTask) {
 											sParams["r2"] = "";
 										}
 										break;
-						case "r3":		if ( opts[4] ) {
+						case "r3":		if ( parseInt(opts[4]) ) {
 											tY = parseInt(opts[4]);
 											if( tY > resNow[2] ) tY = resNow[2];
 											if( tY + tX > maxC ) tY = maxC - tX;
@@ -2907,7 +2904,7 @@ function handleMerchantRequest1(httpRequest, aTask) {
 											sParams["r3"] = "";
 										}
 										break;
-						case "r4":		if ( opts[5] ) {
+						case "r4":		if ( parseInt(opts[5]) ) {
 											tY = parseInt(opts[5]);
 											if( tY > resNow[3] ) tY = resNow[3] - 10;
 											if( tY < 0 ) tY = 0;
@@ -2918,7 +2915,7 @@ function handleMerchantRequest1(httpRequest, aTask) {
 											sParams["r4"] = "";
 										}
 										break;
-						default:		sParams[tInputs[q].name] = tInputs[q].value;
+						default:		if (tInputs[q].name != "action") sParams[tInputs[q].name] = tInputs[q].value;
 										break;
 					}
 				}
@@ -2929,7 +2926,6 @@ function handleMerchantRequest1(httpRequest, aTask) {
 				aTask[3] = opts.join("_");
 				aTask[5] = reqVID;
 				_log(3,"sParams:"+sParams);
-				return
 				post(fullName+'api/v1/marketplace/prepare', JSON.stringify(sParams), handleMerchantRequest2, aTask);
 				return;
 			}
@@ -2974,6 +2970,7 @@ function handleMerchantRequest2(httpRequest, aTask) {
 
 			holder.innerHTML = marketData["formular"];
 			tTime = holder.getElementsByClassName("res_target");
+			sParams["checksum"] = marketData["checksum"];
 			var tInputs = holder.getElementsByTagName('input');
 			if ( tTime.length > 0 && tInputs.length > 4 && reqVID == oldVID) {
 				tTime = tTime[0].getElementsByTagName("td");
@@ -2981,6 +2978,8 @@ function handleMerchantRequest2(httpRequest, aTask) {
 				options.push(tTime[0].getElementsByClassName("coordinates coordinatesWrapper")[0].innerHTML);
 				for (var q = 0 ; q < tInputs.length ; ++q) {
 					if( tInputs[q].name == "dname" ) continue;
+					if( tInputs[q].name == "checksum" ) continue;
+					if( tInputs[q].name == "action" ) { sParams["action"] = "traderoute"; continue; }
 					if( tInputs[q].name == "x2" ) {
 						if (tInputs[q].checked) {
 							sParams["x2"] = "2";
@@ -2992,7 +2991,7 @@ function handleMerchantRequest2(httpRequest, aTask) {
 					sParams[tInputs[q].name] = tInputs[q].value;
 				}
 				var opts = aTask[3].split("_");
-				sParams["r1"] = opts[2]; sParams["r2"] = opts[3]; sParams["r3"] = opts[4]; sParams["r4"] = opts[5];
+				sParams["r1"] = parseInt(opts[2]) ? opts[2] : ""; sParams["r2"] = parseInt(opts[3]) ? opts[3] : ""; sParams["r3"] = parseInt(opts[4]) ? opts[4] : ""; sParams["r4"] = parseInt(opts[5]) ? opts[5] : "";
 				_log(3,"sParams:"+sParams);
 				post(fullName+'api/v1/marketplace/prepare', JSON.stringify(sParams), handleMerchantRequestConfirmation, options);
 				return;
@@ -4077,7 +4076,7 @@ if (init) {
 	}
 	if( oLogout.snapshotLength > 0 || errorFL ) TTQ_setValue(CURRENT_SERVER+'login','0');
     var oSysMsg = xpath("//div[@id='sysmsg']");
-	var oLoginBtn = xpath("//button[@id='s1'][@name='s1'][@type='submit']");
+	var oLoginBtn = xpath("//button[@value='Login'][@type='submit']");
     if ( oLoginBtn.snapshotLength < 1 && (oLogout.snapshotLength > 0 || oSysMsg.snapshotLength > 0) ) {
         _log(0, "Error screen or something. Game is not loaded. Did not start TTQ.");
     } else if ( oLoginBtn.snapshotLength == 1 ) {  //Auto-Login, this assumes that FF has saved your username and password
@@ -4097,7 +4096,7 @@ if (init) {
 					TTQ_setValue(CURRENT_SERVER+'login',oLogin.value+'/'+oPassword.value);
 			}, false);
 		}
-		if( loginFL ) setTimeout("document.getElementById('s1').click();",Math.round(ttqRandomNumber()*111)); // 333 - roughly 1.6 to 3.3 with default random min/max settings
+		if( loginFL ) setTimeout("document.getElementById('loginForm').getElementsByTagName('button')[0].click();",Math.round(ttqRandomNumber()*111)); // 333 - roughly 1.6 to 3.3 with default random min/max settings
 		else _log(0,"Auto-Login failed. You must have Firefox/Chrome store the username and password. TTQ does not.");
 	} else {
 		_log(0, "Initialization failed, Auto-login failed. Travian Task Queue is not running");
