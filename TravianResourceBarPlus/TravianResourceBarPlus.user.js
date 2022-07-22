@@ -32,14 +32,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.22.10
+// @version        2.22.11
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.22.10';
+var version = '2.22.11';
 
 notRunYet = false;
 
@@ -2818,9 +2818,9 @@ acss = "table#"+allIDs[0]+" {width:100%; border-collapse:collapse; font-size:8pt
 	"."+allIDs[42]+" { border: 1px solid rgba(0,0,0,.7); text-align: center; border-radius: 50%; width: 21px; height: 21px; line-height: 23px; position: absolute; }" +
 	"table#"+allIDs[31]+" td a {color:black;font-weight:normal;}" +
  	"."+allIDs[32]+" { padding:0px 2px;cursor:pointer;height:11px;width:12px;background: url("+img_hide+") no-repeat 0px 0px; }" +
-	"."+allIDs[33]+" { height:12px !important;width:18px !important;background: url("+img_car+") no-repeat 0px 0px !important; }" +
-	"."+allIDs[34]+" { height:12px !important;width:18px !important;background: url("+img_def+") no-repeat 0px 0px !important; }" +
-	"."+allIDs[35]+" { height:12px;width:18px;background: url("+img_att+") no-repeat 0px 0px !important; }" +
+	"."+allIDs[33]+" { height:14px !important;width:18px !important;background: url("+img_car+") no-repeat 0px 0px !important; }" +
+	"."+allIDs[34]+" { height:14px !important;width:18px !important;background: url("+img_def+") no-repeat 0px 0px !important; }" +
+	"."+allIDs[35]+" { height:14px;width:18px;background: url("+img_att+") no-repeat 0px 0px !important; }" +
 	"."+allIDs[36]+" { height:8px;width:11px;background: url("+img_igm+") no-repeat 0px 0px;margin:0px 3px; }" +
 	"."+allIDs[37]+" { height:10px;width:12px;background: url("+img_info+") no-repeat 0px 0px;margin:0px 3px; }" +
 	"."+allIDs[38]+" { height:12px;width:16px;background: url("+img_edit+") no-repeat 0px 0px;cursor:pointer; }" +
@@ -4459,7 +4459,7 @@ function vlist_addButtonsT4 () {
 		for( var i=0; i<villages.length; i++) {
 			vLink[i] = $a($gc("name",villages[i])[0].innerHTML,[['href',linkVSwitch[i]]]);
 			var cl = villages_id[i]==village_aid?"dot hl":"dot";
-			vilB.appendChild($em('TR',[$c('&#x25CF;',[['class',cl]]),$c($ee('DIV',vLink[i])),RB.Setup[38] != 0 ? $c($a(printCoords(villages_id[i]),[['href',linkVSwitch[i]]])) : '',$c(addDorf12Links(linkVSwitch[i],0)),$c(addARLinks(villages_id[i],0))]));
+			vilB.appendChild($em('TR',[$c('&#x25CF;',[['class',cl]]),$c($ee('DIV',vLink[i])),RB.Setup[38] != 0 ? $c($a(printCoords(villages_id[i]),[['href',linkVSwitch[i]]])) : '',$c(addDorf12Links(linkVSwitch[i],0),[['style','width:40px;']]),$c(addARLinks(villages_id[i],0))]));
 		}
 		vilT.appendChild(vilB);
 		if( RB.Setup[21] == 1 ) makeFloatD(vilT,7);
@@ -8987,7 +8987,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Resource Bar+";
-		content.innerHTML = "What's new in Version "+version+" - Jun 23, 2022:<p></p><ui><li>Added option to show village inside/outside links</li><li>Added option to hide village coords in village window</li><li>Fixed resource calculation in battle analyzer</li><li>Added oasis defense in battle analyzer</li><li>Fixed icons display for travian PTR server</li><li>Minor fixes</li></ui>";
+		content.innerHTML = "What's new in Version "+version+" - Jul 22, 2022:<p></p><ui><li>Added option to show village inside/outside links</li><li>Added option to hide village coords in village window</li><li>Fixed resource calculation in battle analyzer</li><li>Added oasis defense in battle analyzer</li><li>Fixed icons display for travian PTR server</li><li>Minor fixes</li></ui>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
