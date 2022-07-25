@@ -29,14 +29,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version     1.9.7
+// @version     1.9.8
 // ==/UserScript==
 
 (function () {
 
 function allInOneTTQ () {
 notRunYet = false;
-var sCurrentVersion = "1.9.7";
+var sCurrentVersion = "1.9.8";
 
 //find out if Server errors
 var strTitle = document.title;
@@ -2098,9 +2098,9 @@ function attack(aTask) {
 	printMsg(aLangStrings[6] + " > 1<br><br>" + getTaskDetails(aTask));
 	if(aTask[5] != 'null') {  //multiple villages
 		//we need to switch village (while at the same time, setting the target destination)
-		get(fullName+"build.php?id=39&tt=2&newdid=" + aTask[5] + "&z=" + aTask[2] + "&gid=16", attack2, aTask);
+		get(fullName+"build.php?gid=16&tt=2&newdid=" + aTask[5] + "&z=" + aTask[2], attack2, aTask);
 	} else {  //only 1 village. Perform attack immediately
-		post(fullName+"build.php?id=39&tt=2", "z=" + aTask[2] + "&gid=16", attack2, aTask);
+		post(fullName+"build.php?gid=16&tt=2", "z=" + aTask[2], attack2, aTask);
 		_log(2, "The attack was requested.");
 	}
 	_log(1, "End attack("+aTask+")");
@@ -2223,7 +2223,6 @@ function attack3(httpRequest,aTask){
 					} else sParams += t + "=" + tInputs[q].value + "&";
 				}
 				var okBtn = holder.getElementById("checksum");
-				if (!okBtn) { okBtn = holder.getElementById('c'); }note
 				sParams += okBtn.name + "=" + okBtn.value;
 				post(fullName+'build.php?gid=16&tt=2', sParams, handleRequestAttack, aTask);
 				return;
@@ -3686,7 +3685,7 @@ function detectTribe() {
 	if ( isNaN(iMyRace) || iMyRace < 0 ) {
 		setVariable("TROOP_NAMES", "");
 		var httpRequest = new XMLHttpRequest();
-		var httpRequestString = fullName+"build.php?id=39&tt=2";
+		var httpRequestString = fullName+"build.php?id=39&gid=16&tt=2";
 		httpRequest.open("GET", httpRequestString, true);
 		httpRequest.onreadystatechange = function() {
 			if (httpRequest.readyState == 4) { //complete
