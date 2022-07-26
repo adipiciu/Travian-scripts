@@ -32,14 +32,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.22.12
+// @version        2.22.13
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.22.12';
+var version = '2.22.13';
 
 notRunYet = false;
 
@@ -117,13 +117,13 @@ var RB = new Object();
 	RB.village_dorf12 = [0];
 	RB.village_dorf13 = [0];
 	RB.village_dorf14 = [0];
-	RB.village_Dorf2 = [0,0,0,0,0,0,0];
+	RB.village_Dorf2 = [0,0,0,0,0,0,0,0];
 	RB.village_Var = [0,0,0];
 	RB.village_PPH = [0,0,0,0,0,0,0,0,0,0,0,0,0];
 	RB.overview = [-1,'0'];
 	RB.wantsMem = [0,0,0,0,0,0,0,0,0,0];
-//						1		2				3				4			5					6				7			8		9			10		11		12	  13, 14	15		16				17				18				19				20					21			22		23		24				25
-	RB.dictionary = [0,'Ally','Merchants','Tournament Square','Duration','resource balance','Rally point','Marketplace','Barracks','Stable','Workshop','Buy','Attacks',0,'at ','Map','Reinforcement','Attack: Normal','Attack: Raid','Culture points','Crop consumption','capacity','farm-list','','Great Barracks','Great Stable'];
+//						1		2				3				4			5					6				7			8		9			10		11		12	  13, 14	15		16				17				18				19				20					21			22		23		24				25				26
+	RB.dictionary = [0,'Ally','Merchants','Tournament Square','Duration','resource balance','Rally point','Marketplace','Barracks','Stable','Workshop','Buy','Attacks',0,'at ','Map','Reinforcement','Attack: Normal','Attack: Raid','Culture points','Crop consumption','capacity','farm-list','','Great Barracks','Great Stable','Hospital'];
 	RB.dictFL = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
 	RB.dictTR = ['none',
 		'Legionnaire','Praetorian','Imperian','Equites Legati','Equites Imperatoris','Equites Caesaris','Battering Ram','Fire Catapult','Senator','Settler',
@@ -4917,8 +4917,8 @@ function parseDorf2 () {
 	var base = $g('villageContent');
 	if( !(base) ) return;
 	var fl = false;
-	var buildsID = ['g17','g19','g20','g21','g14','g29','g30'];
-	var buildsNum = [0,0,0,0,0,0,0];
+	var buildsID = ['g17','g19','g20','g21','g14','g29','g30','g46'];
+	var buildsNum = [0,0,0,0,0,0,0,0];
 
 	var allIMG = $gt('IMG',base);
 	for( var t=0; t<allIMG.length; t++ ) {
@@ -4946,7 +4946,7 @@ function parseDorf2 () {
 		RB.village_Var[1] = 0;
 		saveVCookie( 'VV', RB.village_Var );
 	}
-	var dictsFL = [['g17',7],['g19',8],['g20',9],['g21',10],['g16',6],['g14',3],['g29',24],['g30',25]];
+	var dictsFL = [['g17',7],['g19',8],['g20',9],['g21',10],['g16',6],['g14',3],['g29',24],['g30',25],['g46',26]];
 	function getBuildingName () {
 		var turD = $gc('elementTitle')[0].innerHTML.firstText();
 		RB.dictionary[dictsFL[this.i][1]] = turD;
@@ -6323,24 +6323,22 @@ function bigQuickLinks () {
 		[false, 'alliance/reports', '', 7, 1, 12, 5], // Ally attack
 		[true, 5, '&gid=29', 1, 24, 0, 3], // Great Barrack
 		[true, 6, '&gid=30', 2, 25, 0, 4], // Great Stable
+		[true, 7, '&gid=46', 2, 26, 0, 4] // Hospital
 	];
 	//icons 0-RP, 1-workshop, 2-market, 3-ally, 4-barrack, 5-stable, 6-market_in, 7-ally_attack, 8-great_barracks, 9-great_stable
-	//dorf2 0-market, 1-barracks, 2-stable, 3-workshop, 4-Tournament Square, 5-Great Barracks, 6-Great Stable
+	//dorf2 0-market, 1-barracks, 2-stable, 3-workshop, 4-Tournament Square, 5-Great Barracks, 6-Great Stable, 7-Hospital
 	var t = 0;
 	var tt = [];
-	for( var i = 0; i < 2; i++) {
-		for( var j = 0; j < 5; j++ ) {
-			tt[t] = bigIcon[t][4] > 0 ? RB.dictionary[bigIcon[t][4]] : '';
-			if( bigIcon[t][5] > 0 ) tt[t] += ', ' + RB.dictionary[bigIcon[t][5]];
-			t++;
-		}
+	for( var t = 0; t < bigIcon.length; t++) {
+		tt[t] = bigIcon[t][4] > 0 ? RB.dictionary[bigIcon[t][4]] : '';
+		if( bigIcon[t][5] > 0 ) tt[t] += ', ' + RB.dictionary[bigIcon[t][5]];
 	}
 
 	function CreateBigLinkButton (strBuilding, iNo, img) {
-		var imgC = img.cloneNode(true);
+		if (iNo != 10) var imgC = img.cloneNode(true); else imgC = img;
 		var pos = '';
-		if (iNo == 8) { pos = docDir[0] + ':85px;'; imgC.style.height = '20px'; }
-		if (iNo == 9) { pos = docDir[0] + ':170px;'; imgC.style.height = '23px'; }
+		if (iNo == 8) { imgC.style.height = '20px'; }
+		if (iNo == 9) { imgC.style.height = '23px'; }
 
 		var BigLinkButton = $e('a',[['title',tt[iNo]],['class','layoutButton buttonFramed withIcon round ' + strBuilding + ' green ' + (RB.village_Dorf2[bigIcon[iNo][1]] != 0 ? '' : 'disabled')],['style',pos]]);
 		//if (iNo!=0 && iNo!=8 && iNo!=9 && RB.village_Dorf2[bigIcon[iNo][1]] != 0) {
@@ -6359,6 +6357,10 @@ function bigQuickLinks () {
 			BigLinkButton.appendChild($e('img', [['class','productionBoost'],['src','/img/x.gif'],['style','position:absolute;'+docDir[0]+':20px;top:4px;z-index:1000']]));
 		}
 
+		if (iNo >= 8) {
+			BigLinkButton.style.marginLeft = "5px";
+		}
+
 		return BigLinkButton;
 	}
 
@@ -6374,6 +6376,8 @@ function bigQuickLinks () {
 	imgs[4] = $gt('svg',$g('sidebarBoxVillagelist'))[0];
 	imgs[4].style.width = '24px';
 
+	imgs[5] = $e('i', [['class','healTime_medium'],['style','filter: grayscale(100%);']]);
+
 	if (childrenB[0].className.search('green') == -1 ) { //Plus account active
 		for( var j = 0; j < childrenB.length; j++ ) {
 			childrenB[j].style.display = "none";
@@ -6386,17 +6390,20 @@ function bigQuickLinks () {
 	} else {
 		plusAccount = true;
 		if( RB.Setup[16] != 0 ) { bigIconsHeader.insertBefore(CreateBigLinkButton('overview',0,imgs[4]), bigIconsHeader.firstElementChild) }
+		for( var j = 0; j < childrenB.length; j++ ) {
+			// fix links for Plus accounts
+			childrenB[j].href = childrenB[j].href.replace('?gid=17', "?id=" + RB.village_Dorf2[bigIcon[2][1]]+bigIcon[2][2]);
+			childrenB[j].href = childrenB[j].href.replace('?gid=19', "?id=" + RB.village_Dorf2[bigIcon[4][1]]+bigIcon[4][2]);
+			childrenB[j].href = childrenB[j].href.replace('?gid=20', "?id=" + RB.village_Dorf2[bigIcon[5][1]]+bigIcon[5][2]);
+			childrenB[j].href = childrenB[j].href.replace('?gid=21', "?id=" + RB.village_Dorf2[bigIcon[1][1]]+bigIcon[1][2]);
+		}
 	}
 
-	//Insert great barracks and great stable icons, only if they exist
-	if (!isNaN(RB.village_Dorf2[bigIcon[8][1]]) && (RB.village_Dorf2[bigIcon[9][1]] != 0)) { //the isNaN check can be removed later, bug from loadVCookie, loads 1 value more
-		bigIconsFooter.style.paddingBottom = '0'; 
-		bigIconsFooter.appendChild(CreateBigLinkButton('stable',9,imgs[2])) 
-	}
-	if (!isNaN(RB.village_Dorf2[bigIcon[8][1]]) && (RB.village_Dorf2[bigIcon[8][1]] != 0)) {
-		bigIconsFooter.style.paddingBottom = '0';
-		bigIconsFooter.appendChild(CreateBigLinkButton('barracks',8,imgs[1]))
-	}
+	var extraBtns = $e('div', [['class','buttonsWrapper'],['style','display: flex; flex-direction: row; justify-content: flex-end; margin: 0 25px -30px;']]);
+	bigIconsFooter.appendChild(extraBtns);
+	extraBtns.appendChild(CreateBigLinkButton('hospital',10,imgs[5]));
+	extraBtns.appendChild(CreateBigLinkButton('barracks',8,imgs[1]));
+	extraBtns.appendChild(CreateBigLinkButton('stable',9,imgs[2]));
 }
 
 function karteDistance () {
@@ -8987,7 +8994,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Resource Bar+";
-		content.innerHTML = "What's new in Version "+version+" - Jul 22, 2022:<p></p><ui><li>Added option to show village inside/outside links</li><li>Added option to hide village coords in village window</li><li>Fixed resource calculation in battle analyzer</li><li>Added oasis defense in battle analyzer</li><li>Fixed icons display for travian PTR server</li><li>Minor fixes</li></ui>";
+		content.innerHTML = "What's new in Version "+version+" - Jul 26, 2022:<p></p><ui><li>Added Hospital icon link</li><li>Made great stable and great barracks icons visible always</li></ui>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
