@@ -32,14 +32,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.22.13
+// @version        2.22.14
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.22.13';
+var version = '2.22.14';
 
 notRunYet = false;
 
@@ -4455,7 +4455,7 @@ function vlist_addButtonsT4 () {
 		if( RB.bodyH[1] == 1 ) $at(vilB,[['style','display:none']]);
 		var hideP = imgHide(1);
 		hideP.addEventListener('click', function (x) { return function() { bodyHide(x); }}([vilB,1,hideP]), false);
-		vilT.appendChild($ee('THEAD',$em('TR',[$c(hideP),$c($gc('boxTitle',$g('sidebarBoxVillagelist'))[0].innerHTML.onlyText(),[['colspan',2],['style','font-weight:bold;']]),$c('('+villages_count+')')])));
+		vilT.appendChild($ee('THEAD',$em('TR',[$c(hideP),$c($gc('boxTitle',$g('sidebarBoxVillagelist'))[0].innerHTML.onlyText(),[['colspan',3],['style','font-weight:bold;']])])));
 		for( var i=0; i<villages.length; i++) {
 			vLink[i] = $a($gc("name",villages[i])[0].innerHTML,[['href',linkVSwitch[i]]]);
 			var cl = villages_id[i]==village_aid?"dot hl":"dot";
@@ -6336,31 +6336,20 @@ function bigQuickLinks () {
 
 	function CreateBigLinkButton (strBuilding, iNo, img) {
 		if (iNo != 10) var imgC = img.cloneNode(true); else imgC = img;
-		var pos = '';
 		if (iNo == 8) { imgC.style.height = '20px'; }
 		if (iNo == 9) { imgC.style.height = '23px'; }
-
+		var pos = '';
+		if (iNo == 8 || iNo == 9 || iNo == 10) { pos = RB.village_Dorf2[bigIcon[iNo][1]] != 0 ? '' : 'visibility:hidden;' }
 		var BigLinkButton = $e('a',[['title',tt[iNo]],['class','layoutButton buttonFramed withIcon round ' + strBuilding + ' green ' + (RB.village_Dorf2[bigIcon[iNo][1]] != 0 ? '' : 'disabled')],['style',pos]]);
 		//if (iNo!=0 && iNo!=8 && iNo!=9 && RB.village_Dorf2[bigIcon[iNo][1]] != 0) {
 		//	BigLinkButton.setAttribute('onmouseenter', "Travian.Game.Layout.loadLayoutButtonTitle(this, 'activeVillage', '"+strBuilding+"'); this.removeAttribute('onmouseenter')");
 		//}
 		BigLinkButton.appendChild(imgC);
 		if( bigIcon[iNo][0] ) {
-			if( RB.village_Dorf2[bigIcon[iNo][1]] != 0 ) {
-				BigLinkButton.href = "/build.php?id="+RB.village_Dorf2[bigIcon[iNo][1]]+bigIcon[iNo][2];
-			}
-		} else {
-			BigLinkButton.href = bigIcon[iNo][1];
-		}
-
-		if (iNo == 8 || iNo == 9) { //insert plus image only if great barracks or great stable exist
-			BigLinkButton.appendChild($e('img', [['class','productionBoost'],['src','/img/x.gif'],['style','position:absolute;'+docDir[0]+':20px;top:4px;z-index:1000']]));
-		}
-
-		if (iNo >= 8) {
-			BigLinkButton.style.marginLeft = "5px";
-		}
-
+			if( RB.village_Dorf2[bigIcon[iNo][1]] != 0 ) { BigLinkButton.href = "/build.php?id="+RB.village_Dorf2[bigIcon[iNo][1]]+bigIcon[iNo][2]; }
+		} else { BigLinkButton.href = bigIcon[iNo][1]; }
+		if (iNo == 8 || iNo == 9) { BigLinkButton.appendChild($e('img', [['class','productionBoost'],['src','/img/x.gif'],['style','position:absolute;'+docDir[0]+':20px;top:4px;z-index:1000']])); }
+		if (iNo >= 8) { BigLinkButton.style.marginLeft = "5px"; }
 		return BigLinkButton;
 	}
 
@@ -6401,9 +6390,9 @@ function bigQuickLinks () {
 
 	var extraBtns = $e('div', [['class','buttonsWrapper'],['style','display: flex; flex-direction: row; justify-content: flex-end; margin: 0 25px -30px;']]);
 	bigIconsFooter.appendChild(extraBtns);
-	extraBtns.appendChild(CreateBigLinkButton('hospital',10,imgs[5]));
 	extraBtns.appendChild(CreateBigLinkButton('barracks',8,imgs[1]));
 	extraBtns.appendChild(CreateBigLinkButton('stable',9,imgs[2]));
+	extraBtns.appendChild(CreateBigLinkButton('hospital',10,imgs[5]));
 }
 
 function karteDistance () {
@@ -7044,7 +7033,7 @@ function buildDispatcher () {
 		}
 	} else if( gid == 'gid23' ) {
 		crannyCalc();
-	} else if( gid == 'gid19' || gid == 'gid20' || gid == 'gid21' || gid == 'gid25' || gid == 'gid26' || gid == 'gid29'|| gid == 'gid30' || gid == 'gid36' ) {
+	} else if( gid == 'gid19' || gid == 'gid20' || gid == 'gid21' || gid == 'gid25' || gid == 'gid26' || gid == 'gid29'|| gid == 'gid30' || gid == 'gid36' || gid == 'gid46' ) {
 		calcTroopCost();
 		if( RB.Setup[11] > 0 ) calcNPCtroops();
 	} else if( gid == 'gid11' ) {
@@ -8676,7 +8665,7 @@ function spielerSort() {
 			if ( isNaN(aa) || isNaN(bb) ) return a < b ? -1: a > b ? 1: 0;
 			else return aa - bb;
 		}
-	
+
 		function sortSpieler (sc) {
 			if( lastSC == sc ) lastSD = 1 - lastSD;
 			lastSC = sc;
@@ -8689,14 +8678,13 @@ function spielerSort() {
 
 		var vtrows = vtable.tHead.rows[0];
 		var sortCell = (RB.Setup[46]!=1) ? [0,2,4] : [1,3,5,6];
-		for( var i=0; i<4; i++ ) {
-			if (RB.Setup[46] != 1 && i==3) continue;
+		for( var i=0; i<sortCell.length; i++ ) {
 			var newSL = $a(vtrows.cells[sortCell[i]].innerHTML,[['href',jsVoid]]);
 			newSL.addEventListener('click', function(x) { return function() { sortSpieler(x); }}(i), false);
 			vtrows.cells[sortCell[i]].textContent = "";
 			vtrows.cells[sortCell[i]].appendChild(newSL);
 		}
-	
+
 		var lastSD = 1;
 		var lastSC = 0;
 		var vtrows = vtable.tBodies[0].rows;
@@ -8994,7 +8982,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Resource Bar+";
-		content.innerHTML = "What's new in Version "+version+" - Jul 26, 2022:<p></p><ui><li>Added Hospital icon link</li><li>Made great stable and great barracks icons visible always</li></ui>";
+		content.innerHTML = "What's new in Version "+version+" - Jul 27, 2022:<p></p><ui><li>Added troops resource calculation for Hospital</li><li>Made hospital, great stable and great barracks icons visible only if they exist</li></ui>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
