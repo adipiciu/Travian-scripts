@@ -1,24 +1,22 @@
 // ==UserScript==
 // @name           Travian wave builder
 // @namespace      https://github.com/adipiciu/Travian-scripts
-// @description    Wave builder for Travian Legends and Travian Shadow Empires
+// @description    Wave builder for Travian Legends and Travian Glory of Sparta
 // @author         adipiciu (based on Travian wave builder 0.5 by Serj_LV)
 // @license        GPL version 3 or any later version; http://www.gnu.org/copyleft/gpl.html
 // @contributionURL https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=Travian+wave+builder+script&currency_code=EUR
-// @include        *://*.travian.*/build.php*
-// @include        *://*.travian.*.*/build.php*
-// @include        *://*/*.travian.*/build.php*
-// @include        *://*/*.travian.*.*/build.php*
+// @match          https://*.travian.com/build.php*
 
-// @version        2.4
+// @version        2.5
 // ==/UserScript==
 
 function allInOneOpera () {
 
-var version = '2.4';
+var version = '2.5';
 var scriptURL = 'https://github.com/adipiciu/Travian-scripts';
 var defInterval = 200;
 var sLang = detectLanguage();
+var langStrings = ["Add attack", "Remove attack", "Move attack up", "Move attack down", "Add multiple attacks (1-12 attacks)", "Interval between attacks, in milliseconds. Minimum interval is 100 ms.", "Attack type", "Interval", "ms"];
 
 /*********************** localization ****************************/
 
@@ -52,7 +50,6 @@ switch(sLang) {
 		langStrings = ["Saldırı ekle", "Saldırı çıkar", "saldırıyı yukarı kaydır", "saldırıyı asagı kaydır", "Çoklu saldırı ekle (1-12x saldırı)", "Saldırılar arasındaki aralık, milisaniye. en az aralık 100 ms'dir.", "Saldırı tipi", "aralık", "ms"];
 		break;
 	default: //English
-		langStrings = ["Add attack", "Remove attack", "Move attack up", "Move attack down", "Add multiple attacks (1-12 attacks)", "Interval between attacks, in milliseconds. Minimum interval is 100 ms.", "Attack type", "Interval", "ms"];
 }
 
 /*********************** common library ****************************/
@@ -61,9 +58,8 @@ function ajaxRequest(url, aMethod, param, onSuccess, onFailure) {
 	var aR = new XMLHttpRequest();
 	param = encodeURI(param);
 	aR.onreadystatechange = function() {
-		if( aR.readyState == 4 && (aR.status == 200 || aR.status == 304))
-			onSuccess(aR);
-		else if (aR.readyState == 4 && aR.status != 200) onFailure(aR);
+		if( aR.readyState == 4 && (aR.status == 200 || aR.status == 304)) { onSuccess(aR); }
+		else if (aR.readyState == 4 && aR.status != 200) { onFailure(aR); }
 	};
 	aR.open(aMethod, url, true);
 	if (aMethod == 'POST') aR.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=utf-8');
@@ -84,7 +80,7 @@ function $a(iHTML, att) { return $ee('A',iHTML,att); }
 function $am(Elem, mElem) { if (mElem !== undefined) for(var i = 0; i < mElem.length; i++) { if( typeof(mElem[i]) == 'object' ) Elem.appendChild(mElem[i]); else Elem.appendChild($t(mElem[i])); } return Elem;}
 function $em(nElem, mElem, att) {var Elem = $e(nElem, att); return $am(Elem, mElem);}
 function dummy() {return;}
-jsNone = 'return false;';
+var jsNone = 'return false;';
 
 function trImg ( cl, et ) {
 	var ecl = [['class', cl],['src', 'img/x.gif']];
@@ -98,9 +94,13 @@ function getRandom ( x ) {
 }
 
 function detectLanguage() {
+	var lang = "en-us";
 	try { 
-		lang = document.getElementsByName("content-language")[0].getAttribute("content").toLowerCase(); 
-	} catch(e) { lang = "en-us"; }
+		lang = $gn("content-language")[0].getAttribute("content").toLowerCase(); 
+	} catch(e) { }
+	try {
+		lang = $g("mainLayout").getAttribute("lang").toLowerCase();
+	} catch(e) { }
 	return lang;
 }
 
@@ -126,7 +126,7 @@ function addWave () {
 	var cDescr = '';
 
 	for( var i=0; i<tInputs.length; i++ ) {
-		t = tInputs[i].name;
+		var t = tInputs[i].name;
 		if( /redeployHero/.test(t) ) {
 			if( tInputs[i].checked ) {
 				sParams += "redeployHero=1&";
@@ -171,7 +171,7 @@ function addWave () {
 		var sParams = '';
 		var tc = new Array(12);
 		for( i=0; i<tInputs.length; i++ ) {
-			t = tInputs[i].name;
+			var t = tInputs[i].name;
 			if( /^t\d/.test(t) ) {
 				tc[t.match(/\d+/)[0]] = tInputs[i].value;
 			} if( /\[t\d/.test(t) ) {
@@ -205,7 +205,7 @@ function addWave () {
 		nrow.appendChild($c(cDescr,[['title',cDescr]]));
 		var nbody = $ee('TBODY',nrow);
 		tInputs = $gt('SELECT',bld);
-		tSpy = $gc('radio',bld);
+		var tSpy = $gc('radio',bld);
 		nrow = $e('TR');
 		if (tInputs.length>0) {
 			nrow.appendChild($c(tInputs[0],[['colspan',6]]));
@@ -260,7 +260,7 @@ function sendTroops (x) {
 		wlog += "<span style='color:"+(b?'green':'red')+"'> "+a+" </span>";
 		cLog.innerHTML = wlog;
 	}
-	
+
 	if( x == wCount-1 ) {
 		setTimeout(function(){ document.location.href = fullName +'build.php?gid=16&tt=1'; }, getRandom(2000));
 	}
