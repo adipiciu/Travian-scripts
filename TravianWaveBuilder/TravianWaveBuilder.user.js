@@ -7,12 +7,12 @@
 // @contributionURL https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=Travian+wave+builder+script&currency_code=EUR
 // @match          https://*.travian.com/build.php*
 
-// @version        2.5
+// @version        2.6
 // ==/UserScript==
 
 function allInOneOpera () {
 
-var version = '2.5';
+var version = '2.6';
 var scriptURL = 'https://github.com/adipiciu/Travian-scripts';
 var defInterval = 200;
 var sLang = detectLanguage();
@@ -48,6 +48,9 @@ switch(sLang) {
 		break;
 	case "tr-tr": //Turkish
 		langStrings = ["Saldırı ekle", "Saldırı çıkar", "saldırıyı yukarı kaydır", "saldırıyı asagı kaydır", "Çoklu saldırı ekle (1-12x saldırı)", "Saldırılar arasındaki aralık, milisaniye. en az aralık 100 ms'dir.", "Saldırı tipi", "aralık", "ms"];
+		break;
+	case "zh-cn": //Chinese
+		langStrings = ["添加攻击","移除攻击","上移攻击","下移攻击","添加多个攻击 (1-12 次攻击)","攻击间隔 以毫秒为单位。最小间隔为 100 毫秒。","攻击类型","间隔","毫秒"];
 		break;
 	default: //English
 }
