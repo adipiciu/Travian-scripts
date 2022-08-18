@@ -29,14 +29,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version     1.9.8
+// @version     1.9.9
 // ==/UserScript==
 
 (function () {
 
 function allInOneTTQ () {
 notRunYet = false;
-var sCurrentVersion = "1.9.8";
+var sCurrentVersion = "1.9.9";
 
 //find out if Server errors
 var strTitle = document.title;
@@ -442,7 +442,7 @@ if (init) {
 	var nLangBuildings = ["", "Woodcutter", "Clay Pit", "Iron Mine", "Cropland", "Sawmill", "Brickyard", "Iron Foundry", "Grain Mill", "Bakery", "Warehouse", "Granary", "<No Building>", "Smithy", "Tournament Square", "Main Building", "Rally Point", "Marketplace", "Embassy", "Barracks", "Stable", "Workshop", "Academy", "Cranny", "Town Hall", "Residence", "Palace", "Treasury", "Trade Office", "Great Barracks", "Great Stable", "City Wall", "Earth Wall", "Palisade", "Stonemason's Lodge", "Brewery", "Trapper", "Hero's Mansion", "Great Warehouse", "Great Granary", "Wonder Of The World", "Horse Drinking Trough", "Stone Wall", "Makeshift Wall", "Command Center", "Waterworks", "Hospital"];
 	var nLangTasks = ["Build", "Upgrade", "Attack", "Research", "Train", "Party", "Demolish", "Send Merchants", "Send Back/Withdraw"];
 	var nLangStrings = ["Build later", "Upgrade later", "Unknown Town", "Research later", "Schedule this Task for Later", "We started building ", "<center>HALT!</center><br>Please wait, TTQ is processing this task!<br>Step", "Traps", " build request sent. However, it appears that the building is not building.", "was attempted but the server redirected us.", "The task was scheduled.", "Redirected", "We can't schedule this task right now.", "Error", "Scheduled Tasks", "Delete", "Send later", "No troops were selected.", "Your troops were sent to", "Your troops could not be sent to", "Reinforcement", "Attack", "Raid", "Catapults will aim at", "random", "at", "or after", "seconds", "minutes", "hours", "days", "Spy for resources and troops", "Spy for troops and defenses", "away", "The attack cannot be scheduled because no destination was specified.", "at site no.", "Sort by:", "type ", "time ", "target ", "options ", "village ", "Task History", "Flush History", "We started researching ", " cannot be researched.", "Page Failed", "Spy", "train later", "troops.", "... May have not happened!", "We started training ", " cannot be trained.", "Party Later", " but not today.", "We started to ", "Close", "Add/Edit Task Schedule", "Edit and Close", "Add and Close", "Add", "Are you sure you want to [s1] [s2]?", "Demolish Later", "Demolishing", "Cannot demolish", "Invalid coordinates or no resources selected.", "Using Local Time", "Using Server Time", " was attempted but we could not find the link.", " was attempted but failed. Reason: ", "No Link", " was attempted but the building was not found.", "No Building", " was attempted but the server returned an error.", "Server:", "Confirmation Failed", "Sorry, I <b>may</b> have built the building in the wrong town.", "Misbuild:", "Sent Back/Withdrew troops.<br>Troops are going home to:", "Sent Back/Withdrew troops Failed (I think).<br>Troops were supposed to go home to: ", "Click to make this your Active Village." , "Click to see this Village Details screen.", "Timeout or TTQ Crash"];
-	var nLangMenuOptions = ["TTQ: ", "Use server time", "Use local time", "Set your tribe", "Task History", "Reset", "\nHow many past tasks do we keep in history?\n(Type 0 to disable task history.) \nCurrently: ", " What is your tribe on this server?\nType 0 for Romans, 1 for Teutons, 2 for Gauls, 5 for Egyptians, 6 for Huns. Or a negative number to enable autodetect (ie: -1)\nCurrently: ", "Are you sure you want to reset all TTQ variables?"];
+	var nLangMenuOptions = ["TTQ: ", "Use server time", "Use local time", "Set your tribe", "Task History", "Reset", "\nHow many past tasks do we keep in history?\n(Type 0 to disable task history.) \nCurrently: ", " What is your tribe on this server?\nType 0 for Romans, 1 for Teutons, 2 for Gauls, 5 for Egyptians, 6 for Huns, 7 for Spartans. Or a negative number to enable autodetect (ie: -1)\nCurrently: ", "Are you sure you want to reset all TTQ variables?"];
 	// The english troop names are not really needed. But they are provided here in the situation that the the troop name autodetect (rip) does not work. (ie. no rally point)
 	var nLangTroops = new Array();
 	nLangTroops.push( ["Legionnaire", "Praetorian", "Imperian", "Equites Legati", "Equites Imperatoris", "Equites Caesaris", "Battering Ram", "Fire Catapult", "Senator", "Settler", "Hero", nLangStrings[7]] );
@@ -452,6 +452,7 @@ if (init) {
 	nLangTroops.push( ["Pikeman", "Thorned Warrior", "Guardsman", "Birds Of Prey", "Axerider", "Natarian Knight", "War Elephant", "Ballista", "Natarian Emperor", "Settler"] );
 	nLangTroops.push( ["Slave Militia", "Ash Warden", "Khopesh Warrior", "Sopdu Explorer", "Anhur Guard", "Resheph Chariot", "Ram", "Stone Catapult", "Nomarch", "Settler", "Hero"] );
 	nLangTroops.push( ["Mercenary", "Bowman", "Spotter", "Steppe Rider", "Marksman", "Marauder", "Ram", "Catapult", "Logades", "Settler", "Hero"] );
+	nLangTroops.push( ["Hoplite", "Sentinel", "Shieldsman", "Twinsteel Therion", "Elpida Rider", "Corinthian Crusher", "Ram", "Ballista", "Ephor", "Settler", "Hero"] );
 
 	// The english resource names are also not really needed. But provided in the case that the resource autodetect should fail.
 	var aLangResources = ["Lumber","Clay","Iron","Crop"];
@@ -3681,7 +3682,7 @@ function getTroopNames() {
 }
 
 function detectTribe() {
-	iMyRace = parseInt(tOpts["RACE"]);  // 0-Romans, 1-Teutons, 2-Gauls, 5-Egyptians, 6-Huns Set via dialogue. (or -1 for autodetect)
+	iMyRace = parseInt(tOpts["RACE"]);  // 0-Romans, 1-Teutons, 2-Gauls, 5-Egyptians, 6-Huns, 7-Spartans. Set via dialogue. (or -1 for autodetect)
 	if ( isNaN(iMyRace) || iMyRace < 0 ) {
 		setVariable("TROOP_NAMES", "");
 		var httpRequest = new XMLHttpRequest();
@@ -3695,7 +3696,7 @@ function detectTribe() {
 					var troopImg = xpath('.//img[contains(@class,"unit u")]',holder,true,holder);
 					if( troopImg ) {
 						iMyRace = Math.floor(parseInt(troopImg.getAttribute('class').match(/\d+/)[0])/10);
-						if ( isNaN(iMyRace) || iMyRace < 0 || iMyRace > 6 ) iMyRace = 0;
+						if ( isNaN(iMyRace) || iMyRace < 0 || iMyRace > 7 ) iMyRace = 0;
 						else setOption("RACE", iMyRace);
 					}
 				}
@@ -3711,7 +3712,7 @@ function detectTribe() {
 
 function onlySpies(aTroops) { // @return true if there are only spies, false if there is anything else or no spies.
 	_log(3,"Begin onlySpies()");
-	var iScoutUnit = (iMyRace == 2 || iMyRace == 6) ? 3 : 4;
+	var iScoutUnit = (iMyRace == 7) ? 2 : ((iMyRace == 2 || iMyRace == 6) ? 3 : 4);
 	if(aTroops[iScoutUnit] < 1) { //no spies
 		_log(3, "No spies.");
 		return false;
@@ -4075,7 +4076,7 @@ if (init) {
 	}
 	if( oLogout.snapshotLength > 0 || errorFL ) TTQ_setValue(CURRENT_SERVER+'login','0');
     var oSysMsg = xpath("//div[@id='sysmsg']");
-	var oLoginBtn = xpath("//button[@value='Login'][@type='submit']");
+	var oLoginBtn = xpath("//table[@id='loginForm']//button[@type='submit']");
     if ( oLoginBtn.snapshotLength < 1 && (oLogout.snapshotLength > 0 || oSysMsg.snapshotLength > 0) ) {
         _log(0, "Error screen or something. Game is not loaded. Did not start TTQ.");
     } else if ( oLoginBtn.snapshotLength == 1 ) {  //Auto-Login, this assumes that FF has saved your username and password
