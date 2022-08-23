@@ -32,14 +32,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.22.15
+// @version        2.22.16
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.22.15';
+var version = '2.22.16';
 
 notRunYet = false;
 
@@ -2822,8 +2822,8 @@ acss = "table#"+allIDs[0]+" {width:100%; border-collapse:collapse; font-size:8pt
 	"."+allIDs[33]+" { height:14px !important;width:18px !important;background: url("+img_car+") no-repeat 0px 0px !important; }" +
 	"."+allIDs[34]+" { height:14px !important;width:18px !important;background: url("+img_def+") no-repeat 0px 0px !important; }" +
 	"."+allIDs[35]+" { height:14px;width:18px;background: url("+img_att+") no-repeat 0px 0px !important; }" +
-	"."+allIDs[36]+" { height:11px;width:11px;background: url("+img_igm+") no-repeat 0px 0px;margin:0px 3px; }" +
-	"."+allIDs[37]+" { height:14px;width:12px;background: url("+img_info+") no-repeat 0px 0px;margin:0px 3px; }" +
+	"."+allIDs[36]+" { height:8px;width:11px;background: url("+img_igm+") no-repeat 0px 0px;margin:0px 3px; }" +
+	"."+allIDs[37]+" { height:10px;width:12px;background: url("+img_info+") no-repeat 0px 0px;margin:0px 3px; }" +
 	"."+allIDs[38]+" { height:12px;width:16px;background: url("+img_edit+") no-repeat 0px 0px;cursor:pointer; }" +
 	"."+allIDs[39]+" { height:12px;width:16px;background: url("+img_del+") no-repeat 0px 0px;cursor:pointer; }" +
 	"."+allIDs[47]+" { height:12px;width:12px;background: url("+img_tinfo+") no-repeat 0px 0px;margin:0px 5px; display: inline-block; }" +
@@ -3770,9 +3770,9 @@ function marketSumm () {
 	if ( !mForm ) return;
 	var MutationObserver = window.MutationObserver;
 	var observer = new MutationObserver(function(mutations) {
-		mutations.forEach(function(mutation) { 
+		mutations.forEach(function(mutation) {
 			if (mutation.removedNodes.length > 0) {
-				marketSummReal();
+				setTimeout(marketSummReal, 150);
 			}
 		});
 	});
@@ -4671,10 +4671,10 @@ function progressbar_init() {
 	var alink2 = $a(' v' + version,[['style','font-size:9px;'],['target','_blank'],['title',gtext("svers")]]);
 	alink2.addEventListener('click', displayWhatIsNew, false);
 
-	var aImg = $e('IMG',[['src',img_pref],['title',gtext("settings")],['style','padding:0px 2px;cursor:pointer;']]);
+	var aImg = $e('IMG',[['src',img_pref],['title',gtext("settings")],['style','padding:0px 2px;cursor:pointer;vertical-align: middle;']]);
 	aImg.addEventListener('click', rbSetup, false);
 
-	var aImg2 = $e('IMG',[['src',img_notes],['title',gtext("notes")],['style','padding:0px 2px;cursor:pointer;']]);
+	var aImg2 = $e('IMG',[['src',img_notes],['title',gtext("notes")],['style','padding:0px 2px;cursor:pointer;vertical-align: middle;']]);
 	aImg2.addEventListener('click', rbNotes, false);
 
     var alink3 = $a('[M+]', [['href', jsVoid],['style','font-weight:400;'],['title',gtext("res90")]]);
@@ -5278,7 +5278,7 @@ function overviewWarehouse () {
 }
 
 function trImg ( cl, et ) {
-	var ecl = [['class', cl],['src', '/img/x.gif'],['style','display: inline-block;']];
+	var ecl = [['class', cl],['src', '/img/x.gif'],['style','display: inline-block;vertical-align: middle;']];
 	if( typeof et != 'undefined' ) ecl.push(['title',et]);
 	return $e('IMG',ecl);
 }
@@ -5290,12 +5290,12 @@ function humanRF ( num ) {
 	var ddnum = 0;
 	var fnum = '';
 	while( dnum > 1000 ) {
-		ddnum = ('00'+(dnum % 1000)).substr(-3,3);
+		ddnum = ('00'+(dnum % 1000)).substring(-3,3);
 		dnum = Math.floor(dnum/1000);
 		fnum = ddnum + ',' + fnum;
 	}
 	fnum = dnum + ',' + fnum;
-	return sign+fnum.substr(0,fnum.length-1);
+	return sign+fnum.substring(0,fnum.length-1);
 }
 
 function overviewResources () {
@@ -5941,7 +5941,7 @@ function AllyBonusPageRefreshRB() {
 	var observer = new MutationObserver(function(mutations) {
 		mutations.forEach(function(mutation) {
 			if (mutation.type === 'childList') {
-				initRes = true; getResources(); progressbar_ReInit();
+				initRes = true; setTimeout(function() { getResources(); progressbar_ReInit(); }, 150);
 			}
 		});
 	});
@@ -6550,7 +6550,7 @@ function villageHintEdit () {
 	function editVHint () {
 		newVHint = prompt(gtext("name2"), vName);
 		if( newVHint == null ) return;
-		if( newVHint.length > 20 ) newVHint = newVHint.substr(0,20);
+		if( newVHint.length > 20 ) newVHint = newVHint.substring(0,20);
 		if( RB.vHint[village_aid] != newVHint ) {
 			RB.vHint[village_aid] = newVHint;
 			saveOVCookie('vHint', RB.vHint);
@@ -6594,7 +6594,7 @@ function linkHint ( aLink, vID ) {
 		if( ht != '' ) {
 			var ltext = aLink.innerHTML.onlyText().length;
 			if( ltext < 20 )
-				aLink.appendChild($ee('SPAN',' '+ht.substr(0,20-ltext),[['style','color:'+vHColor+';']]));
+				aLink.appendChild($ee('SPAN',' '+ht.substring(0,20-ltext),[['style','color:'+vHColor+';']]));
 		}
 	}
 }
@@ -7871,7 +7871,7 @@ function addReport () {
 		replace(/<script[\s\S]+?script>/g,'').replace(/<i [\s\S]+?i>/g,'').replace(/alt=\"(.+?)\"/g,'>$1<a').replace(/\s{2,}/g,' ').
 		replace(/<\/td>/g,"\t").replace(/<\/th>|<\/div>|<\/tr>/g,"\n").onlyText().replace(/\n{2,}/g,'\n').replace(/\t{2,}/g,'\t').replace(/^ +/gm,'').replace(/[^\S\r\n]+$/gm,'');
 	var form = $e('FORM',[['id','battleReportsForm'],['method','post'],['action','https://www.inactivesearch.it/tools/battle-reports'],['target','_blank']]);
-	form.appendChild($em('SELECT',[$e('OPTION',[['value',$gn("content-language")[0].getAttribute("content").toLowerCase().substr(3,5)],['selected','']])],[['name','language'],['hidden','']]));
+	form.appendChild($em('SELECT',[$e('OPTION',[['value',$gn("content-language")[0].getAttribute("content").toLowerCase().substring(3,5)],['selected','']])],[['name','language'],['hidden','']]));
 	form.appendChild($ee('textarea', reportV, [['name','report'],['cols',30],['rows',10]]));
 	form.appendChild($em('DIV',[$e('input',[['type','checkbox'],['name','anonymous']])," Anonymous "]));
 	form.appendChild($em('DIV',[$e('input',[['type','checkbox'],['name','hide_att']])," Hide attaker troops "]));
@@ -8995,7 +8995,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Resource Bar+";
-		content.innerHTML = "What's new in Version "+version+" - Aug 15, 2022:<p></p><ui><li>Added Spartans tribe</li><li>Added support for Travian Glory of Sparta servers</li></ui>";
+		content.innerHTML = "What's new in Version "+version+" - Aug 23, 2022:<p></p><ui><li>Fixed refreshing resources in market</li><li>Minor fixes</li></ui>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
