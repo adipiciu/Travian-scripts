@@ -32,14 +32,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.22.16
+// @version        2.22.17
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.22.16';
+var version = '2.22.17';
 
 notRunYet = false;
 
@@ -3933,7 +3933,7 @@ function resourceCalculator ( tObj, timeToGo, incomingRes, tType ) { // tType 0-
 			incomeToGo[j] = fullRes[j];
 			mColor = 'red';
 		}
-		textIncome += '&nbsp;' + '<i class=r'+(j+1)+'></i>' + ' <span style="color: ' + mColor + ';">' + incomeToGo[j];
+		textIncome += '&nbsp;' + '<i class=r'+(j+1)+' style="vertical-align: middle;"></i>' + ' <span style="color: ' + mColor + ';">' + incomeToGo[j];
 		if( extraRes != 0 ) textIncome += ' (' + (extraRes > 0 ? '+' + extraRes: extraRes) + ') ';
 		textIncome += '</span>';
 		incomeToGoSumm += incomeToGo[j];
@@ -5006,7 +5006,7 @@ function gtext ( txt ) {
 
 RB.dSetup = [//	0	1	2	3	4	5	6	7	8	9
 	/* 0 */	version,0,	7,	0,	1,	7,	1,	1,	3,	0,
-	/* 1 */		2,	1,	2,	0,	1,	1,	2,	0,	1,	4,
+	/* 1 */		2,	1,	2,	0,	1,	1,	2,	0,	1,	3,
 	/* 2 */		1,	1,	1,	10,	80,	1,	1,	0,	0,	audiofile,
 	/* 3 */		0,	15,	1,	1,	0,	0,	1,	1,	1,	0,
 	/* 4 */		'',	'',	'',	'',	'',	0,	0,  0,  0,  1
@@ -5014,10 +5014,6 @@ RB.dSetup = [//	0	1	2	3	4	5	6	7	8	9
 RB.Setup = RB.dSetup.slice();
 
 function rbSetup () {
-	var analyzers = [gtext('incomreso')[0]];
-	for( var i = 1; i <= serversAC; i++ ) {
-		analyzers[i] = userActivityServers( i, 1, true )[0];
-	}
 	var normProd = [gtext('incomreso')[0],gtext("normal")];
 	for( i = 2; i < normalizeProductionCount+2; i++ ) {
 		normProd[i] = RB.dictTR[i+(10*(RB.Setup[2]-(RB.Setup[2]>4?2:0)))-1];
@@ -5056,7 +5052,7 @@ function rbSetup () {
 			['SEL',21, gtext("addvtable"), gtext('addvtableo')],
 			['CB',38, gtext("vtcoords")],
 			['CB',17, gtext("opennote")],
-			['SEL',35, gtext("notesize"), ['40x15','55x20','70x30','60x45','40x8','30х34']],
+			['SEL',35, gtext("notesize"), ['40x15','55x20','70x30','60x45','40x8','30x34']],
 			['CB',34, gtext("openoview")],
 		['I', 0, gtext("resbar")],
 			['CB', 4, gtext("showres")],
@@ -5857,34 +5853,26 @@ function filterIncomeTroops () {
 
 /***************************** Activity Servers **********************************/
 
-var serversAC = 6;
-RB.serversAN = new Array(serversAC);
+var analyzers = [gtext('incomreso')[0],'travmap.shishnet.org','gettertools.com','inactivesearch.it'];
+RB.serversAN = new Array(analyzers.length);
 function userActivityServers ( num, id, user ) {
 	var dsrv = RB.serversAN[num-1] !== undefined ? RB.serversAN[num-1]: srv;
-	if ( num == 3 ) {
-		return ['travianbox.com','http://'+dsrv+'.testing.travianbox.com/Stats/'+(user?'Player?p=':'Alliance?a=')+id,'http://###'+dsrv+'###.testing.travianbox.com/stats/Player?p=...'];
-	} else if ( num == 6 ) {
-		if( RB.serversAN[num-1] === undefined ) dsrv = crtName;
-		return ['inactivesearch.it','https://www.inactivesearch.it/analyse/'+dsrv+'/'+(user?'player':'alliance')+'/'+id,'https://www.inactivesearch.it/analyse/###'+dsrv+'###/player/...'];
-	} else if ( num == 4 ) {
-		if( RB.serversAN[num-1] === undefined ) dsrv = crtLang + crtName.split('.')[0];
-		return ['travianstats.de','https://travianstats.de/index.php?m='+(user?'player':'alliance')+'_info&'+(user?'u':'a')+'id='+id+'&w='+dsrv,'https://travianstats.de/index.php?m=player_info&w=###'+dsrv+'###uid=...'];
-	} else if ( num == 5 ) {
-		if( RB.serversAN[num-1] === undefined ) dsrv = crtName;
-		return ['gettertools.com','https://www.gettertools.com/'+dsrv+'/'+(user?'Player':'Alliance')+'/'+id+'-','https://www.gettertools.com/###'+dsrv+'###/Player/...'];
-	} else if ( num == 1 ) {
+	if ( num == 1 ) {
 		if( RB.serversAN[num-1] === undefined ) dsrv = crtName;
 		return ['travmap.shishnet.org','https://travmap.shishnet.org/map.php?server='+dsrv+'&'+(user?'player':'alliance')+'=id:'+id+'&groupby='+(user?'town':'player')+'&casen=on&format=svg&azoom=off','https://travmap.shishnet.org/map.php?server=###'+dsrv+'###&player=....'];
+	} else if ( num == 2 ) {
+		if( RB.serversAN[num-1] === undefined ) dsrv = crtName;
+		return ['gettertools.com','https://www.gettertools.com/'+dsrv+'/'+(user?'Player':'Alliance')+'/'+id+'-','https://www.gettertools.com/###'+dsrv+'###/Player/...'];
 	} else {
-		return ['travian.ws','http://travian.ws/analyser.pl?s='+dsrv+'&'+(user?'u':'a')+'id='+id,'http://travian.ws/analyser.pl?s=###'+dsrv+'###&uid=...'];
+		if( RB.serversAN[num-1] === undefined ) dsrv = crtName;
+		return ['inactivesearch.it','https://www.inactivesearch.it/analyse/'+dsrv+'/'+(user?'player':'alliance')+'/'+id,'https://www.inactivesearch.it/analyse/###'+dsrv+'###/player/...'];
 	}
 }
 
 function ActivityInfo ( id, user ) {
 	var newR = $ee('TR',$c($e('IMG',[['src',img_stat]]),[['style','width:55px;']]));
 	var newD = $c('',[['style','text-align:'+docDir[0]+';']]);
-	for( var i = 1; i <= serversAC; i++ ) {
-		if ( i==2 || i==3 || i==4 ) continue; //don't show old analyzer sites
+	for( var i = 1; i < analyzers.length; i++ ) {
 		var alink = userActivityServers( i, id, user );
 		newD.appendChild($a(alink[0],[['href',alink[1]],['target','_blank']]));
 		newD.appendChild($e('BR'));
@@ -6899,7 +6887,7 @@ function a2bInfo () {
 	rT.appendChild($em('TR',[$c($e('i',[['class','r5']])),$c(humanRF(ts[5]),[['colspan','2']])]));
 	rT.appendChild($em('TR',[$c(trImg(allIDs[33])),$c(humanRF(ts[4]),[['colspan','2']])]));
 	rP.appendChild(rT);
-	if( $g('ok') ) $g('ok').parentNode.appendChild(rP);
+	if( $g('ok') ) $g('ok').parentNode.insertBefore(rP, $g('ok').parentNode.lastElementChild)
 	else if( $g('raidListSlot') ) insertAfter(rP, $g('raidListSlot'));
 }
 
@@ -7821,7 +7809,7 @@ function analyzerSetup () {
 	if( closeWindowN(7) ) return;
 
 	function okAnalyzer() {
-		for( var i=0; i<serversAC; i++ ) {
+		for( var i=0; i<analyzers.length-1; i++ ) {
 			RB.serversAN[i] = inp[i].value;
 		}
 		saveCookie('AS', 'serversAN');
@@ -7833,10 +7821,9 @@ function analyzerSetup () {
 
 	var newT = $e('TABLE',[['class',allIDs[7]],['style','background-color:yellow;']]); // #F0F0F0
 	var inp = [];
-	for( var i=0; i<serversAC; i++ ) {
+	for( var i=0; i<analyzers.length-1; i++ ) {
 		var ps = userActivityServers(i+1)[2].split('###');
 		inp[i] = $e('INPUT',[['type','text'],['value',ps[1]],['size',(ps[1].length+1)]]);
-		if ( i==1 || i==2 || i==3 ) continue; //don't show old analyzer sites
 		newT.appendChild($ee('TR',$em('TD',[ps[0],inp[i],ps[2]],[['style','direction:ltr;']])));
 	}
 	newT.appendChild($ee('TR',okTD(okAnalyzer,cancelAnalyzer)));
@@ -7956,9 +7943,9 @@ var bCost = [[0],//dummy
 [50,80,40,30,1,0,1.28], //Makeshift Wall Cost gid = 43
 [1600,1250,1050,200,2,1,1.22], //Command Center Cost gid = 44
 [910,945,910,340,2,1,1.31], //Waterworks Cost gid = 45
-[320,280,420,360,4,4,1.28] //Hospital Cost gid = 46
-//[320,280,420,360,4,4,1.28] //Spartan Wall Cost gid = 47
-//[320,280,420,360,4,4,1.28] //Asclepeion Cost gid = 48
+[320,280,420,360,4,4,1.28], //Hospital Cost gid = 46
+//[320,280,420,360,4,4,1.28], //Spartan Wall Cost gid = 47
+[320,280,420,360,5,4,1.28] //Asclepeion Cost gid = 48
 ];
 
 fieldsOfVillage = {
@@ -8995,7 +8982,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Resource Bar+";
-		content.innerHTML = "What's new in Version "+version+" - Aug 23, 2022:<p></p><ui><li>Fixed refreshing resources in market</li><li>Minor fixes</li></ui>";
+		content.innerHTML = "What's new in Version "+version+" - Sep 1, 2022:<p></p><ui><li>Removed travianstats.de analyzer website</li><li>Make inactivesearch.it website default analyzer</li><li>Added Asclepeion building cost</li><li>Minor fixes</li></ui>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
