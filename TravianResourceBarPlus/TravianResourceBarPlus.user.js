@@ -32,14 +32,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.22.17
+// @version        2.22.18
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.22.17';
+var version = '2.22.18';
 
 notRunYet = false;
 
@@ -5280,18 +5280,19 @@ function trImg ( cl, et ) {
 }
 
 function humanRF ( num ) {
+	return num.toLocaleString('en-US');
 	var rnum = parseInt(num);
 	var dnum = Math.abs(rnum);
 	var sign = rnum < 0 ? '-': '';
 	var ddnum = 0;
 	var fnum = '';
 	while( dnum > 1000 ) {
-		ddnum = ('00'+(dnum % 1000)).substring(-3,3);
+		ddnum = ('00'+(dnum % 1000)).substr(-3,3);
 		dnum = Math.floor(dnum/1000);
 		fnum = ddnum + ',' + fnum;
 	}
 	fnum = dnum + ',' + fnum;
-	return sign+fnum.substring(0,fnum.length-1);
+	return sign+fnum.substr(0,fnum.length-1);
 }
 
 function overviewResources () {
@@ -6887,7 +6888,7 @@ function a2bInfo () {
 	rT.appendChild($em('TR',[$c($e('i',[['class','r5']])),$c(humanRF(ts[5]),[['colspan','2']])]));
 	rT.appendChild($em('TR',[$c(trImg(allIDs[33])),$c(humanRF(ts[4]),[['colspan','2']])]));
 	rP.appendChild(rT);
-	if( $g('ok') ) $g('ok').parentNode.insertBefore(rP, $g('ok').parentNode.lastElementChild)
+	if( $g('ok') ) $g('ok').parentNode.insertBefore(rP, $g('ok').parentNode.lastElementChild);
 	else if( $g('raidListSlot') ) insertAfter(rP, $g('raidListSlot'));
 }
 
@@ -7607,16 +7608,48 @@ function analyzerBattle () {
 	newTR.appendChild($c(proc[4]+'%'));
 	newTABLE.appendChild(newTR);
 
-	var toLog1 = $a('https://www.inactivesearch.it/tools/battle-reports');
-	toLog1.addEventListener("click", addReport, true);
-	var toLog = $a('https://travian-tool.com');
-	toLog.addEventListener("click", addReport2, true);
+	//var toLog = $a('https://www.inactivesearch.it/tools/battle-reports');
+	//toLog.addEventListener("click", addReport, true);
+	var toLog = $a('https://www.inactivesearch.it/tools/battle-reports',[['href','https://www.inactivesearch.it/tools/battle-reports'],['target','_blank']]);
 	var kLog = $a('http://travian.kirilloid.ru/report.php',[['href','http://travian.kirilloid.ru/report.php'],['target','_blank']]);
 	newTABLE.appendChild($ee('TR',$c(toLog,[['colspan',4]])));
-	newTABLE.appendChild($ee('TR',$c(toLog1,[['colspan',4]])));
 	newTABLE.appendChild($ee('TR',$c(kLog,[['colspan',4]])));
 
 	$g('attacker').parentNode.parentNode.appendChild(newTABLE);
+}
+
+function addReport () {
+	if( closeWindowN(8) ) return;
+	var reportO = $g('report_surround');
+	if(! reportO) {
+		reportO = $g("reportWrapper");
+		if (! reportO) return;
+	}
+
+	function cancelLog () {
+		closeWindowN(8);
+	}
+
+	var report = reportO.cloneNode(true);
+	var rt = $gc(allIDs[7],report)[0];
+	rt.parentNode.removeChild(rt);
+
+	var reportV = report.innerHTML.replace(/<button[\s\S]+?button>/g,'').replace(/\"\"/g,'').
+		replace(/<script[\s\S]+?script>/g,'').replace(/<i [\s\S]+?i>/g,'').replace(/alt=\"(.+?)\"/g,'>$1<a').replace(/\s{2,}/g,' ').
+		replace(/<\/td>/g,"\t").replace(/<\/th>|<\/div>|<\/tr>/g,"\n").onlyText().replace(/\n{2,}/g,'\n').replace(/\t{2,}/g,'\t').replace(/^ +/gm,'').replace(/[^\S\r\n]+$/gm,'');
+	var form = $e('FORM',[['id','battleReportsForm'],['method','post'],['action','https://www.inactivesearch.it/tools/battle-reports'],['target','_blank']]);
+	form.appendChild($em('SELECT',[$e('OPTION',[['value',$g("mainLayout").getAttribute("lang").toLowerCase().substring(3,5)],['selected','']])],[['name','language'],['hidden','']]));
+	form.appendChild($ee('textarea', reportV, [['name','report'],['cols',30],['rows',10]]));
+	form.appendChild($em('DIV',[$e('input',[['type','checkbox'],['name','anonymous']])," Anonymous "]));
+	form.appendChild($em('DIV',[$e('input',[['type','checkbox'],['name','hide_att']])," Hide attaker troops "]));
+	form.appendChild($em('DIV',[$e('input',[['type','checkbox'],['name','hide_def']])," Hide defender troops "]));
+	var newBTX = $ee('BUTTON',gtext("cancel"),[['class',allIDs[15]],['onclick',jsNone]]);
+	newBTX.addEventListener('click', cancelLog, true);
+	form.appendChild($em('DIV',[$ee('BUTTON','Submit',[['type','submit'],['class',allIDs[15]],['name','submit']]),newBTX]));
+	var newRF = $ee('DIV',form,[['style','background-color:cyan;']]);
+
+	var xy = offsetPosition(this);
+	windowID[8] = makeFloat(newRF, xy[0]-100, xy[1]-250, 21);
 }
 
 function returnQuickHelp () {
@@ -7836,61 +7869,6 @@ function timeToBids () {
 	for( var i=0; i<timers.snapshotLength; i++ ) {
 		timers.snapshotItem(i).setAttribute('title',formatTime(absTime(toSeconds(timers.snapshotItem(i).innerHTML)),2));
 	}
-}
-
-function addReport () {
-	if( closeWindowN(8) ) return;
-	var reportO = $g('report_surround');
-	if(! reportO) {
-		reportO = $g("reportWrapper");
-		if (! reportO) return;
-	}
-
-	function cancelLog () {
-		closeWindowN(8);
-	}
-
-	var report = reportO.cloneNode(true);
-	var rt = $gc(allIDs[7],report)[0];
-	rt.parentNode.removeChild(rt);
-
-	var reportV = report.innerHTML.replace(/<button[\s\S]+?button>/g,'').replace(/\"\"/g,'').
-		replace(/<script[\s\S]+?script>/g,'').replace(/<i [\s\S]+?i>/g,'').replace(/alt=\"(.+?)\"/g,'>$1<a').replace(/\s{2,}/g,' ').
-		replace(/<\/td>/g,"\t").replace(/<\/th>|<\/div>|<\/tr>/g,"\n").onlyText().replace(/\n{2,}/g,'\n').replace(/\t{2,}/g,'\t').replace(/^ +/gm,'').replace(/[^\S\r\n]+$/gm,'');
-	var form = $e('FORM',[['id','battleReportsForm'],['method','post'],['action','https://www.inactivesearch.it/tools/battle-reports'],['target','_blank']]);
-	form.appendChild($em('SELECT',[$e('OPTION',[['value',$gn("content-language")[0].getAttribute("content").toLowerCase().substring(3,5)],['selected','']])],[['name','language'],['hidden','']]));
-	form.appendChild($ee('textarea', reportV, [['name','report'],['cols',30],['rows',10]]));
-	form.appendChild($em('DIV',[$e('input',[['type','checkbox'],['name','anonymous']])," Anonymous "]));
-	form.appendChild($em('DIV',[$e('input',[['type','checkbox'],['name','hide_att']])," Hide attaker troops "]));
-	form.appendChild($em('DIV',[$e('input',[['type','checkbox'],['name','hide_def']])," Hide defender troops "]));
-	var newBTX = $ee('BUTTON',gtext("cancel"),[['class',allIDs[15]],['onclick',jsNone]]);
-	newBTX.addEventListener('click', cancelLog, true);
-	form.appendChild($em('DIV',[$ee('BUTTON','Submit',[['type','submit'],['class',allIDs[15]],['name','submit']]),newBTX]));
-	var newRF = $ee('DIV',form,[['style','background-color:cyan;']]);
-
-	var xy = offsetPosition(this);
-	windowID[8] = makeFloat(newRF, xy[0]-100, xy[1]-250, 21);
-}
-
-function addReport2 () {
-	function b64EncodeUnicode(str) {
-		return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g,
-			function toSolidBytes(match, p1) {
-				return String.fromCharCode('0x' + p1);
-			}));
-	}
-
-	function sendReport() {
-		var params = "data="+encodeURIComponent(b64EncodeUnicode(document.getElementById('reportWrapper').outerHTML));
-		ajaxRequest('https://travian-tool.com/create/json', 'POST', params, function(response) {
-			var data = JSON.parse(response.responseText);
-			inp.value = data.url;
-		}, dummy);
-	}
-
-	var inp = $e('input',[['size','30'],['onclick','this.select()'],['style','background-color:cyan;margin:0 10px;']]);
-	this.parentNode.appendChild(inp);
-	sendReport();
 }
 
 /************************** center number ****************************/
@@ -8982,7 +8960,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Resource Bar+";
-		content.innerHTML = "What's new in Version "+version+" - Sep 1, 2022:<p></p><ui><li>Removed travianstats.de analyzer website</li><li>Make inactivesearch.it website default analyzer</li><li>Added Asclepeion building cost</li><li>Minor fixes</li></ui>";
+		content.innerHTML = "What's new in Version "+version+" - Sep 2, 2022:<p></p><ui><li>Removed travianstats.de analyzer website</li><li>Make inactivesearch.it website default analyzer</li><li>Added Asclepeion building cost</li><li>Removed travian-tool.com battle report website</li><li>Fixed troops attack power display</li><li>Minor fixes</li></ui>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
