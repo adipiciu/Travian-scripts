@@ -29,14 +29,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version     1.9.9
+// @version     2.0.0
 // ==/UserScript==
 
 (function () {
 
 function allInOneTTQ () {
 notRunYet = false;
-var sCurrentVersion = "1.9.9";
+var sCurrentVersion = "2.0.0";
 
 //find out if Server errors
 var strTitle = document.title;
@@ -187,7 +187,10 @@ function detectLanguage() {
 	var lang = TTQ_getValue(CURRENT_SERVER+"lang","0");
 	if( lang != 0 ) return lang;
 	try { 
-		lang = document.getElementsByName("content-language")[0].getAttribute("content").toLowerCase(); lang = lang.substr(3,5); 
+		lang = document.getElementsByName("content-language")[0].getAttribute("content").toLowerCase(); lang = lang.substring(3,5); 
+	} catch(e) { lang = "en"; }
+	try {
+		lang = $id("mainLayout").getAttribute("lang").toLowerCase(); lang = lang.substring(3,5); 
 	} catch(e) { lang = "en"; }
 	return lang;
 }
