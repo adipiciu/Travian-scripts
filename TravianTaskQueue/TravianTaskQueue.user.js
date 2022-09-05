@@ -29,14 +29,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version     2.0.0
+// @version     2.0.1
 // ==/UserScript==
 
 (function () {
 
 function allInOneTTQ () {
 notRunYet = false;
-var sCurrentVersion = "2.0.0";
+var sCurrentVersion = "2.0.1";
 
 //find out if Server errors
 var strTitle = document.title;
@@ -1938,6 +1938,10 @@ function createAttackLinks() {
 		_log(3, "We are not creating the 'Send later' button here.");
 		return false;
 	}
+	if ($id("combatSimulator")) {
+		_log(3, "Combat simulator page. We are not creating the 'Send later' button here.");
+		return false;
+	}
 
 	// create the button //Add the new button after the original
 	if ( /[&?]d=\d+/.test(location.search) && $gn("snd").length == 0 ) { //At Send Troops Back screen
@@ -3652,7 +3656,7 @@ function getTaskDetails(aTask) {
 
 function getTroopNames() {
 	var httpRequest = new XMLHttpRequest();
-	var httpRequestString = fullName+"build.php?id=39&tt=1";
+	var httpRequestString = fullName+"build.php?id=39&gid=16&tt=1";
 	httpRequest.open("GET", httpRequestString, true);
 	httpRequest.onreadystatechange = function() {
 		if (httpRequest.readyState == 4) { //complete
@@ -3664,8 +3668,7 @@ function getTroopNames() {
 					var tUnits = holder.getElementsByClassName("troop_details");
 					if ( tUnits.length > 0 ) {
 						var i;
-						for ( i = 0, k = tUnits.length ; i < k && tUnits[i].className.indexOf(" ") > -1 ; ++i ) ;
-						tUnits = tUnits[i].getElementsByClassName("unit");
+						tUnits = tUnits[tUnits.length-1].getElementsByClassName("unit");
 						if ( tUnits.length > 10 ) for ( i = 0 ; i < 11 ; ++i ) tTroops.push("["+tUnits[i].alt+"]");
 					} else {
 						return; //no Rally Point
