@@ -32,14 +32,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.22.18
+// @version        2.22.19
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.22.18';
+var version = '2.22.19';
 
 notRunYet = false;
 
@@ -7922,7 +7922,7 @@ var bCost = [[0],//dummy
 [1600,1250,1050,200,2,1,1.22], //Command Center Cost gid = 44
 [910,945,910,340,2,1,1.31], //Waterworks Cost gid = 45
 [320,280,420,360,4,4,1.28], //Hospital Cost gid = 46
-//[320,280,420,360,4,4,1.28], //Spartan Wall Cost gid = 47
+[160,100,80,60,1,0,1.28], //Defensive Wall Cost gid = 47
 [320,280,420,360,5,4,1.28] //Asclepeion Cost gid = 48
 ];
 
@@ -8622,9 +8622,9 @@ function spielerSort() {
 					vtable = $gc("villages");
 					if ( vtable.length == 1 ) {
 						vtable = vtable[0];
+						once = true;
 						sortTable();
 						parseSpieler();
-						once = true;
 						observer.disconnect();
 					}
 				}
@@ -8960,7 +8960,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Resource Bar+";
-		content.innerHTML = "What's new in Version "+version+" - Sep 2, 2022:<p></p><ui><li>Removed travianstats.de analyzer website</li><li>Make inactivesearch.it website default analyzer</li><li>Added Asclepeion building cost</li><li>Removed travian-tool.com battle report website</li><li>Fixed troops attack power display</li><li>Minor fixes</li></ui>";
+		content.innerHTML = "What's new in Version "+version+" - Sep 6, 2022:<p></p><ui><li>Removed travianstats.de analyzer website</li><li>Make inactivesearch.it website default analyzer</li><li>Added Asclepeion building cost</li><li>Removed travian-tool.com battle report website</li><li>Fixed troops attack power display</li><li>Added Spartan wall cost</li><li>Minor fixes</li><li>Fixed profile page crash</li></ui>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
