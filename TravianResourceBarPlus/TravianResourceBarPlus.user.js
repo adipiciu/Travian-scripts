@@ -32,14 +32,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.22.19
+// @version        2.22.20
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.22.19';
+var version = '2.22.20';
 
 notRunYet = false;
 
@@ -5893,9 +5893,9 @@ function ActivityInfo ( id, user ) {
 				if (mutation.type === 'childList') {
 					var vtable = $gc("villages", cont);
 					if ( vtable.length == 1 ) {
+						observer.disconnect();
 						addStats();
 						once = true;
-						observer.disconnect();
 					}
 				}
 			});
@@ -8612,6 +8612,7 @@ function stopRP () {
 
 function spielerSort() {
 	var once = false;
+	if( /\/edit/.test(relName) ) return;
 	var vtable = $g("villages");
 	if ( ! vtable ) {
 		var target = $g('playerProfile');
@@ -8622,10 +8623,10 @@ function spielerSort() {
 					vtable = $gc("villages");
 					if ( vtable.length == 1 ) {
 						vtable = vtable[0];
-						once = true;
+						observer.disconnect();
 						sortTable();
 						parseSpieler();
-						observer.disconnect();
+						once = true;
 					}
 				}
 			});
@@ -8960,7 +8961,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Resource Bar+";
-		content.innerHTML = "What's new in Version "+version+" - Sep 6, 2022:<p></p><ui><li>Removed travianstats.de analyzer website</li><li>Make inactivesearch.it website default analyzer</li><li>Added Asclepeion building cost</li><li>Removed travian-tool.com battle report website</li><li>Fixed troops attack power display</li><li>Added Spartan wall cost</li><li>Minor fixes</li><li>Fixed profile page crash</li></ui>";
+		content.innerHTML = "What's new in Version "+version+" - Sep 8, 2022:<p></p><ui><li>Removed travianstats.de analyzer website</li><li>Make inactivesearch.it website default analyzer</li><li>Added Asclepeion building cost</li><li>Removed travian-tool.com battle report website</li><li>Fixed troops attack power display</li><li>Added Spartan wall cost</li><li>Minor fixes</li><li>Fixed profile page crash</li></ui>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
