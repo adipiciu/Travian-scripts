@@ -32,14 +32,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.22.21
+// @version        2.22.22
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.22.21';
+var version = '2.22.22';
 
 notRunYet = false;
 
@@ -4801,17 +4801,22 @@ function distanceToTargetVillages() {
 	var vtable = $g("villages");
 	if ( ! vtable ) {
 		herofashion = true;
-		if (document.readyState === "complete") {
-			vtable = $gc("villages")[0];
-			fdistance();
-		} else {
-			document.onreadystatechange = function () {
-				if (document.readyState === "complete") {
-					vtable = $gc("villages")[0];
-					fdistance();
+		var target = $g('playerProfile');
+		var MutationObserver = window.MutationObserver;
+		var observer = new MutationObserver(function(mutations) {
+			mutations.forEach(function(mutation) {
+				if (mutation.type === 'childList') {
+					vtable = $gc("villages");
+					if ( vtable.length == 1 ) {
+						vtable = vtable[0];
+						fdistance();
+						observer.disconnect();
+					}
 				}
-			}
-		}
+			});
+		});
+		var config = { childList: true, subtree: true };
+		observer.observe(target, config);
 	} else fdistance();
 
 	function fdistance() {
@@ -5870,20 +5875,31 @@ function ActivityInfo ( id, user ) {
 	newR.appendChild($c('',[['id',allIDs[0]],['style','width:40%;text-align:'+docDir[0]+';']]));
 	newT = $ee('TABLE',newR,[['class',allIDs[21]]]);
 	var newP = $ee('P',newT);
-	if (document.readyState === "complete") {
-		addStats();
+	var lastT = $gt('TABLE',cont);
+	if (lastT.length>0) {
+		insertAfter(newP, lastT[lastT.length-1]);
 	} else {
-		document.onreadystatechange = function () {
-			if (document.readyState === "complete") {
-				addStats();
-			}
-		}
+		var once = false;
+		var MutationObserver = window.MutationObserver;
+		var observer = new MutationObserver(function(mutations) {
+			mutations.forEach(function(mutation) {
+				if (mutation.type === 'childList') {
+					var vtable = $gc("villages", cont);
+					if ( vtable.length == 1 ) {
+						observer.disconnect();
+						addStats();
+						once = true;
+					}
+				}
+			});
+		});
+		var config = { childList: true, subtree: true };
+		observer.observe(cont, config);
 	}
 	function addStats () {
+		if (once) return;
 		var lastT = $gt('TABLE',cont);
-		if (lastT.length>0) {
-			insertAfter(newP, lastT[lastT.length-1]);
-		}
+		insertAfter(newP, lastT[lastT.length-1]);
 	}
 }
 function userActivityInfo() {
@@ -8587,29 +8603,32 @@ function stopRP () {
 }
 
 function spielerSort() {
+	var once = false;
 	if( /\/edit/.test(relName) ) return;
 	var vtable = $g("villages");
 	if ( ! vtable ) {
-		if (document.readyState === "complete") {
-			vtable = $gc("villages")[0];
-			distanceToTargetVillages();
-			userActivityInfo();
-			sortTable();
-			parseSpieler();
-		} else {
-			document.onreadystatechange = function () {
-				if (document.readyState === "complete") {
-					vtable = $gc("villages")[0];
-					distanceToTargetVillages();
-					userActivityInfo();
-					sortTable();
-					parseSpieler();
+		var target = $g('playerProfile');
+		var MutationObserver = window.MutationObserver;
+		var observer = new MutationObserver(function(mutations) {
+			mutations.forEach(function(mutation) {
+				if (mutation.type === 'childList') {
+					vtable = $gc("villages");
+					if ( vtable.length == 1 ) {
+						vtable = vtable[0];
+						observer.disconnect();
+						sortTable();
+						parseSpieler();
+						once = true;
+					}
 				}
-			}
-		}
+			});
+		});
+		var config = { childList: true, subtree: true };
+		observer.observe(target, config);
 	} else sortTable();
 
 	function sortTable () {
+		if (once) return;
 		function aSort(a, b) {
 			var a = a[lastSC];
 			var b = b[lastSC];
@@ -8934,7 +8953,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Resource Bar+";
-		content.innerHTML = "What's new in Version "+version+" - Sep 24, 2022:<p></p><ui><li>Fixed building name detection</li><li>Fixed spartan troops calculations for farming resources</li><li>Minor fixes</li></ui>";
+		content.innerHTML = "What's new in Version "+version+" - Sep 26, 2022:<p></p><ui><li>Fixed building name detection</li><li>Fixed spartan troops calculations for farming resources</li><li>Minor fixes</li></ui>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
@@ -9056,7 +9075,8 @@ function displayWhatIsNew () {
 		AllyBonusPageRefreshRB();
 	}
 	if( /^\/profile(?!\?)/.test(relName) ) {
-		if ( ! $g('PlayerProfileEditor') ) { distanceToTargetVillages(); userActivityInfo(); parseSpieler(); spielerSort(); }
+		distanceToTargetVillages(); userActivityInfo();
+		if ( ! $g('PlayerProfileEditor') ) { parseSpieler(); spielerSort(); }
 	}
 	if( /report.+id=/.test(crtPath) ) { addSpeedAndRTSend(); analyzerBattle(); getTroopNames(); }
 	if( ! /dorf.\.php/.test(crtPath) && ! /profile/.test(crtPath) ) addRefIGM();
