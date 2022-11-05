@@ -32,14 +32,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.22.22
+// @version        2.22.23
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.22.22';
+var version = '2.22.23';
 
 notRunYet = false;
 
@@ -3674,91 +3674,70 @@ function marketOffer() {
 }
 
 function marketTradeRoutes() {
-	function checkAll () {
-		var f = $gc('rbcheckboxall',cont);
-		var e = $gc('rbcheckbox',cont);
-		for(var i=0; i<e.length; i++) {
-			if (f[0].checked == true) { 
-				e[i].checked = true; 
-			} else {
-				e[i].checked = false; 
-			}
-		}
-	}
-	function merUpd () {
-		var aR = 0;
-		for (var i = 1; i < 5; i++ ) { var val = $g("r"+i,routesForm).value; aR += isNumeric(val) ? parseInt(val) : 0; }
-		m3.textContent = '( '+RB.dictionary[2]+' '+ Math.ceil(aR/RB.village_Var[0]) + (aR % RB.village_Var[0] != 0 ? ' : -' + (RB.village_Var[0] - aR % RB.village_Var[0]):'') + ' )';
-	}
-	function mofLinkU () {
-		var inp = this.parentNode.previousSibling;
-		var aR = parseInt(inp.value);
-		if ( this.id == "rbplus" ) {
-			inp.value = isNaN(aR) ? RB.village_Var[0] : aR + ( aR % RB.village_Var[0] != 0 ? RB.village_Var[0] - aR % RB.village_Var[0] : RB.village_Var[0] );
-		} else {
-			inp.value = isNaN(aR) ? 0 : aR <= RB.village_Var[0] ? 0 : aR - ( aR % RB.village_Var[0] != 0 ? aR % RB.village_Var[0] : RB.village_Var[0] );
-		}
-		var changeEvent = new Event("change", {"bubbles":true, "cancelable":false});
-		inp.dispatchEvent(changeEvent);
-		merUpd();
-	}
-	function OnOffTradeRoute (inp) {
-		var clickEvent = new MouseEvent("click");
-		inp.dispatchEvent(clickEvent);
-	}
-	function DisableAllTradeRoutes () {
-		var count = 0;
-		for ( var i=0; i<routesTable.tBodies[0].rows.length-1; i++) {
-			var inputEl = $gt("input",routesTable.tBodies[0].rows[i])[0];
-			if (disableInp.checked==false) { 
-				if(inputEl.checked) { setTimeout(function(x){return function(){ OnOffTradeRoute(x); };}(inputEl), 600*count++); }
-			} else {
-				if(inputEl.checked==false) { setTimeout(function(x){return function(){ OnOffTradeRoute(x); };}(inputEl), 600*count++); }
-			}
-		}
-	}
-	function mhRowLinkMem () {
-		loadVCookie('vPPH', 'village_PPH', RB.wantsMem[4]);
-		if( RB.wantsMem[4] == 0 ) return;
-		var inp = $gt('input',this.parentNode.previousElementSibling);
-		for( var i = 0; i < 4; i++ ) {
-			var wantRes = parseInt(RB.wantsMem[i]);
-			if( wantRes < 0 ) wantRes = 0;
-			inp[i].value = wantRes;
-		}
-		merUpd();
-	}
-	var disableInp = $e('INPUT',[['type','checkbox'],['checked','']]);
 	function RemoveTradeRoutesBtn () {
 		if (routesTable.tBodies[0].rows.length < 2 ) return;
 		var newR = $em('TR',[$c(''),$c(''),$c(''),$c(''),$c(''),$c(disableInp)]);
-		disableInp.addEventListener('click', DisableAllTradeRoutes, false);
 		routesTable.tBodies[0].appendChild(newR);
 	}
 	var routesTable = $g("trading_routes",cont);
 	if (routesTable) RemoveTradeRoutesBtn();
-	var routesForm = $g("tradeRouteEdit",cont);
-	if ( !routesForm ) { return; }
-
-	for (var i = 1; i < 5; i++ ) { 
-		var inp = $g("r"+i,routesForm);
-		inp.addEventListener('input', merUpd, false); 
-		var divC = $e('DIV',[['style','margin:0 3px;display:inline-block;']]);
-		var refM = $a(' − ',[["id","rbmin"],['href',jsVoid]]);
-		refM.addEventListener('click', mofLinkU, false);
-		var refP = $a(' + ',[["id","rbplus"],['href',jsVoid]]);
-		refP.addEventListener('click', mofLinkU, false);
-		divC.appendChild(refP);
-		divC.appendChild(refM);
-		inp.parentNode.insertBefore(divC,inp.nextSibling);
+	var routesDiv = $g("tradeRoutes",cont);
+	if ( !routesDiv ) { return; }
+	var buttons = $gt('button', routesDiv);
+	for (var i = 0; i < buttons.length; i++ ) { 
+		buttons[i].addEventListener('click', function(x) { setTimeout(tradeRoutes,500); }, 0);
 	}
-	var divTC = $e('DIV',[['style','width: 50px;margin: 0 auto 15px;']]);
-	var ref = $a(' M ',[["id","memory"],['href',jsVoid]]);
-	ref.addEventListener('click', mhRowLinkMem, false);
-	divTC.appendChild(ref);
-	routesForm.insertBefore(divTC, routesForm.children[2]);
-	var m3 = $e('DIV',[['style','margin:15px 0px;']]);
-	$ib(m3, $g("tradeRouteError",routesForm));
+	function tradeRoutes () {
+		var routesForm = $g("tradeRouteEditCreate",cont);
+		if ( !routesForm ) { return; }
+		function merUpd () {
+			var aR = 0;
+			for (var i = 1; i < 5; i++ ) { var val = $gn("r"+i,routesForm)[0].value; aR += isNumeric(val) ? parseInt(val) : 0; }
+			m3.textContent = '( '+RB.dictionary[2]+' '+ Math.ceil(aR/RB.village_Var[0]) + (aR % RB.village_Var[0] != 0 ? ' : -' + (RB.village_Var[0] - aR % RB.village_Var[0]):'') + ' )';
+		}
+		function mofLinkU () {
+			var inp = this.parentNode.previousSibling;
+			var aR = parseInt(inp.value);
+			if ( this.id == "rbplus" ) {
+				inp.value = isNaN(aR) ? RB.village_Var[0] : aR + ( aR % RB.village_Var[0] != 0 ? RB.village_Var[0] - aR % RB.village_Var[0] : RB.village_Var[0] );
+			} else {
+				inp.value = isNaN(aR) ? 0 : aR <= RB.village_Var[0] ? 0 : aR - ( aR % RB.village_Var[0] != 0 ? aR % RB.village_Var[0] : RB.village_Var[0] );
+			}
+			var changeEvent = new Event("change", {"bubbles":true, "cancelable":false});
+			inp.dispatchEvent(changeEvent);
+			merUpd();
+		}
+		function mhRowLinkMem () {
+			loadVCookie('vPPH', 'village_PPH', RB.wantsMem[4]);
+			if( RB.wantsMem[4] == 0 ) return;
+			var inp = $gt('input',this.parentNode.previousElementSibling);
+			for( var i = 0; i < 4; i++ ) {
+				var wantRes = parseInt(RB.wantsMem[i]);
+				if( wantRes < 0 ) wantRes = 0;
+				inp[i].value = wantRes;
+			}
+			merUpd();
+		}
+		for (var i = 1; i < 5; i++ ) { 
+			var inp = $gn("r"+i,routesForm)[0];
+			inp.addEventListener('input', merUpd, false); 
+			var divC = $e('DIV',[['style','margin:2px auto;font-size:24px;pointer-events:auto;']]);
+			var refM = $a(' - ',[["id","rbmin"],['href',jsVoid]]);
+			refM.addEventListener('click', mofLinkU, false);
+			var refP = $a(' + ',[["id","rbplus"],['href',jsVoid]]);
+			refP.addEventListener('click', mofLinkU, false);
+			divC.appendChild(refP);
+			divC.appendChild(refM);
+			inp.parentNode.insertBefore(divC,inp.nextSibling);
+		}
+		//var divTC = $e('DIV',[['style','width: 50px;margin: 0 auto 15px;']]);
+		//var ref = $a(' M ',[["id","memory"],['href',jsVoid]]);
+		//ref.addEventListener('click', mhRowLinkMem, false);
+		//divTC.appendChild(ref);
+		//routesForm.insertBefore(divTC, routesForm.children[2]);
+		var m3 = $e('DIV',[['style','margin:8px 0px 5px;']]);
+		$ib(m3, $gc("resourceError",routesForm)[0]);
+	}
 }
 
 // calculate incomming resourses
@@ -3772,7 +3751,7 @@ function marketSumm () {
 	var observer = new MutationObserver(function(mutations) {
 		mutations.forEach(function(mutation) {
 			if (mutation.removedNodes.length > 0) {
-				setTimeout(marketSummReal, 150);
+				setTimeout(marketSummReal, 200);
 			}
 		});
 	});
@@ -5370,7 +5349,7 @@ function overviewTroops () {
 			var nR1 = $e('TR');
 			var nR2 = $e('TR');
 			for( t; t < RB.village_dorf12.length; t+2 ) {
-				for( var i = 1; i < 71; i++ ) {
+				for( var i = 1; i < 81; i++ ) {
 					nR1.appendChild($c(trImg('unit u'+i)));
 					if( i == RB.village_dorf12[t] ) {
 						nR2.appendChild($c(RB.village_dorf12[t+1]));
@@ -7001,7 +6980,7 @@ function buildDispatcher () {
 	var gid = build.getAttribute('class');
 	gid = gid.split(/\s/)[0];
 	if( gid == 'gid17' ) {
-		marketSend(); marketSumm(); marketOffer(); marketBuy(); marketTradeRoutes(); stopRP();
+		marketSend(); marketSumm(); marketOffer(); marketBuy(); setTimeout(marketTradeRoutes,400); stopRP();
 		var gold = $xf('//div[@class="npcMerchant"]//button[contains(@class, "gold")]','l',cont);
 		for( var i = 0; i < gold.snapshotLength; i++ ) {
 			gold.snapshotItem(i).addEventListener('click', function(x) { setTimeout(npcForTroops,500); }, 0);
@@ -8953,7 +8932,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Resource Bar+";
-		content.innerHTML = "What's new in Version "+version+" - Sep 26, 2022:<p></p><ui><li>Fixed building name detection</li><li>Fixed spartan troops calculations for farming resources</li><li>Minor fixes</li></ui>";
+		content.innerHTML = "What's new in Version "+version+" - Nov 5, 2022:<p></p><ui><li>Updated the market trade routes function</li><li>Fixed troops overview</li></ui>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
