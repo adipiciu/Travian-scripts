@@ -32,14 +32,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.22.23
+// @version        2.22.24
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.22.23';
+var version = '2.22.24';
 
 notRunYet = false;
 
@@ -6380,10 +6380,10 @@ function karteDistance4 () {
 		tileDFL = false;
 	} else {
 		tileDFL = true;
-		var tipE = $gc('tip-contents');
+		var tipE = document.querySelectorAll('[data-tippy-root]');
 		var ttD = $g(allIDs[3]);
 		if( tipE.length > 0 && ! ttD ) {
-			var tipC = getVidFromCoords($gc('text elementText',tipE[0])[0].innerHTML);
+			var tipC = getVidFromCoords($gc('coordinatesWrapper',tipE[0])[0].innerHTML);
 			if( tipC > 0 ) {
 				var newTip = getVTip(tipC);
 				if( newTip != activeTip ) {
@@ -8932,7 +8932,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Resource Bar+";
-		content.innerHTML = "What's new in Version "+version+" - Nov 5, 2022:<p></p><ui><li>Updated the market trade routes function</li><li>Fixed troops overview</li></ui>";
+		content.innerHTML = "What's new in Version "+version+" - Nov 16, 2022:<p></p><ui><li>Fixed show troops time on map</li></ui>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
