@@ -32,14 +32,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.22.24
+// @version        2.22.25
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.22.24';
+var version = '2.22.25';
 
 notRunYet = false;
 
@@ -6383,19 +6383,22 @@ function karteDistance4 () {
 		var tipE = document.querySelectorAll('[data-tippy-root]');
 		var ttD = $g(allIDs[3]);
 		if( tipE.length > 0 && ! ttD ) {
-			var tipC = getVidFromCoords($gc('coordinatesWrapper',tipE[0])[0].innerHTML);
-			if( tipC > 0 ) {
-				var newTip = getVTip(tipC);
-				if( newTip != activeTip ) {
-					activeTip = newTip;
-					if( newTip != '' ) {
-						var titleElem = $gc('title elementTitle',tipE[0])[0];
-						titleElem.appendChild($ee('span',newTip,[['style','color:#77FF77;margin:0px 10px;']]));
+			var coords = $gc('coordinatesWrapper',tipE[0]);
+			if( coords.length > 0 ) {
+				var tipC = getVidFromCoords(coords[0].innerHTML);
+				if( tipC > 0 ) {
+					var newTip = getVTip(tipC);
+					if( newTip != activeTip ) {
+						activeTip = newTip;
+						if( newTip != '' ) {
+							var titleElem = $gc('title elementTitle',tipE[0])[0];
+							titleElem.appendChild($ee('span',newTip,[['style','color:#77FF77;margin:0px 10px;']]));
+						}
 					}
+					var dTTK = showAllTTime(0, tipC, RB.village_Var[1]);
+					$at(dTTK, [['style','background-color:#fef7e7;']]);
+					windowID[2] = makeFloat( dTTK, (ltr?contRight+5:contRight-200), contTop);
 				}
-				var dTTK = showAllTTime(0, tipC, RB.village_Var[1]);
-				$at(dTTK, [['style','background-color:#fef7e7;']]);
-				windowID[2] = makeFloat( dTTK, (ltr?contRight+5:contRight-200), contTop);
 			}
 		}
 	}
@@ -7470,7 +7473,7 @@ function analyzerBattle () {
 	kirilloid += kirillS+'Ub#d:'+((RB.Setup[46]==1)?'m9':'');
 	kirilloid = kirilloid.replace(/r0(uUb)?/g,'');
 	atS[0][1] -= atS[1][1];
-	var res = $gc('res',tt[1]);
+	var res = $gc('crannyInfo',tt[1]);
 	var goods = $gc('goods',tt[1]);
 	var ress = [0,0,0,0,0];
 	var resp = [0,0,0,0];
@@ -7485,12 +7488,7 @@ function analyzerBattle () {
 	if( goods.length > 1) {
 		var crC = parseInt( res[1].innerHTML.onlyText() );
 		if( ! isNaN(crC) ) {
-			var pbonus = 0;
-			for( var i=1; i<5; i++ ) {
-				var t = ress[i]-crC;
-				pbonus += t < 0 ? 0: t;
-			}
-			var pbonusS = $ee('SPAN',' ( &#931;= '+pbonus+' ) ',[['style','vertical-align:baseline;']]);
+			var pbonus = crC;
 			if( pbonus > 0 ) {
 				var newT = $e('TABLE',[['class',allIDs[7]]]);
 				for( i=1; i<11; i++ ) {
@@ -7499,10 +7497,11 @@ function analyzerBattle () {
 						newT.appendChild($em('TR',[$c(trImg('unit u'+(i+parseInt(RB.Setup[2])*10))),$c(Math.ceil(pbonus/trC))]));
 					}
 				}
-				pbonusS.addEventListener("mouseover", function () { makeTooltip(newT); }, false);
-				pbonusS.addEventListener("mouseout", removeTooltip, false);
+				var clone = res[1].cloneNode(true);
+				clone.addEventListener("mouseover", function () { makeTooltip(newT); }, false);
+				clone.addEventListener("mouseout", removeTooltip, false);
+				res[1].parentNode.replaceChild(clone,res[1]);
 			}
-			res[1].firstElementChild.appendChild(pbonusS)
 		}
 	}
 
@@ -7936,25 +7935,12 @@ function TM_ShowMainBuildingNumbers(){
 			}
 		}
 		if ($gt('DIV',slots.snapshotItem(1)).length>0) {
-			levels = $xf('.//DIV','l',mapInfo2); lswitch = false;
-		} else {
-			levels = $xf('.//SPAN','l',mapInfo2); lswitch = true;
+			levels = $xf('.//DIV','l',mapInfo2);
 		}
 	} else {
 		dorf = 2;
-		var lswitch = $g('levelSwitch');
-		var blswitch = false;
 		var lRef = 0;
-
-		if ( lswitch ) {
-			if ( lswitch.className == "plus" ) {
-				blswitch = true;
-				levels = $xf('./div/a/span','l',mapInfo);
-			} else {
-				levels = $xf('.//div[contains(@class,"labelLayer")]','l',mapInfo);
-			}
-		}
-
+		levels = $xf('.//div[contains(@class,"labelLayer")]','l',mapInfo);
 		var imageElements = $xf('.//img[contains(@class,"building") or contains(@class,"Bottom")]','l',mapInfo);
 		countArray = imageElements.snapshotLength;
 	}
@@ -7969,7 +7955,6 @@ function TM_ShowMainBuildingNumbers(){
 			gid = fieldsOfVillage['f'+typeOfVillage[1]][i]+1;
 			aid = i+mapOffset;
 			smallDIV = levels.snapshotItem(i);
-			if (lswitch) smallDIV.className += ' '+allIDs[42];
 			if ( /underConstruction/.test(levels.snapshotItem(i).parentNode.getAttribute('class')) ) underConstruction = true; else underConstruction = false;
 		}
 
@@ -8004,7 +7989,6 @@ function TM_ShowMainBuildingNumbers(){
 			continue;
 		}
 
-		if (blswitch && (dorf == 2)) { smallDIV.className += ' '+allIDs[42]; }
 		if (BuildingLevel == getMaxLevel(gid)) {
 			smallDIV.style.backgroundColor = getColor(4);//green
 		}else if( resneed[0] > fullRes[0] || resneed[1] > fullRes[0] || resneed[2] > fullRes[0] || resneed[3] > fullRes[3] ) {
@@ -8932,7 +8916,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Resource Bar+";
-		content.innerHTML = "What's new in Version "+version+" - Nov 16, 2022:<p></p><ui><li>Fixed show troops time on map</li></ui>";
+		content.innerHTML = "What's new in Version "+version+" - Dec 8, 2022:<p></p><ui><li>Fixed building level colors</li><li>Fixed showing troops needed to loot resources in spying reports</li></ui>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
