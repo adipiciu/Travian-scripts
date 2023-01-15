@@ -32,14 +32,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.22.25
+// @version        2.23.1
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.22.25';
+var version = '2.23.1';
 
 notRunYet = false;
 
@@ -8611,8 +8611,15 @@ function spielerSort() {
 			}
 		}
 
+		var sortCell;
 		var vtrows = vtable.tHead.rows[0];
-		var sortCell = (RB.Setup[46]!=1) ? [0,2,4] : [1,3,5,6];
+		var colNo = vtrows.cells.length;
+		switch(colNo) {
+			case 5: sortCell = [0,2,4]; break;
+			case 6: sortCell = [1,3,5]; break;
+			case 7: sortCell = [1,3,5,6]; break;
+			default: sortCell = [1,3,5];
+		}
 		for( var i=0; i<sortCell.length; i++ ) {
 			var newSL = $a(vtrows.cells[sortCell[i]].innerHTML,[['href',jsVoid]]);
 			newSL.addEventListener('click', function(x) { return function() { sortSpieler(x); }}(i), false);
@@ -8758,7 +8765,7 @@ function underProgressSave (gid) {
 			newCookie[0]++;
 			var ts = td[1].innerHTML.match(/\d+:\d\d:\d\d/);
 			newCookie.push(gid, Math.round(RunTime[0]/1000) + toSeconds(ts?ts[0]:"0:00:00"),
-							td[0].innerHTML.replace(/[\n\t]/g,' ').replace(/\s+/g,' ').replace(tinfo_c,'"tinfo_c"'),
+							td[0].innerHTML.replace(/[\n\t]/g,' ').replace(/\s+/g,' ').replace(tinfo_c,'"tinfo_c"').replace(/<a.*?<\/a>/g, ''),
 							td[2].innerHTML.replace(/[\n\t]/g,' ').replace(/\s+/g,' ').onlyText());
 			fl = true;
 		}
@@ -8916,7 +8923,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Resource Bar+";
-		content.innerHTML = "What's new in Version "+version+" - Dec 8, 2022:<p></p><ui><li>Fixed building level colors</li><li>Fixed showing troops needed to loot resources in spying reports</li></ui>";
+		content.innerHTML = "What's new in Version "+version+" - Jan 15, 2023:<p></p><ui><li>Fixed sorting villages on NYS server</li><li>Minor fixes</li></ui>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
