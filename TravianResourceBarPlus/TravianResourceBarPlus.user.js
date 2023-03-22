@@ -32,14 +32,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.23.1
+// @version        2.23.2
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.23.1';
+var version = '2.23.2';
 
 notRunYet = false;
 
@@ -4370,7 +4370,7 @@ function addARLinks(myVid, aDirect) {
 	ref.addEventListener('click', function(x) { return function() { sendArmy(x); }}(myVid), false);
 	newLinks.appendChild(ref);
 	if( aDirect < 2 ) {
-		var ref = $ee('a',trImg(allIDs[33]),[['href','/build.php?z=' + myVid + '&gid=17&t=5'],['onclick','return false;']]);
+		var ref = $ee('a',trImg(allIDs[33]),[['href','/build.php?gid=17&z=' + myVid + '&t=5']]);
 		ref.addEventListener('click', function(x) { return function() { sendResourses(x); }}(myVid), false);
 		newLinks.appendChild(ref);
 	}
@@ -4887,7 +4887,7 @@ function sendResourses( myVid ) {
 			if( myVid != village_aid ) RB_setValue(GMcookieID + 'next', myVid);
 			document.location.href='/build.php?id=' + RB.village_Dorf2[0] + '&t=5&gid=17';
 		} else {
-			document.location.href='/build.php?z=' + myVid + '&gid=17&t=5';
+			document.location.href='/build.php?gid=17&z=' + myVid + '&t=5';
 		}
 	}
 	return false;
@@ -7467,7 +7467,7 @@ function analyzerBattle () {
 	var tCount = 0;
 	var atS = [[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],0];
 	var aRU =  [0,8,3,4,5,6,9];
-	var kirillRace = [0,1,2,3,3,4,5];
+	var kirillRace = [0,1,2,3,4,5,6,7];
 	var kirillS = '';
 	var atS = parseTroops( aRow, aRU, atS );
 	kirilloid += kirillS+'Ub#d:'+((RB.Setup[46]==1)?'m9':'');
@@ -7507,7 +7507,7 @@ function analyzerBattle () {
 
 	var dfS = [[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],0];
 	var dRU =  [1,2,3,4,5,6,9];
-	var kirillRace = [0,1,2,3,4,5,6];
+	var kirillRace = [0,1,2,3,4,5,6,7];
 	var kirillSd = '';
 	for( dTc=1; dTc < tt.length; dTc++ ) {
 		var dRow = tt[dTc].rows;
@@ -8923,7 +8923,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Resource Bar+";
-		content.innerHTML = "What's new in Version "+version+" - Jan 15, 2023:<p></p><ui><li>Fixed sorting villages on NYS server</li><li>Minor fixes</li></ui>";
+		content.innerHTML = "What's new in Version "+version+" - Mar 22, 2023:<p></p><ui><li>Fixed send resources links</li></ui>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
