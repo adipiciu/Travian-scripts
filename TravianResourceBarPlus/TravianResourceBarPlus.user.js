@@ -6720,9 +6720,9 @@ function getTroopNames() {
 
 function troopInfo( tt, val ) {
 	if (tt>50) { 
-		tt = tt-20
+		tt = tt-30
 	} else if (tt>30) {
-		tt = tt+20
+		tt = tt+30
 	}
 	if( RB.dictFL[13] < 2 ) return 0;
 	if( triFL ) {
