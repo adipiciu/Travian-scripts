@@ -32,14 +32,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.23.2
+// @version        2.23.3
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.23.2';
+var version = '2.23.3';
 
 notRunYet = false;
 
@@ -129,6 +129,8 @@ var RB = new Object();
 		'Legionnaire','Praetorian','Imperian','Equites Legati','Equites Imperatoris','Equites Caesaris','Battering Ram','Fire Catapult','Senator','Settler',
 		'Clubswinger','Spearman','Axeman','Scout','Paladin','Teutonic Knight','Ram','Catapult','Chief','Settler',
 		'Phalanx','Swordsman','Pathfinder','Theutates Thunder','Druidrider','Haeduan','Ram','Trebuchet','Chieftain','Settler',
+		'Rat','Spider','Snake','Bat','Wild Boar','Wolf','Bear','Crocodile','Tiger','Elephant',
+		'Pikeman','Thorned Warrior','Guardsman','Birds Of Prey','Axerider','Natarian Knight','War Elephant','Ballista','Natarian Emperor','Settler',
 		'Slave Militia','Ash Warden','Khopesh Warrior','Sopdu Explorer','Anhur Guard','Resheph Chariot','Ram','Stone Catapult','Nomarch','Settler',
 		'Mercenary','Bowman','Spotter','Steppe Rider','Marksman','Marauder','Ram','Catapult','Logades','Settler',
 		'Hoplite','Sentinel','Shieldsman','Twinsteel','Elpida Rider','Corinthian','Ram','Ballista','Ephor','Settler'];
@@ -138,8 +140,8 @@ var RB = new Object();
 	var iReports = [1,2,3,4,5,6,7,15,16,17,18,19];
 	RB.dictRpFL = Array(12);
 	RB.market_fi = [0,0,0,0,0,0,0,0,0,0,0,0];
-	RB.tropsI = new Array(600);
-	RB.trFL = new Array(51);
+	RB.tropsI = new Array(800);
+	RB.trFL = new Array(71);
 	RB.XY = [
 		200, 10, // 0-Setup
 		700, 430, // 1-Resource bar
@@ -3318,10 +3320,12 @@ function marketSend () {
 				}
 			}
 			if( wantRes < 0 ) wantRes = 0;
-			if( checkRes[i+1].checked ) rxI[i+1].value = wantRes < resNow[i] ? wantRes: resNow[i];
+			//if( checkRes[i+1].checked ) rxI[i+1].value = wantRes < resNow[i] ? wantRes: resNow[i];
+			rxI[i].value = wantRes < resNow[i] ? wantRes: resNow[i];
+			rxI[i].dispatchEvent(new Event('input', {bubbles:true}));
 		}
-		mhRowUpdate();
-		sendResourses( RB.wantsMem[4] );
+		//mhRowUpdate();
+		//sendResourses( RB.wantsMem[4] );
 	}
 	var mcFL = true;
 	function rEL () {
@@ -3431,11 +3435,13 @@ function marketSend () {
 		reloadMerchants();
 	}
 	function addButtonsEvent ( fl ) {
-		var ss = $gt('button',$gn('snd')[0]);
+		//var ss = $gt('button',$gn('snd')[0]);
+		var sendForm = $g('sendResourcesForm');
+		var ss = sendForm.querySelectorAll('button[type=submit]');
 		for( i=0; i<ss.length; i++ ) ss[i].addEventListener('click', removeACh, true);
 		// travel time
-		if( ! fl && ss.length > 0 )
-			addShowDistanceIn( ss[0].parentNode, -1 );
+		//if( ! fl && ss.length > 0 )
+		//	addShowDistanceIn( ss[0].parentNode, -1 );
 		if( fl ) $gn('dname')[0].value = '';
 	}
 	function checkTargetValidate () {
@@ -3453,23 +3459,26 @@ function marketSend () {
 		mhRowUpdate();
 	}
 	function checkMerchants () {
-		moC = $gc('merchantsAvailable')[0].parentNode;
+		moC = $gc('merchantsInformation')[0].firstElementChild.firstElementChild;
 		if (moC) {
-			var moCC = moC.innerHTML.onlyText().match(/(\S+)\s+\D*?(\d+)\D+?(\d+)/);
-			mName = moCC[1];
-			if (parseInt(moCC[3]) > parseInt(moCC[2])) {
-				maxM = parseInt(moCC[2]);
-				merchInWork = parseInt(moCC[3]) - maxM;
-			} else {
-				maxM = parseInt(moCC[3]);
+			var moCC = moC.innerHTML.onlyText().match(/(\d+)\/(\d+)/);
+			mDiv = $gc('merchantsInformation')[0].firstElementChild;
+			mName = mDiv.textContent.split(":")[0];
+			if (parseInt(moCC[2]) > parseInt(moCC[1])) {
+				maxM = parseInt(moCC[1]);
 				merchInWork = parseInt(moCC[2]) - maxM;
+			} else {
+				maxM = parseInt(moCC[2]);
+				merchInWork = parseInt(moCC[1]) - maxM;
 			}
 			return false;
 		} else return true;
 	}
 
-	if( checkTargetValidate() ) return;
-	var basee = $g('send_select');
+	//if( checkTargetValidate() ) return;
+
+	//var basee = $g('send_select');
+	var basee = $g('sendResourcesForm');
 	if( ! basee ) return;
 
 	var moC = null;
@@ -3481,6 +3490,7 @@ function marketSend () {
 	var lastLinkR = [0,0,0,0];
 	var checkRes = [];
 	var lPP = 0;
+	var resnames = ["lumber","clay","iron","crop"];
 
 	if( checkMerchants() ) return;
 
@@ -3491,11 +3501,12 @@ function marketSend () {
 
 	fillXY();
 
-	for (var i = 1; i < 5; i++){
-		rxI[i] = $g('r' + i);
+	for (var i = 0; i < 4; i++){
+		rxI[i] = $gn(resnames[i])[0];
 		rxI[i].addEventListener('keyup', mhRowUpdate, false);
 		rxI[i].addEventListener('change', mhRowUpdate, false);
-		var iRow = basee.rows[i-1];
+		/*
+		var iRow = basee.rows[i];
 		$gt('a',iRow.cells[0])[0].addEventListener('click', mhRowUpdate, false);
 		$g('addRessourcesLink'+i,iRow).addEventListener('click', mhRowUpdate, false);
 		var ref = $a('-',[['href',jsVoid]]);
@@ -3509,8 +3520,11 @@ function marketSend () {
 		iRow.appendChild($c(ref,[['width','5%']]));
 		checkRes[i] = $e('INPUT',[['type','checkbox'],['checked','checked'],['name',allIDs[18]+i]]);
 		iRow.appendChild($c(checkRes[i],[['width','5%']]));
+		*/
 	};
-	maxC = parseInt($g('addRessourcesLink1',basee).innerHTML.match(/(\d+)/)[1]);
+
+	//maxC = parseInt($g('addRessourcesLink1',basee).innerHTML.match(/(\d+)/)[1]);
+	maxC = parseInt($gc('merchantCarryInfo',basee)[0].textContent.match(/(\d+)/)[1]);
 	maxTr = maxM * maxC;
 
 	if( maxC != RB.village_Var[0] ) {
@@ -3518,10 +3532,11 @@ function marketSend () {
 		saveVCookie( 'VV', RB.village_Var );
 	}
 
-	var maxRM = $e('INPUT',[['type', 'TEXT'],['size',2],['value',maxM],['style','font-size:80%;']]);
-	var maxRC = $e('INPUT',[['type', 'TEXT'],['size',5],['value',maxTr],['style','font-size:80%;']]);
-	moC.appendChild($em('SPAN',[maxRM,' Σ=',maxRC],[['style','margin:0px 5px;font-size:12px;']]));
+	//var maxRM = $e('INPUT',[['type', 'TEXT'],['size',2],['value',maxM],['style','font-size:80%;']]);
+	//var maxRC = $e('INPUT',[['type', 'TEXT'],['size',5],['value',maxTr],['style','font-size:80%;']]);
+	//moC.appendChild($em('SPAN',[maxRM,' Σ=',maxRC],[['style','margin:0px 5px;font-size:12px;']]));
 
+	/*
 	var newTR = $e('tr');
 	var cM = $c('',[['colspan','3']]);
 	newTR.appendChild(cM);
@@ -3532,26 +3547,29 @@ function marketSend () {
 		}
 		insertAfter(newTR,basee.rows[3]);
 	} else basee.appendChild(newTR);
-	mhRowUpdate();
+	*/
+	//mhRowUpdate();
 
-	var ref = $a('(M)',[['href',jsVoid]]);
-	ref.addEventListener('click', mhRowLinkMPlus, false);
-	newTR.appendChild($c(ref));
-	var ref = $a('-',[['href',jsVoid]]);
-	ref.addEventListener('click', mhRowsLinkM, false);
-	newTR.appendChild($c(ref,[['width','5%']]));
+	//var ref = $a('(M)',[['href',jsVoid]]);
+	//ref.addEventListener('click', mhRowLinkMPlus, false);
+	//newTR.appendChild($c(ref));
+	//var ref = $a('-',[['href',jsVoid]]);
+	//ref.addEventListener('click', mhRowsLinkM, false);
+	//newTR.appendChild($c(ref,[['width','5%']]));
+	var newTR = $e('div');
 	var ref = $a('M',[['href',jsVoid]]);
 	ref.addEventListener('click', mhRowLinkMem, false);
-	newTR.appendChild($c(ref,[['width','5%']]));
-	var ref = $a('+',[['href',jsVoid]]);
-	ref.addEventListener('click', mhRowsLinkP, false);
-	newTR.appendChild($c(ref,[['width','5%']]));
-	var refP = $a('&nbsp;=',[['href',jsVoid]]);
-	refP.addEventListener('click', mhRowsLinkPP, false);
-	newTR.appendChild($c(refP,[['width','5%']]));
+	newTR.appendChild(ref,[['width','5%']]);
+	basee.appendChild(newTR);
+	//var ref = $a('+',[['href',jsVoid]]);
+	//ref.addEventListener('click', mhRowsLinkP, false);
+	//newTR.appendChild($c(ref,[['width','5%']]));
+	//var refP = $a('&nbsp;=',[['href',jsVoid]]);
+	//refP.addEventListener('click', mhRowsLinkPP, false);
+	//newTR.appendChild($c(refP,[['width','5%']]));
 
-	if( /&r\d=/.test(crtPath) )
-		for( i=1; i<5; i++ ) try{ rxI[i].value = crtPath.match(new RegExp('&r'+i+'=(\\d+)'))[1]; } catch(e){};
+	//if( /&r\d=/.test(crtPath) )
+	//	for( i=1; i<5; i++ ) try{ rxI[i].value = crtPath.match(new RegExp('&r'+i+'=(\\d+)'))[1]; } catch(e){};
 
 	addButtonsEvent();
 	
@@ -3565,7 +3583,7 @@ function marketSend () {
 		});
 	});
 	var config = { childList: true, subtree: true };
-	observer.observe(target, config);
+	//observer.observe(target, config);
 }
 
 // 'Repeat' offer possition
@@ -4260,7 +4278,7 @@ function showAllTTime ( vType, tVil, arena, art, shoes, leftHand ) {
 					var newTD = $e('TD');
 					while( TTime[i][1][j] < (11+10*k) ) {
 						if( Math.ceil((TTime[i][1][j])/10) == tR ) { fl = true; fl2 = true; }
-						newTD.appendChild(trImg('unit u' + TTime[i][1][j], RB.dictTR[TTime[i][1][j]-(TTime[i][1][j]>50?20:0)]));
+						newTD.appendChild(trImg('unit u' + TTime[i][1][j], RB.dictTR[TTime[i][1][j]]));
 						j++;
 					}
 					if( fl2 ) newTR.appendChild(newTD);
@@ -4370,7 +4388,7 @@ function addARLinks(myVid, aDirect) {
 	ref.addEventListener('click', function(x) { return function() { sendArmy(x); }}(myVid), false);
 	newLinks.appendChild(ref);
 	if( aDirect < 2 ) {
-		var ref = $ee('a',trImg(allIDs[33]),[['href','/build.php?gid=17&z=' + myVid + '&t=5']]);
+		var ref = $ee('a',trImg(allIDs[33]),[['href','/build.php?gid=17&z=' + myVid + '&t=5'],['onclick','return false;']]);
 		ref.addEventListener('click', function(x) { return function() { sendResourses(x); }}(myVid), false);
 		newLinks.appendChild(ref);
 	}
@@ -4845,6 +4863,20 @@ function fillXY ( nXY ) {
 	}
 }
 
+function fillXYMarket ( nXY ) {
+	//if( /[&?]z=\d/.test(crtPath) ) return;
+	var myVid = nXY || RB_getValue(GMcookieID + 'next', -1);
+	if( myVid > 0 ) {
+		var arXY = id2xy( myVid );
+		if( $gc('coordinateX')[0].length < 1 ) return;
+		var coordX = $gt('input',$gc('coordinateX')[0])[0];
+		var coordY = $gt('input',$gc('coordinateY')[0])[0];
+		coordX.value = arXY[0];
+		coordY.value = arXY[1];
+		nextFL = false;
+	}
+}
+
 function fillXYtoRP() {
 	fillXY();
 	var tt = $g('troops');
@@ -4879,16 +4911,12 @@ function sendArmy( myVid ) {
 }
 
 function sendResourses( myVid ) {
-	if( $gn('r1').length > 0 ) {
-		fillXY( myVid );
+	if( $g('sendResourcesForm1') ) {
+		fillXYMarket( myVid );
 		showDistanceIn( -1 );
 	} else {
-		if( RB.village_Dorf2[0] != 0 ) {
-			if( myVid != village_aid ) RB_setValue(GMcookieID + 'next', myVid);
-			document.location.href='/build.php?id=' + RB.village_Dorf2[0] + '&t=5&gid=17';
-		} else {
-			document.location.href='/build.php?gid=17&z=' + myVid + '&t=5';
-		}
+		if( myVid != village_aid ) RB_setValue(GMcookieID + 'next', myVid);
+		document.location.href='/build.php?gid=17&z=' + myVid + '&t=5';
 	}
 	return false;
 }
@@ -4988,7 +5016,7 @@ RB.Setup = RB.dSetup.slice();
 function rbSetup () {
 	var normProd = [gtext('incomreso')[0],gtext("normal")];
 	for( i = 2; i < normalizeProductionCount+2; i++ ) {
-		normProd[i] = RB.dictTR[i+(10*(RB.Setup[2]-(RB.Setup[2]>4?2:0)))-1];
+		normProd[i] = RB.dictTR[i+(10*RB.Setup[2])-1];
 	}
 	for( i = 0; i < 5; i++ )
 		if( RB.Setup[40+i].length<2 ) RB.Setup[40+i] = cnColors[i];
@@ -6689,14 +6717,26 @@ function scanTroopsData () {
 		m = 4;
 		break;
 	}
-	RB.tropsI = [40,35,50,120,100,150,30,6*m,50,1,30,65,35,100,130,160,70,5*m,20,1,70,40,25,150,160,210,80,7*m,50,1,0,20,10,140,160,20,40,16*m,0,2,120,65,50,550,440,320,100,14*m,100,3,180,80,105,550,640,800,180,10*m,70,4,60,30,75,900,360,500,70,4*m,0,3,75,60,10,950,1350,600,90,3*m,0,6,50,40,30,30750,27200,45000,37500,4*m,0,5,0,80,80,4600,4200,5800,4400,5*m,3000,1,
-	             40,20,5,95,75,40,40,7*m,60,1,10,35,60,145,70,85,40,7*m,40,1,60,30,30,130,120,170,70,6*m,50,1,0,10,5,160,100,50,50,9*m,0,1,55,100,40,370,270,290,75,10*m,110,2,150,50,75,450,515,480,80,9*m,80,3,65,30,80,1000,300,350,70,4*m,0,3,50,60,10,900,1200,600,60,3*m,0,6,40,60,40,35500,26600,25000,27200,4*m,0,4,10,80,80,5800,4400,4600,5200,5*m,3000,1,
-				 15,40,50,100,130,55,30,7*m,35,1,65,35,20,140,150,185,60,6*m,45,1,0,20,10,170,150,20,40,17*m,0,2,100,25,40,350,450,230,60,19*m,75,2,45,115,55,360,330,280,120,16*m,35,2,140,60,165,500,620,675,170,13*m,65,3,50,30,105,950,555,330,75,4*m,0,3,70,45,10,960,1450,630,90,3*m,0,6,40,50,50,30750,45400,31000,37500,5*m,0,4,0,80,80,4400,5600,4200,3900,5*m,3000,1,
-				 10,30,20,45,60,30,15,7*m,15,1,30,55,40,115,100,145,60,6*m,50,1,65,50,20,170,180,220,80,7*m,45,1,0,20,10,170,150,20,40,16*m,0,2,50,110,50,360,330,280,120,15*m,50,2,110,120,150,450,560,610,180,10*m,70,3,55,30,95,995,575,340,80,4*m,0,3,65,55,10,980,1510,660,100,3*m,0,6,40,50,50,34000,50000,34000,42000,4*m,0,4,0,80,80,5040,6510,4830,4620,5*m,3000,1,
-				 35,40,30,130,80,40,40,6*m,50,1,50,30,10,140,110,60,60,6*m,30,1,0,20,10,170,150,20,40,19*m,0,2,120,30,15,290,370,190,45,16*m,75,2,110,80,70,320,350,330,50,15*m,105,2,180,60,40,450,560,610,140,14*m,80,3,65,30,90,1060,330,360,70,4*m,0,3,45,55,10,950,1280,620,60,3*m,0,6,50,40,30,37200,27600,25200,27600,5*m,0,4,10,80,80,6100,4600,4800,5400,5*m,3000,1,
-				 50,35,30,110,185,110,35,6*m,60,1,0,40,22,185,150,35,75,9*m,0,1,40,85,45,145,95,245,45,8*m,40,1,90,55,40,130,200,400,65,6*m,50,1,55,120,90,555,445,330,110,16*m,110,2,195,80,75,660,495,995,165,9*m,80,3,65,30,80,525,260,790,130,4*m,0,3,50,60,10,550,1240,825,135,3*m,0,6,40,60,40,33450,30665,36240,13935,4*m,0,4,10,80,80,5115,5580,6045,3255,5*m,3000,1];
+	//Attack, Infantry defense, Cavalery defense, Wood, Clay, Iron, Crop, Speed, Carry, Upkeep
+	RB.tropsI = [//Romans
+				 //Legionnaire 					   Praetorian 						 Imperian 						   Equites Legati  				   Equites Imperatoris					 Equites Caesaris					   Battering ram					Fire Catapult					  Senator 									Settler
+				 40,35,50,120,100,150,30,6*m,50,1, 30,65,35,100,130,160,70,5*m,20,1, 70,40,25,150,160,210,80,7*m,50,1, 0,20,10,140,160,20,40,16*m,0,2, 120,65,50,550,440,320,100,14*m,100,3, 180,80,105,550,640,800,180,10*m,70,4, 60,30,75,900,360,500,70,4*m,0,3, 75,60,10,950,1350,600,90,3*m,0,6, 50,40,30,30750,27200,45000,37500,4*m,0,5, 0,80,80,4600,4200,5800,4400,5*m,3000,1,
+	             //Teutons
+				 40,20,5,95,75,40,40,7*m,60,1, 10,35,60,145,70,85,40,7*m,40,1, 60,30,30,130,120,170,70,6*m,50,1,0, 10,5,160,100,50,50,9*m,0,1, 55,100,40,370,270,290,75,10*m,110,2, 150,50,75,450,515,480,80,9*m,80,3, 65,30,80,1000,300,350,70,4*m,0,3, 50,60,10,900,1200,600,60,3*m,0,6, 40,60,40,35500,26600,25000,27200,4*m,0,4, 10,80,80,5800,4400,4600,5200,5*m,3000,1,
+				 //Gauls
+				 15,40,50,100,130,55,30,7*m,35,1, 65,35,20,140,150,185,60,6*m,45,1, 0,20,10,170,150,20,40,17*m,0,2, 100,25,40,350,450,230,60,19*m,75,2, 45,115,55,360,330,280,120,16*m,35,2, 140,60,165,500,620,675,170,13*m,65,3, 50,30,105,950,555,330,75,4*m,0,3, 70,45,10,960,1450,630,90,3*m,0,6, 40,50,50,30750,45400,31000,37500,5*m,0,4, 0,80,80,4400,5600,4200,3900,5*m,3000,1,
+				 //Nature http://t4.answers.travian.com/index.php?aid=109
+				 10,25,20,0,0,0,0,20,0,1, 20,35,40,0,0,0,0,20,0,1, 60,40,60,0,0,0,0,20,0,1, 80,66,50,0,0,0,0,20,0,1, 50,70,33,0,0,0,0,20,0,2, 100,80,70,0,0,0,0,20,0,2, 250,140,200,0,0,0,0,20,0,3, 450,380,240,0,0,0,0,20,0,3, 200,170,250,0,0,0,0,20,0,3, 600,440,520,0,0,0,0,20,0,5, 
+				 //Natars
+				 20,35,50,0,0,0,0,0,0,0, 65,30,10,0,0,0,0,0,0,0, 100,90,75,0,0,0,0,0,0,0, 0,10,0,0,0,0,0,0,0,0, 155,80,50,0,0,0,0,0,0,0, 170,140,80,0,0,0,0,0,0,0, 250,120,150,0,0,0,0,0,0,0, 60,45,10,0,0,0,0,0,0,0, 80,50,50,0,0,0,0,0,0,0, 30,40,40,0,0,0,0,0,0,0, 
+				 //Egyptians
+				 10,30,20,45,60,30,15,7*m,15,1, 30,55,40,115,100,145,60,6*m,50,1, 65,50,20,170,180,220,80,7*m,45,1, 0,20,10,170,150,20,40,16*m,0,2, 50,110,50,360,330,280,120,15*m,50,2, 110,120,150,450,560,610,180,10*m,70,3, 55,30,95,995,575,340,80,4*m,0,3, 65,55,10,980,1510,660,100,3*m,0,6, 40,50,50,34000,50000,34000,42000,4*m,0,4, 0,80,80,5040,6510,4830,4620,5*m,3000,1,
+				 //Huns
+				 35,40,30,130,80,40,40,6*m,50,1, 50,30,10,140,110,60,60,6*m,30,1, 0,20,10,170,150,20,40,19*m,0,2, 120,30,15,290,370,190,45,16*m,75,2, 110,80,70,320,350,330,50,15*m,105,2, 180,60,40,450,560,610,140,14*m,80,3, 65,30,90,1060,330,360,70,4*m,0,3, 45,55,10,950,1280,620,60,3*m,0,6, 50,40,30,37200,27600,25200,27600,5*m,0,4, 10,80,80,6100,4600,4800,5400,5*m,3000,1,
+				 //Spartans
+				 50,35,30,110,185,110,35,6*m,60,1, 0,40,22,185,150,35,75,9*m,0,1, 40,85,45,145,95,245,45,8*m,40,1, 90,55,40,130,200,400,65,6*m,50,1, 55,120,90,555,445,330,110,16*m,110,2, 195,80,75,660,495,995,165,9*m,80,3, 65,30,80,525,260,790,130,4*m,0,3, 50,60,10,550,1240,825,135,3*m,0,6, 40,60,40,33450,30665,36240,13935,4*m,0,4, 10,80,80,5115,5580,6045,3255,5*m,3000,1];
 	saveCookie('tropsI','tropsI');
-	RB.dictFL[13] = 2;
+	RB.dictFL[13] = 3;
 	saveCookie( 'DictFL', 'dictFL' );
 }
 
@@ -6706,9 +6746,8 @@ function getTroopNames() {
 		var tUnits = $gt("img",table);
 		for (var i=0; i<tUnits.length-1; i++) {
 			hn = Math.floor(parseInt(tUnits[i].getAttribute('class').match(/\d+/)[0]));
-			if ( hn > 30 && hn < 51 ) continue;
-			RB.dictTR[hn-(hn>50?20:0)] = tUnits[i].alt;
-			RB.trFL[hn-(hn>50?20:0)] = 1;
+			RB.dictTR[hn] = tUnits[i].alt;
+			RB.trFL[hn] = 1;
 		}
 		saveCookie('trFL','trFL');
 		saveCookie('DictTR','dictTR');
@@ -6719,41 +6758,9 @@ function getTroopNames() {
 }
 
 function troopInfo( tt, val ) {
-	if (tt>50) { 
-		tt = tt-20
-	} else if (tt>30) {
-		tt = tt+20
-	}
-	if( RB.dictFL[13] < 2 ) return 0;
+	if( RB.dictFL[13] < 3 ) return 0;
 	if( triFL ) {
 		loadCookie( 'tropsI', 'tropsI' );
-//						   1 2 3  4  5  6  7 8  9 10
-		var parseRules2 = [-1,1,2,-1,-1,-1,-1,4,-1,3];
-		var nature = [ //http://t4.answers.travian.com/index.php?aid=109
-		[10,25,20,1,20],
-		[20,35,40,1,20],
-		[60,40,60,1,20],
-		[80,66,50,1,20],
-		[50,70,33,2,20],
-		[100,80,70,2,20],
-		[250,140,200,3,20],
-		[450,380,240,3,20],
-		[200,170,250,3,20],
-		[600,440,520,5,20],
-		[20,35,50,1,6], // natarian
-		[65,30,10,1,7],
-		[100,90,75,1],
-		[0,10,0,1,25],
-		[155,80,50,2,14],
-		[170,140,80,3],
-		[250,120,150,6,5],
-		[60,45,10,5,3],
-		[80,50,50,1,5],
-		[30,40,40,1,5]];
-		var j=RB.tropsI.length;
-		for( var i=0; i<20; i++ )
-			for( var t=0; t<10; t++ )
-				RB.tropsI[j++] = parseRules2[t]<0? 0: nature[i][parseRules2[t]];
 		triFL = false;
 	}
 	return parseInt(RB.tropsI[(tt-1)*10+val]);
@@ -6983,7 +6990,7 @@ function buildDispatcher () {
 	var gid = build.getAttribute('class');
 	gid = gid.split(/\s/)[0];
 	if( gid == 'gid17' ) {
-		marketSend(); marketSumm(); marketOffer(); marketBuy(); setTimeout(marketTradeRoutes,400); stopRP();
+		setTimeout(marketSend,1000); marketSumm(); marketOffer(); marketBuy(); setTimeout(marketTradeRoutes,400); stopRP();
 		var gold = $xf('//div[@class="npcMerchant"]//button[contains(@class, "gold")]','l',cont);
 		for( var i = 0; i < gold.snapshotLength; i++ ) {
 			gold.snapshotItem(i).addEventListener('click', function(x) { setTimeout(npcForTroops,500); }, 0);
@@ -7419,7 +7426,7 @@ function npcForTroops () {
 }
 
 function analyzerBattle () {
-	if( RB.Setup[25] == 0 || RB.dictFL[13] < 2 ) return;
+	if( RB.Setup[25] == 0 || RB.dictFL[13] < 3 ) return;
 	var report = $g("reportWrapper");
 	if (! report) return;
 	if (! $g('defender')) return;
@@ -8923,7 +8930,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Resource Bar+";
-		content.innerHTML = "What's new in Version "+version+" - Mar 22, 2023:<p></p><ui><li>Fixed send resources links</li></ui>";
+		content.innerHTML = "What's new in Version "+version+" - Apr 4, 2023:<p></p><ui><li>Added M(emory) button on market (not fully functional)</li><li>Fixed animals crop consumption</li></ui>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
@@ -9059,7 +9066,7 @@ function displayWhatIsNew () {
 	if( RB.Setup[12] > 0 ) showLinks();
 	if( RB.Setup[17] == 1 ) rbNotes();
 	addSpeedRTSendMessageInLLinks();
-	if( RB.Setup[20] > 0 ) if( RB.dictFL[13] < 2 || RB.Setup[20] == 2 || RB.Setup[45] == 10) scanTroopsData();
+	if( RB.Setup[20] > 0 ) if( RB.dictFL[13] < 3 || RB.Setup[20] == 2 || RB.Setup[45] == 10) scanTroopsData();
 	returnQuickHelp();
 	if( RB.Setup[32] == 1 ) centerNumber();
 	if( RB.Setup[34] == 1 ) overviewAll();
