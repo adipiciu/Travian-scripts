@@ -32,14 +32,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.23.3
+// @version        2.23.4
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.23.3';
+var version = '2.23.4';
 
 notRunYet = false;
 
@@ -3299,6 +3299,10 @@ function marketSend () {
 	function mhRowLinkMem () {
 		loadVCookie('vPPH', 'village_PPH', RB.wantsMem[4]);
 		if( RB.wantsMem[4] == 0 ) return;
+		var arXY = id2xy( RB.wantsMem[4] );
+		var coordX = parseInt($gt('input',$gc('coordinateX')[0])[0].getAttribute("value"));
+		var coordY = parseInt($gt('input',$gc('coordinateY')[0])[0].getAttribute("value"));
+		if (arXY[0] != coordX || arXY[1] != coordY) { sendResourses( RB.wantsMem[4] ); return; }
 		var htR = getTTime( calcDistance(RB.wantsMem[4], village_aid), MTime[parseInt(RB.Setup[2])]*sM, 0, 0 );
 		var ht = parseInt(RB.wantsMem[9]) < htR ? htR - parseInt(RB.wantsMem[9]): 0;
 		for( var i = 0; i < 4; i++ ) {
@@ -3322,7 +3326,7 @@ function marketSend () {
 			if( wantRes < 0 ) wantRes = 0;
 			//if( checkRes[i+1].checked ) rxI[i+1].value = wantRes < resNow[i] ? wantRes: resNow[i];
 			rxI[i].value = wantRes < resNow[i] ? wantRes: resNow[i];
-			rxI[i].dispatchEvent(new Event('input', {bubbles:true}));
+			rxI[i].dispatchEvent(new Event('change', {bubbles:true}));
 		}
 		//mhRowUpdate();
 		//sendResourses( RB.wantsMem[4] );
@@ -3492,7 +3496,7 @@ function marketSend () {
 	var lPP = 0;
 	var resnames = ["lumber","clay","iron","crop"];
 
-	if( checkMerchants() ) return;
+	//if( checkMerchants() ) return;
 
 	if( mName != RB.dictionary[2] ) {
 		RB.dictionary[2] = mName;
@@ -3503,8 +3507,8 @@ function marketSend () {
 
 	for (var i = 0; i < 4; i++){
 		rxI[i] = $gn(resnames[i])[0];
-		rxI[i].addEventListener('keyup', mhRowUpdate, false);
-		rxI[i].addEventListener('change', mhRowUpdate, false);
+		//rxI[i].addEventListener('keyup', mhRowUpdate, false);
+		//rxI[i].addEventListener('change', mhRowUpdate, false);
 		/*
 		var iRow = basee.rows[i];
 		$gt('a',iRow.cells[0])[0].addEventListener('click', mhRowUpdate, false);
@@ -3571,7 +3575,7 @@ function marketSend () {
 	//if( /&r\d=/.test(crtPath) )
 	//	for( i=1; i<5; i++ ) try{ rxI[i].value = crtPath.match(new RegExp('&r'+i+'=(\\d+)'))[1]; } catch(e){};
 
-	addButtonsEvent();
+	//addButtonsEvent();
 	
 	var target = $gc('merchantsAvailable')[0];
 	var MutationObserver = window.MutationObserver;
@@ -3763,8 +3767,12 @@ var mSInit = true;
 function marketSumm () {
 	marketSummReal();
 	mSInit = false;
-	var mForm = $g('merchantsOnTheWayFormular');
-	if ( !mForm ) return;
+	var merchantsOnTheWay = $g('marketplaceSendResources');
+	if ( !merchantsOnTheWay ) return;
+	var merchantInOut = $gc('deliveriesOverview', merchantsOnTheWay);
+	if (merchantInOut.length == 0) return;
+	var routes = $gc('routes', merchantInOut[0]);
+	if (routes.length == 0) return;
 	var MutationObserver = window.MutationObserver;
 	var observer = new MutationObserver(function(mutations) {
 		mutations.forEach(function(mutation) {
@@ -3773,18 +3781,19 @@ function marketSumm () {
 			}
 		});
 	});
-	var config = { childList: true };
-	observer.observe(mForm, config);
+	//observer.observe(merchantsOnTheWay, {childList: true});
 }
 function marketSummReal () {
 	if( RB.Setup[10] == 0 ) return;
-	var merchantsOnTheWay = $g('merchantsOnTheWayFormular');
+	var merchantsOnTheWay = $g('marketplaceSendResources');
 	if (!merchantsOnTheWay) return;
-	var incomingMerchants = $gc('ownMerchants', merchantsOnTheWay);
-	var ownMerchants = $gc('incomingMerchants', merchantsOnTheWay);
+	var merchantInOut = $gc('group expanded', merchantsOnTheWay);
+	if (merchantInOut.length == 0) return;
+	//var ownMerchants = $gc('group expanded', merchantsOnTheWay)[1];
 	if( ! mSInit ) {
 		initRes = true; getResources(); progressbar_ReInit(); addSpeedAndRTSend();
 	}
+	/*
 	if (ownMerchants.length > 0) {
 		var aTo = $gc('traders',ownMerchants[0]);
 		for (i = 0; i < aTo.length; i++) {
@@ -3792,10 +3801,13 @@ function marketSummReal () {
 			showMer(aTo[i], incomingRes);
 		}
 	}
-	if (incomingMerchants.length == 0) return;
-	var aT = $gc('traders',incomingMerchants[0]);
+	*/
+	var incomingMerchants = merchantInOut[0];
+	//var aT = $gc('traders',incomingMerchants[0]);
+	var aT = $gc('delivery',incomingMerchants);
 	if( aT.length == 0 ) return;
-	//if( $gc(allIDs[29],aT[0]).length > 0 ) return;
+	/*
+	if( $gc(allIDs[29],aT[0]).length > 0 ) return;
 	var cH4 = $gt('H4');
 	if( cH4 ) var merchB = cH4.length;
 	var i = cH4[0].innerHTML.onlyText().trim();
@@ -3806,8 +3818,9 @@ function marketSummReal () {
 			saveCookie( 'Dict', 'dictionary' );
 		}
 	}
+	*/
 // add 2x 1x tables
-	if (RB.Setup[10] < 3 && RB.Setup[33] > 0 ) {
+	if (RB.Setup[10] < 3 && RB.Setup[33] > 0 && 0) {
 		var extRT = new Array();
 		for (i = 0; i < aT.length; i++) {
 			// get count of retry
@@ -3857,17 +3870,22 @@ function marketSummReal () {
 		}
 	}
 	resourceCalculatorInit();
+	var incomingResArr = [];
 	for (i = 0; i < aT.length; i++) {
 		// get time to go
-		var timeToGo = toSeconds(aT[i].rows[1].cells[1].innerHTML);
+		//var timeToGo = toSeconds(aT[i].rows[1].cells[1].innerHTML);
+		var timeToGo = parseInt($gc('timer',aT[i])[0].getAttribute("value"));
 		// get incoming resources
-		var incomingRes = aT[i].rows[2].cells[1].innerHTML.match( />\s*?\d+.?/g );
-		resourceCalculator( aT[i], timeToGo, incomingRes, 0 );
+		//var incomingRes = aT[i].rows[2].cells[1].innerHTML.match( />\s*?\d+.?/g );
+		var incomingRes = $gc('value',aT[i]);
+		for( var j = 0; j < 4; j++ ) { incomingResArr[j] = incomingRes[j].textContent; }
+		resourceCalculator( aT[i], timeToGo, incomingResArr, 0 );
 	}
-	if( RB.Setup[10] > 1 ) resourceCalculatorSumm(cH4[0].nextElementSibling, timeToGo);
-	if( RB.Setup[10] > 2 ) redLinesSumm(cH4[0].nextElementSibling);
+	if( RB.Setup[10] > 1 ) resourceCalculatorSumm(incomingMerchants, timeToGo);
+	if( RB.Setup[10] > 2 ) redLinesSumm(incomingMerchants);
 }
 
+/*
 function showMer (tObj, incomingRes) {
 	var rSumm = 0;
 	while( /\/|x/.test(incomingRes[0]) ) incomingRes.shift();
@@ -3879,6 +3897,7 @@ function showMer (tObj, incomingRes) {
 	newTR.appendChild($ee('td',Math.ceil(rSumm/RB.village_Var[0])+'x <i class="merchantCap_small"></i>',[['colspan','11'],['style','text-align:'+docDir[0]+';']]));
 	tObj.appendChild($ee('TBODY',newTR,[['class','mer']]));
 }
+*/
 
 var incomeToGo = [];
 var summIncomingRes = [];
@@ -3912,9 +3931,10 @@ function resourceCalculator ( tObj, timeToGo, incomingRes, tType ) { // tType 0-
 	var incomeToGoSumm = 0;
 	while( /\/|x/.test(incomingRes[0]) ) incomingRes.shift();
 	for( var j = 0; j < 4; j++ ) {
-		incomingRes[j] = parseInt(incomingRes[j].match(/\d+/)[0]);
+		incomingRes[j] = parseInt(toNumber(incomingRes[j]));
 		var extraRes = 0;
-		var mColor = '';
+		//var mColor = '';
+		var mColor = 'black';
 		summIncomingRes[j] += incomingRes[j];
 		incomeToGo[j] = Math.round(incomepersecond[j] * (timeToGo - lastTime) + incomeToGo[j]);
 		if( incomeToGo[j] < 0 ) {
@@ -3930,7 +3950,11 @@ function resourceCalculator ( tObj, timeToGo, incomingRes, tType ) { // tType 0-
 			incomeToGo[j] = fullRes[j];
 			mColor = 'red';
 		}
-		textIncome += '&nbsp;' + '<i class=r'+(j+1)+' style="vertical-align: middle;"></i>' + ' <span style="color: ' + mColor + ';">' + incomeToGo[j];
+		if( tType == 0 ) {
+			textIncome += '<i class=r'+(j+1)+'></i>' + ' <span style="color: ' + mColor + ';">' + incomeToGo[j];
+		} else {
+			textIncome += '&nbsp;' + '<i class=r'+(j+1)+' style="vertical-align: middle;"></i>' + ' <span style="color: ' + mColor + ';">' + incomeToGo[j];
+		}
 		if( extraRes != 0 ) textIncome += ' (' + (extraRes > 0 ? '+' + extraRes: extraRes) + ') ';
 		textIncome += '</span>';
 		incomeToGoSumm += incomeToGo[j];
@@ -3962,13 +3986,21 @@ function resourceCalculator ( tObj, timeToGo, incomingRes, tType ) { // tType 0-
 			retFL = true;
 		}
 	}
-	if( RB.Setup[11] > 0 ) textIncome += ' (<img class="npc" style="margin:0 3px" src="/img/x.gif">'+incomeToGoSumm+')';
-	var newFText = retFL ? $em('A',[trImg("clock"),' ',formatTime(absTime(timeToGo,serverTime), 1)],[['href','#'+allIDs[31]]]):
-		$em('SPAN',[trImg("clock"),' ',formatTime(absTime(timeToGo,serverTime), 1)]); // 2 ??
 	if( tType == 0 ) {
-		var newTR = $ee('tr',$c( newFText ),[['class','res']]);
-		newTR.appendChild( $c( textIncome ));
-		tObj.appendChild( newTR );
+		if( RB.Setup[11] > 0 ) textIncome += '<img class="npc" src="/img/x.gif"><span>&#931;('+incomeToGoSumm+')</span>';
+		var newFText = retFL ? $em('A',[trImg("clock"),' ',formatTime(absTime(timeToGo,serverTime), 1)],[['href','#'+allIDs[31]]]):
+		$em('SPAN',[trImg("clock"),' ',formatTime(absTime(timeToGo,serverTime), 1)],[['style','justify-self: end;']]); // 2 ??
+	} else {
+		if( RB.Setup[11] > 0 ) textIncome += ' (<img class="npc" style="margin:0 3px" src="/img/x.gif">'+incomeToGoSumm+')';
+		var newFText = retFL ? $em('A',[trImg("clock"),' ',formatTime(absTime(timeToGo,serverTime), 1)],[['href','#'+allIDs[31]]]):
+		$em('SPAN',[trImg("clock"),' ',formatTime(absTime(timeToGo,serverTime), 1)]); // 2 ??
+	}
+
+	if( tType == 0 ) {
+		var newdiv = $e('div',[['class','res'],['style','display: grid; grid-template-columns: repeat(5,18px 58px) auto; align-items: center; gap: 0 3px; margin-bottom: 5px;']]);
+		newdiv.innerHTML = textIncome;
+		newdiv.appendChild(newFText);
+		tObj.parentNode.appendChild( newdiv );
 	} else {
 		var existT = $gc(allIDs[20],tObj);
 		if( existT.length > 0 ) tObj.removeChild(existT[0].parentNode);
@@ -3978,7 +4010,11 @@ function resourceCalculator ( tObj, timeToGo, incomingRes, tType ) { // tType 0-
 	}
 	lastTime = timeToGo;
 
-	if( redLine.length > 0 ) tObj.parentNode.insertBefore($ee('table',$ee('tr',$c(redLine)),[['class',allIDs[13]]]),tObj);
+	if( tType == 0 ) {
+		if( redLine.length > 0 ) tObj.parentNode.insertBefore($ee('table',$ee('tr',$c(redLine)),[['class',allIDs[13]]]),tObj);
+	} else {
+		if( redLine.length > 0 ) tObj.parentNode.insertBefore($ee('table',$ee('tr',$c(redLine)),[['class',allIDs[13]]]),tObj);
+	}
 
 	rpCount++;
 }
@@ -6990,7 +7026,24 @@ function buildDispatcher () {
 	var gid = build.getAttribute('class');
 	gid = gid.split(/\s/)[0];
 	if( gid == 'gid17' ) {
-		setTimeout(marketSend,1000); marketSumm(); marketOffer(); marketBuy(); setTimeout(marketTradeRoutes,400); stopRP();
+		var sendRes = $g("marketplaceSendResources");
+		if (document.readyState === "complete") {
+			if (sendRes) { 
+				var sendButt = $gt("button",sendRes);
+				if (sendButt.length>0) { sendButt[0].addEventListener("click",function(x) { setTimeout(marketSend,200); }, 0); }
+			}
+			setTimeout(marketSend,400); setTimeout(marketSumm,400); marketOffer(); marketBuy(); setTimeout(marketTradeRoutes,400); stopRP();
+		} else {
+			document.onreadystatechange = function () {
+				if (document.readyState === "complete") {
+					if (sendRes) { 
+						var sendButt = $gt("button",sendRes);
+						if (sendButt.length>0) { sendButt[0].addEventListener("click",function(x) { setTimeout(marketSend,200); }, 0); }
+					}
+					setTimeout(marketSend,400); setTimeout(marketSumm,400); marketOffer(); marketBuy(); setTimeout(marketTradeRoutes,400); stopRP();
+				}
+			}
+		}
 		var gold = $xf('//div[@class="npcMerchant"]//button[contains(@class, "gold")]','l',cont);
 		for( var i = 0; i < gold.snapshotLength; i++ ) {
 			gold.snapshotItem(i).addEventListener('click', function(x) { setTimeout(npcForTroops,500); }, 0);
@@ -8930,7 +8983,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Resource Bar+";
-		content.innerHTML = "What's new in Version "+version+" - Apr 4, 2023:<p></p><ui><li>Added M(emory) button on market (not fully functional)</li><li>Fixed animals crop consumption</li></ui>";
+		content.innerHTML = "What's new in Version "+version+" - Apr 8, 2023:<p></p><ui><li>Added market resource summary</li><li>Added M(emory) button on market (works only on Firefox with Greasemonkey)</li><li>Fixed animals crop consumption</li></ui>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
