@@ -32,14 +32,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.23.4
+// @version        2.23.5
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.23.4';
+var version = '2.23.5';
 
 notRunYet = false;
 
@@ -3769,19 +3769,17 @@ function marketSumm () {
 	mSInit = false;
 	var merchantsOnTheWay = $g('marketplaceSendResources');
 	if ( !merchantsOnTheWay ) return;
-	var merchantInOut = $gc('deliveriesOverview', merchantsOnTheWay);
+	var merchantInOut = $gc('listFooter', merchantsOnTheWay);
 	if (merchantInOut.length == 0) return;
-	var routes = $gc('routes', merchantInOut[0]);
-	if (routes.length == 0) return;
 	var MutationObserver = window.MutationObserver;
 	var observer = new MutationObserver(function(mutations) {
 		mutations.forEach(function(mutation) {
 			if (mutation.removedNodes.length > 0) {
-				setTimeout(marketSummReal, 200);
+				//setTimeout(marketSummReal, 200);
 			}
 		});
 	});
-	//observer.observe(merchantsOnTheWay, {childList: true});
+	//observer.observe(merchantInOut[0], {childList: true});
 }
 function marketSummReal () {
 	if( RB.Setup[10] == 0 ) return;
@@ -3789,19 +3787,19 @@ function marketSummReal () {
 	if (!merchantsOnTheWay) return;
 	var merchantInOut = $gc('group expanded', merchantsOnTheWay);
 	if (merchantInOut.length == 0) return;
-	//var ownMerchants = $gc('group expanded', merchantsOnTheWay)[1];
 	if( ! mSInit ) {
 		initRes = true; getResources(); progressbar_ReInit(); addSpeedAndRTSend();
 	}
-	/*
-	if (ownMerchants.length > 0) {
-		var aTo = $gc('traders',ownMerchants[0]);
+	if (merchantInOut.length > 1) {
+		var ownMerchants = $gc('group expanded', merchantsOnTheWay)[1];
+		var aTo = $gc('delivery',ownMerchants);
+		var outgoingResArr = [];
 		for (i = 0; i < aTo.length; i++) {
-			var incomingRes = aTo[i].rows[2].cells[1].innerHTML.match( />\s*?\d+.?/g );
-			showMer(aTo[i], incomingRes);
+			var outgoingRes = $gc('value',aTo[i]);
+			for( var j = 0; j < 4; j++ ) { outgoingResArr[j] = outgoingRes[j].textContent; }
+			showMer(aTo[i], outgoingResArr);
 		}
 	}
-	*/
 	var incomingMerchants = merchantInOut[0];
 	//var aT = $gc('traders',incomingMerchants[0]);
 	var aT = $gc('delivery',incomingMerchants);
@@ -3885,19 +3883,16 @@ function marketSummReal () {
 	if( RB.Setup[10] > 2 ) redLinesSumm(incomingMerchants);
 }
 
-/*
 function showMer (tObj, incomingRes) {
 	var rSumm = 0;
-	while( /\/|x/.test(incomingRes[0]) ) incomingRes.shift();
 	for( var j = 0; j < 4; j++ ) {
-		incomingRes[j] = parseInt(incomingRes[j].match(/\d+/)[0]);
+		incomingRes[j] = parseInt(toNumber(incomingRes[j]));
 		rSumm += incomingRes[j];
 	}
-	var newTR = $ee('TR',$c(RB.dictionary[2]),[['class',allIDs[20]]]);
-	newTR.appendChild($ee('td',Math.ceil(rSumm/RB.village_Var[0])+'x <i class="merchantCap_small"></i>',[['colspan','11'],['style','text-align:'+docDir[0]+';']]));
-	tObj.appendChild($ee('TBODY',newTR,[['class','mer']]));
+	var newDIV = $ee('DIV',$ee('span',RB.dictionary[2]+': '+Math.ceil(rSumm/RB.village_Var[0])+'x',[['style','justify-self:end;font-weight:700;']]),[['class',allIDs[20]],['style','display: grid; grid-template-columns: auto 25px; align-items: end; gap: 0 3px; margin-bottom: 5px;']]);
+	newDIV.appendChild($e('i',[['class','merchantCap_small']]));
+	tObj.parentNode.appendChild(newDIV);
 }
-*/
 
 var incomeToGo = [];
 var summIncomingRes = [];
@@ -3933,13 +3928,12 @@ function resourceCalculator ( tObj, timeToGo, incomingRes, tType ) { // tType 0-
 	for( var j = 0; j < 4; j++ ) {
 		incomingRes[j] = parseInt(toNumber(incomingRes[j]));
 		var extraRes = 0;
-		//var mColor = '';
 		var mColor = 'black';
 		summIncomingRes[j] += incomingRes[j];
 		incomeToGo[j] = Math.round(incomepersecond[j] * (timeToGo - lastTime) + incomeToGo[j]);
 		if( incomeToGo[j] < 0 ) {
 			redTime = serverTime + timeToGo - Math.floor(incomeToGo[j]/incomepersecond[j]);
-			redLine += '<i class=r'+(j+1)+'></i>' + formatTime(redTime,1);
+			redLine += '<i class=r'+(j+1)+'></i><span style="margin-'+docDir[1]+': auto;">' + formatTime(redTime,1) + '</span>';
 			extraRes = incomeToGo[j];
 			mColor = 'red';
 			incomeToGo[j] = 0;
@@ -3951,7 +3945,7 @@ function resourceCalculator ( tObj, timeToGo, incomingRes, tType ) { // tType 0-
 			mColor = 'red';
 		}
 		if( tType == 0 ) {
-			textIncome += '<i class=r'+(j+1)+'></i>' + ' <span style="color: ' + mColor + ';">' + incomeToGo[j];
+			textIncome += '<i class=r'+(j+1)+'></i>' + ' <span style="margin-'+docDir[1]+': auto; color: ' + mColor + ';">' + incomeToGo[j];
 		} else {
 			textIncome += '&nbsp;' + '<i class=r'+(j+1)+' style="vertical-align: middle;"></i>' + ' <span style="color: ' + mColor + ';">' + incomeToGo[j];
 		}
@@ -3965,7 +3959,7 @@ function resourceCalculator ( tObj, timeToGo, incomingRes, tType ) { // tType 0-
 		timeToZero = timeToGo - Math.round(incomeToGo[3]/incomepersecond[3]);
 		if( RB.Setup[10] > 2 ) textIncome += ' <b>/ '+ ntf +'</b>';
 		else if( timeToZero < 86400 )
-			textIncome += '<i class="r5"></i>' + formatTime(serverTime + timeToZero,2);
+			textIncome += '<i class="r5"></i><span style="margin-'+docDir[1]+': auto;">' + formatTime(serverTime + timeToZero,2) + '</span>';
 		if( redTime > 0 ) {
 			if( redLineFL ) {
 				redLines[++rLl] = [extraRes,redTime,0, ntf];
@@ -3987,9 +3981,9 @@ function resourceCalculator ( tObj, timeToGo, incomingRes, tType ) { // tType 0-
 		}
 	}
 	if( tType == 0 ) {
-		if( RB.Setup[11] > 0 ) textIncome += '<img class="npc" src="/img/x.gif"><span>&#931;('+incomeToGoSumm+')</span>';
+		if( RB.Setup[11] > 0 ) textIncome += '<img class="npc" src="/img/x.gif"/> <span style="margin-'+docDir[1]+': auto;">&#931;('+incomeToGoSumm+')</span>';
 		var newFText = retFL ? $em('A',[trImg("clock"),' ',formatTime(absTime(timeToGo,serverTime), 1)],[['href','#'+allIDs[31]]]):
-		$em('SPAN',[trImg("clock"),' ',formatTime(absTime(timeToGo,serverTime), 1)],[['style','justify-self: end;']]); // 2 ??
+		$em('SPAN',[trImg("clock"),' ',formatTime(absTime(timeToGo,serverTime), 1)],[['style','margin-'+docDir[0]+': auto;']]); // 2 ??
 	} else {
 		if( RB.Setup[11] > 0 ) textIncome += ' (<img class="npc" style="margin:0 3px" src="/img/x.gif">'+incomeToGoSumm+')';
 		var newFText = retFL ? $em('A',[trImg("clock"),' ',formatTime(absTime(timeToGo,serverTime), 1)],[['href','#'+allIDs[31]]]):
@@ -3997,7 +3991,7 @@ function resourceCalculator ( tObj, timeToGo, incomingRes, tType ) { // tType 0-
 	}
 
 	if( tType == 0 ) {
-		var newdiv = $e('div',[['class','res'],['style','display: grid; grid-template-columns: repeat(5,18px 58px) auto; align-items: center; gap: 0 3px; margin-bottom: 5px;']]);
+		var newdiv = $e('div',[['class','res'],['style','display: flex; align-items: center; gap: 3px; margin-bottom: 5px;']]);
 		newdiv.innerHTML = textIncome;
 		newdiv.appendChild(newFText);
 		tObj.parentNode.appendChild( newdiv );
@@ -7026,24 +7020,10 @@ function buildDispatcher () {
 	var gid = build.getAttribute('class');
 	gid = gid.split(/\s/)[0];
 	if( gid == 'gid17' ) {
+		setTimeout(marketSend,700); setTimeout(marketSumm,700); marketOffer(); marketBuy(); setTimeout(marketTradeRoutes,700); stopRP();
 		var sendRes = $g("marketplaceSendResources");
-		if (document.readyState === "complete") {
-			if (sendRes) { 
-				var sendButt = $gt("button",sendRes);
-				if (sendButt.length>0) { sendButt[0].addEventListener("click",function(x) { setTimeout(marketSend,200); }, 0); }
-			}
-			setTimeout(marketSend,400); setTimeout(marketSumm,400); marketOffer(); marketBuy(); setTimeout(marketTradeRoutes,400); stopRP();
-		} else {
-			document.onreadystatechange = function () {
-				if (document.readyState === "complete") {
-					if (sendRes) { 
-						var sendButt = $gt("button",sendRes);
-						if (sendButt.length>0) { sendButt[0].addEventListener("click",function(x) { setTimeout(marketSend,200); }, 0); }
-					}
-					setTimeout(marketSend,400); setTimeout(marketSumm,400); marketOffer(); marketBuy(); setTimeout(marketTradeRoutes,400); stopRP();
-				}
-			}
-		}
+		var sendButt = $gt("button",sendRes);
+		if (sendButt.length > 0) { sendButt[0].addEventListener("click",function(x) { setTimeout(marketSend,700); }, 0); }
 		var gold = $xf('//div[@class="npcMerchant"]//button[contains(@class, "gold")]','l',cont);
 		for( var i = 0; i < gold.snapshotLength; i++ ) {
 			gold.snapshotItem(i).addEventListener('click', function(x) { setTimeout(npcForTroops,500); }, 0);
@@ -8983,7 +8963,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Resource Bar+";
-		content.innerHTML = "What's new in Version "+version+" - Apr 8, 2023:<p></p><ui><li>Added market resource summary</li><li>Added M(emory) button on market (works only on Firefox with Greasemonkey)</li><li>Fixed animals crop consumption</li></ui>";
+		content.innerHTML = "What's new in Version "+version+" - Apr 10, 2023:<p></p><ui><li>Added market resource summary</li><li>Added M(emory) button on market (works only on Firefox with Greasemonkey)</li><li>Added number of merchants for each transport</li></ui>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
