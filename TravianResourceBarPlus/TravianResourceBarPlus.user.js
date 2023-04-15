@@ -32,14 +32,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.23.5
+// @version        2.23.6
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.23.5';
+var version = '2.23.6';
 
 notRunYet = false;
 
@@ -3224,7 +3224,7 @@ function marketSend () {
 	}
 	function getTotTransport() {
 		var totT = 0;
-		for (var i = 1; i < 5; i++) {
+		for (var i = 0; i < 4; i++) {
 			var aR = parseInt(rxI[i].value);
 			if (isFinite(aR)) totT += aR;
 		}
@@ -3243,7 +3243,7 @@ function marketSend () {
 			mhText += " ( "+ crtExceed + " )";
 		} else if ( crtWaste ) mhText += " ( -"+ crtWaste + " )";
  		mhText += "</b>";
-		setMerchantsCell(mhText, mhColor);
+		//setMerchantsCell(mhText, mhColor);
 	}
 	function getMaxRTr () {
 		var maxRRTr = parseInt(maxRC.value);
@@ -3325,8 +3325,17 @@ function marketSend () {
 			}
 			if( wantRes < 0 ) wantRes = 0;
 			//if( checkRes[i+1].checked ) rxI[i+1].value = wantRes < resNow[i] ? wantRes: resNow[i];
+			let lastValue = rxI[i].value;
 			rxI[i].value = wantRes < resNow[i] ? wantRes: resNow[i];
-			rxI[i].dispatchEvent(new Event('change', {bubbles:true}));
+			let event = new Event('change', { bubbles: true });
+			// hack React15
+			event.simulated = true;
+			// hack React16 内部定义了descriptor拦截value，此处重置状态
+			let tracker = rxI[i]._valueTracker;
+			if (tracker) {
+				tracker.setValue(lastValue);
+			}
+			rxI[i].dispatchEvent(event);
 		}
 		//mhRowUpdate();
 		//sendResourses( RB.wantsMem[4] );
@@ -3341,15 +3350,17 @@ function marketSend () {
 		setTimeout(reloadSettings,100);
 	}
 	function removeACh () {
-		$g('button').addEventListener('DOMNodeInserted',rEL,false);
-		if( typeof checkRes == 'undefined' ) return;
+		//$g('button').addEventListener('DOMNodeInserted',rEL,false);
+		//if( typeof checkRes == 'undefined' ) return;
 
-		for( var i = 1; i < 5; i++ )
-			checkRes[i].checked = false;
+		//for( var i = 1; i < 5; i++ )
+		//	checkRes[i].checked = false;
 
-		if( $gn('x').length < 1 ) return;
-		var xx = parseInt($gn('x')[0].value);
-		var yy = parseInt($gn('y')[0].value);
+		//if( $gn('x').length < 1 ) return;
+		//var xx = parseInt($gn('x')[0].value);
+		//var yy = parseInt($gn('y')[0].value);
+		var xx = parseInt($gt('input',$gc('coordinateX')[0])[0].getAttribute("value"));
+		var yy = parseInt($gt('input',$gc('coordinateY')[0])[0].getAttribute("value"));
 		if( isNaN(xx) || isNaN(yy) ) return;
 		if( xy2id(xx,yy) == RB.wantsMem[4] ) {
 			RB.wantsMem[3] = parseInt(RB.wantsMem[3]) - extNegat;
@@ -3575,7 +3586,7 @@ function marketSend () {
 	//if( /&r\d=/.test(crtPath) )
 	//	for( i=1; i<5; i++ ) try{ rxI[i].value = crtPath.match(new RegExp('&r'+i+'=(\\d+)'))[1]; } catch(e){};
 
-	//addButtonsEvent();
+	addButtonsEvent();
 	
 	var target = $gc('merchantsAvailable')[0];
 	var MutationObserver = window.MutationObserver;
@@ -7022,8 +7033,10 @@ function buildDispatcher () {
 	if( gid == 'gid17' ) {
 		setTimeout(marketSend,700); setTimeout(marketSumm,700); marketOffer(); marketBuy(); setTimeout(marketTradeRoutes,700); stopRP();
 		var sendRes = $g("marketplaceSendResources");
-		var sendButt = $gt("button",sendRes);
-		if (sendButt.length > 0) { sendButt[0].addEventListener("click",function(x) { setTimeout(marketSend,700); }, 0); }
+		if (sendRes) {
+			var sendButt = $gt("button",sendRes);
+			if (sendButt.length > 0) { sendButt[0].addEventListener("click",function(x) { setTimeout(marketSend,700); }, 0); }
+		}
 		var gold = $xf('//div[@class="npcMerchant"]//button[contains(@class, "gold")]','l',cont);
 		for( var i = 0; i < gold.snapshotLength; i++ ) {
 			gold.snapshotItem(i).addEventListener('click', function(x) { setTimeout(npcForTroops,500); }, 0);
@@ -8963,7 +8976,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Resource Bar+";
-		content.innerHTML = "What's new in Version "+version+" - Apr 10, 2023:<p></p><ui><li>Added market resource summary</li><li>Added M(emory) button on market (works only on Firefox with Greasemonkey)</li><li>Added number of merchants for each transport</li></ui>";
+		content.innerHTML = "What's new in Version "+version+" - Apr 15, 2023:<p></p><ui><li>Fixed M(emory) function for Tampermonkey and Violentmonkey</li></ui>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
