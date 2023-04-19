@@ -32,14 +32,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.23.6
+// @version        2.23.7
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.23.6';
+var version = '2.23.7';
 
 notRunYet = false;
 
@@ -3246,9 +3246,13 @@ function marketSend () {
 		//setMerchantsCell(mhText, mhColor);
 	}
 	function getMaxRTr () {
-		var maxRRTr = parseInt(maxRC.value);
+		//var maxRRTr = parseInt(maxRC.value);
+		var maxRRTr = parseInt(maxTr);
+		//var maxRTr = isNaN(maxRRTr)? maxTr: maxRRTr;
 		var maxRTr = isNaN(maxRRTr)? maxTr: maxRRTr;
-		var maxRMM = parseInt(maxRM.value);
+		//var maxRMM = parseInt(maxRM.value);
+		var maxRMM = parseInt(maxM);
+		//var maxRTTr = isNaN(maxRMM)? maxTr: maxRMM * maxC;
 		var maxRTTr = isNaN(maxRMM)? maxTr: maxRMM * maxC;
 		return Math.min(maxRTr, maxRTTr);
 	}
@@ -3325,21 +3329,32 @@ function marketSend () {
 			}
 			if( wantRes < 0 ) wantRes = 0;
 			//if( checkRes[i+1].checked ) rxI[i+1].value = wantRes < resNow[i] ? wantRes: resNow[i];
-			let lastValue = rxI[i].value;
-			rxI[i].value = wantRes < resNow[i] ? wantRes: resNow[i];
-			let event = new Event('change', { bubbles: true });
-			// hack React15
-			event.simulated = true;
-			// hack React16 内部定义了descriptor拦截value，此处重置状态
-			let tracker = rxI[i]._valueTracker;
-			if (tracker) {
-				tracker.setValue(lastValue);
-			}
-			rxI[i].dispatchEvent(event);
+			//rxI[i].value = wantRes < resNow[i] ? wantRes: resNow[i];
+			updateInput(rxI[i],wantRes < resNow[i] ? wantRes: resNow[i]);
+			//rxI[i].focus();
+			//if (rxI[i].value) rxI[i].select();
+			//document.execCommand('insertText', false, wantRes < resNow[i] ? wantRes: resNow[i]);
 		}
 		//mhRowUpdate();
 		//sendResourses( RB.wantsMem[4] );
 	}
+	function updateInput (input, value) {
+		let lastValue = input.value;
+		input.value = value;
+		let event = new Event('change', { bubbles: true });
+		// hack React16
+		let tracker = input._valueTracker;
+		if (tracker) {
+			tracker.setValue(lastValue);
+		}
+		input.dispatchEvent(event);
+	}
+	function updateInput1 (input, value) {
+		input.focus();
+		if (input.value) input.select();
+		document.execCommand('insertText', false, value);
+	}
+	
 	var mcFL = true;
 	function rEL () {
 		$g('button').removeEventListener('DOMNodeInserted',rEL);
@@ -3359,8 +3374,8 @@ function marketSend () {
 		//if( $gn('x').length < 1 ) return;
 		//var xx = parseInt($gn('x')[0].value);
 		//var yy = parseInt($gn('y')[0].value);
-		var xx = parseInt($gt('input',$gc('coordinateX')[0])[0].getAttribute("value"));
-		var yy = parseInt($gt('input',$gc('coordinateY')[0])[0].getAttribute("value"));
+		var xx = parseInt($gt('input',$gc('coordinateX')[0])[0].value);
+		var yy = parseInt($gt('input',$gc('coordinateY')[0])[0].value);
 		if( isNaN(xx) || isNaN(yy) ) return;
 		if( xy2id(xx,yy) == RB.wantsMem[4] ) {
 			RB.wantsMem[3] = parseInt(RB.wantsMem[3]) - extNegat;
@@ -3374,7 +3389,8 @@ function marketSend () {
 				refP.innerHTML = '&nbsp;%';
 				lPP++;
 				var aRF = [];
-				for( var i = 0; i < 4; i++ ) if( checkRes[i+1].checked && resNow[i] > 0 ) aRF.push(resNow[i]);
+				//for( var i = 0; i < 4; i++ ) if( checkRes[i+1].checked && resNow[i] > 0 ) aRF.push(resNow[i]);
+				for( var i = 0; i < 4; i++ ) aRF.push(resNow[i]);
 				if( aRF.length > 0 ) {
 					aRF.sort(function(a,b){return b-a;});
 					var aRc = 0;
@@ -3385,9 +3401,12 @@ function marketSend () {
 						if( aRc+aRF[i-1]*i >  maxRTr ) break;
 					}
 					aRc = Math.floor((maxRTr-aRc)/i);
-					for( var i = 0; i < 4; i++ )
-						if( checkRes[i+1].checked ) rxI[i+1].value = aRc > resNow[i] ? resNow[i]: aRc;
-					mhRowUpdate();
+					for( var i = 0; i < 4; i++ ) {
+						//if( checkRes[i+1].checked ) rxI[i+1].value = aRc > resNow[i] ? resNow[i]: aRc;
+						//rxI[i].value = aRc > resNow[i] ? resNow[i]: aRc;
+						updateInput1(rxI[i],aRc > resNow[i] ? resNow[i]: aRc);
+					}
+					//mhRowUpdate();
 				}
 				break;
 			case 1:
@@ -3395,21 +3414,27 @@ function marketSend () {
 				lPP++;
 				var aRc = 0;
 				var aRn = 0;
-				for( var i = 1; i < 5; i++ ) if( checkRes[i].checked ) { aRc++; aRn += resNow[i-1]; }
+				//for( var i = 1; i < 5; i++ ) if( checkRes[i].checked ) { aRc++; aRn += resNow[i-1]; }
+				for( var i = 1; i < 5; i++ ) { aRc++; aRn += resNow[i-1]; }
 				if( aRc > 0 ) {
-					for( var i = 1; i < 5; i++ ) {
-						if( checkRes[i].checked ) {
-							var toRes = Math.floor((resNow[i-1]/aRn) * maxRTr);
-							rxI[i].value = toRes < resNow[i-1] ? toRes : resNow[i-1];
-						}
+					for( var i = 0; i < 4; i++ ) { updateInput(rxI[i],0); } //hack... reset values 
+					for( var i = 0; i < 4; i++ ) {
+						//if( checkRes[i].checked ) {
+							var toRes = Math.floor((resNow[i]/aRn) * maxRTr);
+							//rxI[i].value = toRes < resNow[i] ? toRes : resNow[i];
+							var val = toRes < resNow[i] ? toRes : resNow[i];
+							updateInput1(rxI[i],val);
+						//}
 					}
-					mhRowUpdate();
+					//mhRowUpdate();
 				}
 				break;
 			default:
-				for( var i = 1; i < 5; i++ )
-					if( checkRes[i].checked ) rxI[i].value = '';
-				mhRowUpdate();
+				for( var i = 1; i < 5; i++ ) {
+					//if( checkRes[i].checked ) rxI[i].value = '';
+					updateInput1(rxI[i-1],0);
+				}
+				//mhRowUpdate();
 				refP.innerHTML = '&nbsp;=';
 				lPP = 0;
 				break;
@@ -3421,19 +3446,21 @@ function marketSend () {
 		if( isNaN(xx) || isNaN(yy) ) return;
 		RB.wantsMem = [0,0,0,0,0,0,0,0,0,0];
 		for( var i=0; i<4; i++ )
-			 if( isFinite(parseInt(rxI[i+1].value)) ) RB.wantsMem[i] = parseInt(rxI[i+1].value);
+			if( isFinite(parseInt(rxI[i+1].value)) ) RB.wantsMem[i] = parseInt(rxI[i+1].value);
  		RB.wantsMem[4] = xy2id(xx,yy);
 		saveCookie('Mem', 'wantsMem');
 		alert( "Saved: "+ RB.wantsMem[0] +" | "+ RB.wantsMem[1] +" | "+ RB.wantsMem[2] +" | "+ RB.wantsMem[3] );
 	}
 	function mhRowLinkAMem () {
-		var tID = $gn('kid')[0].value;
-		if( tID != RB.wantsMem[4] ) return;
+		var xx = parseInt($gt('input',$gc('coordinateX')[0])[0].value);
+		var yy = parseInt($gt('input',$gc('coordinateY')[0])[0].value);
+		if( isNaN(xx) || isNaN(yy) ) return;
+		if( xy2id(xx,yy) != RB.wantsMem[4] ) return;
 		loadVCookie('vPPH', 'village_PPH', RB.wantsMem[4]);
 		var htR = getTTime( calcDistance(RB.wantsMem[4], village_aid), MTime[parseInt(RB.Setup[2])]*sM, 0, 0 );
 		var ht = parseInt(RB.wantsMem[9]) < htR ? htR - parseInt(RB.wantsMem[9]): 0;
 		for( var i = 0; i < 4; i++ ) {
-			var rxI = $gn('r' + (i+1))[0].value;
+			var rxI = $gn(resnames[i])[0].value;
 			if( isNaN(parseInt(rxI)) || parseInt(rxI) == 0 ) continue;
 			RB.wantsMem[i] = parseInt(RB.wantsMem[i]) - parseInt(rxI) - Math.ceil(RB.village_PPH[i]/3600 * ht);
 			if( RB.wantsMem[i] <= 0 ) RB.wantsMem[i] = 0;
@@ -3453,17 +3480,23 @@ function marketSend () {
 		//var ss = $gt('button',$gn('snd')[0]);
 		var sendForm = $g('sendResourcesForm');
 		var ss = sendForm.querySelectorAll('button[type=submit]');
-		for( i=0; i<ss.length; i++ ) ss[i].addEventListener('click', removeACh, true);
+		//for( i=0; i<ss.length; i++ ) ss[i].addEventListener('click', removeACh, true);
+		for( i=0; i<ss.length; i++ ) ss[i].addEventListener('click', mhRowLinkAMem, true);
 		// travel time
 		//if( ! fl && ss.length > 0 )
 		//	addShowDistanceIn( ss[0].parentNode, -1 );
 		if( fl ) $gn('dname')[0].value = '';
 	}
 	function checkTargetValidate () {
-		var basee = $g('target_validate');
+		//var basee = $g('target_validate');
+		var basee = $g('sendResourcesForm');
 		if( basee ) {
-			$gc("sendRessources",$gn('snd')[0])[0].addEventListener('click', mhRowLinkAMem, true);
-			addSpeedAndRTSend(basee);
+			var ss = basee.querySelectorAll('button[type=submit]');
+			//$gc("sendRessources",$gn('snd')[0])[0].addEventListener('click', mhRowLinkAMem, true);
+			if (ss.length>0) {
+				ss[0].addEventListener('click', mhRowLinkAMem, true);
+			} else return false;
+			//addSpeedAndRTSend(basee);
 			return true;
 		} else return false;
 	}
@@ -3507,7 +3540,7 @@ function marketSend () {
 	var lPP = 0;
 	var resnames = ["lumber","clay","iron","crop"];
 
-	//if( checkMerchants() ) return;
+	if( checkMerchants() ) return;
 
 	if( mName != RB.dictionary[2] ) {
 		RB.dictionary[2] = mName;
@@ -3572,9 +3605,9 @@ function marketSend () {
 	//ref.addEventListener('click', mhRowsLinkM, false);
 	//newTR.appendChild($c(ref,[['width','5%']]));
 	var newTR = $e('div');
-	var ref = $a('M',[['href',jsVoid]]);
-	ref.addEventListener('click', mhRowLinkMem, false);
-	newTR.appendChild(ref,[['width','5%']]);
+	var memL = $a('M',[['href',jsVoid],['style','font-size:15px;margin-'+docDir[0]+':10px;']]);
+	memL.addEventListener('click', mhRowLinkMem, false);
+	newTR.appendChild(memL,[['width','5%']]);
 	basee.appendChild(newTR);
 	//var ref = $a('+',[['href',jsVoid]]);
 	//ref.addEventListener('click', mhRowsLinkP, false);
@@ -3582,6 +3615,21 @@ function marketSend () {
 	//var refP = $a('&nbsp;=',[['href',jsVoid]]);
 	//refP.addEventListener('click', mhRowsLinkPP, false);
 	//newTR.appendChild($c(refP,[['width','5%']]));
+	var refP = $a('&nbsp;=',[['href',jsVoid],['style','font-size:15px;margin-'+docDir[0]+':20px;']]);
+	refP.addEventListener('click', mhRowsLinkPP, false);
+	var newAllRes = $e('i', [['class','resources_medium']]);
+	var resSelector = $gc("resourceSelector")[0];
+	var pButt = $gc("buttonFramed plus rectangle")[0].cloneNode(true);
+	var mButt = $gc("buttonFramed minus rectangle")[0].cloneNode(true);
+	mButt.removeAttribute('disabled');
+	pButt.style.margin = "0 20px";
+	var newDiv = $e('div');
+	//newDiv.appendChild(mButt);
+	//newDiv.appendChild(pButt);
+	newDiv.appendChild(memL);
+	newDiv.appendChild(refP);
+	resSelector.appendChild(newAllRes);
+	resSelector.appendChild(newDiv);
 
 	//if( /&r\d=/.test(crtPath) )
 	//	for( i=1; i<5; i++ ) try{ rxI[i].value = crtPath.match(new RegExp('&r'+i+'=(\\d+)'))[1]; } catch(e){};
@@ -8976,7 +9024,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Resource Bar+";
-		content.innerHTML = "What's new in Version "+version+" - Apr 15, 2023:<p></p><ui><li>Fixed M(emory) function for Tampermonkey and Violentmonkey</li></ui>";
+		content.innerHTML = "What's new in Version "+version+" - Apr 19, 2023:<p></p><ui><li>Added equal/percent/clear market buttons</li><li>Fixed the Memory function to update the resources needed value after sending merchants</li></ui>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
