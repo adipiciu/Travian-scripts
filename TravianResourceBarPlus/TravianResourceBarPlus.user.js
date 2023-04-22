@@ -32,14 +32,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.23.8
+// @version        2.23.9
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.23.8';
+var version = '2.23.9';
 
 notRunYet = false;
 
@@ -3278,25 +3278,27 @@ function marketSend () {
 			if( ++lastLinkR[1] > 1 || ! i ) lastLinkR[0] = 0;
 		}
 		lastLinkR[3] = parseInt(rxI[RC].value);
-		mhRowUpdate();
+		//mhRowUpdate();
 	}
 	function mhRowLinkM ( RC ) {
 		var aR = parseInt(rxI[RC].value);
-		rxI[RC].value = aR > maxC ? aR - maxC : '';
-		mhRowUpdate();
+		//rxI[RC].value = aR > maxC ? aR - maxC : '';
+		updateInput1(rxI[RC],aR > maxC ? aR - maxC : '');
+		//mhRowUpdate();
 	}
 	function mhRowLinkP ( RC ) {
 		var aR = parseInt(rxI[RC].value);
 		var i = isNaN(aR) ? maxC : aR + maxC;
-		rxI[RC].value = i < resNow[RC-1] ? i : resNow[RC-1];
-		mhRowUpdate();
+		//rxI[RC].value = i < resNow[RC-1] ? i : resNow[RC-1];
+		updateInput1(rxI[RC],i < resNow[RC] ? i : resNow[RC]);
+		//mhRowUpdate();
 	}
 	function mhRowsLinkM () {
-		for( var i = 1; i < 5; i++ )
+		for( var i = 0; i < 4; i++ )
 			if( checkRes[i].checked ) mhRowLinkM ( i );
 	}
 	function mhRowsLinkP () {
-		for( var i = 1; i < 5; i++ )
+		for( var i = 0; i < 4; i++ )
 			if( checkRes[i].checked ) mhRowLinkP ( i );
 	}
 	var extNegat = 0;
@@ -3597,33 +3599,31 @@ function marketSend () {
 	//var ref = $a('-',[['href',jsVoid]]);
 	//ref.addEventListener('click', mhRowsLinkM, false);
 	//newTR.appendChild($c(ref,[['width','5%']]));
-	var memL = $a('M',[['href',jsVoid],['style','font-size:15px;margin-'+docDir[0]+':20px;']]);
+	var memL = $a('M',[['href',jsVoid],['style','font-size:15px;']]);
 	memL.addEventListener('click', mhRowLinkMem, false);
 	//var ref = $a('+',[['href',jsVoid]]);
 	//ref.addEventListener('click', mhRowsLinkP, false);
 	//newTR.appendChild($c(ref,[['width','5%']]));
-	//var refP = $a('&nbsp;=',[['href',jsVoid]]);
-	//refP.addEventListener('click', mhRowsLinkPP, false);
-	//newTR.appendChild($c(refP,[['width','5%']]));
-	var refEq = $a('=',[['href',jsVoid],['style','font-size:15px;margin-'+docDir[0]+':20px;']]);
+	var refEq = $a('=',[['href',jsVoid],['style','font-size:15px;']]);
 	refEq.addEventListener('click', mhRowsLinkEq, false);
-	var refP = $a('%',[['href',jsVoid],['style','font-size:15px;margin-'+docDir[0]+':20px;']]);
+	var refP = $a('%',[['href',jsVoid],['style','font-size:15px;']]);
 	refP.addEventListener('click', mhRowsLinkPP, false);
-	var refCl = $a('C',[['href',jsVoid],['style','font-size:15px;margin-'+docDir[0]+':20px;']]);
+	var refCl = $a('C',[['href',jsVoid],['style','font-size:15px;']]);
 	refCl.addEventListener('click', mhRowsLinkCl, false);
 	var newAllRes = $e('i', [['class','resources_medium']]);
 	var resSelector = $gc("resourceSelector")[0];
 	var pButt = $gc("buttonFramed plus rectangle")[0].cloneNode(true);
+	pButt.addEventListener('click', mhRowsLinkP, false);
 	var mButt = $gc("buttonFramed minus rectangle")[0].cloneNode(true);
+	mButt.addEventListener('click', mhRowsLinkM, false);
 	mButt.removeAttribute('disabled');
-	pButt.style.margin = "0 20px";
-	var newDiv = $e('div');
-	//newDiv.appendChild(mButt);
-	//newDiv.appendChild(pButt);
+	var newDiv = $e('div',[['style','display:flex;justify-content:space-between;align-items:center;']]);
+	newDiv.appendChild(mButt);
 	newDiv.appendChild(memL);
 	newDiv.appendChild(refEq);
 	newDiv.appendChild(refP);
 	newDiv.appendChild(refCl);
+	newDiv.appendChild(pButt);
 	resSelector.appendChild(newAllRes);
 	resSelector.appendChild(newDiv);
 
@@ -9020,7 +9020,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Resource Bar+";
-		content.innerHTML = "What's new in Version "+version+" - Apr 22, 2023:<p></p><ui><li>Added resource selection checkboxes in market</li><li>Added equal/percent/clear market buttons</li><li>Fixed the Memory function to update the resources needed value after sending merchants</li><li>Fixes</li></ui>";
+		content.innerHTML = "What's new in Version "+version+" - Apr 22, 2023:<p></p><ui><li>Added plus/minus all resources buttons</li><li>Added resource selection checkboxes in market</li><li>Added equal/percent/clear market buttons</li><li>Fixed the Memory function to update the resources needed value after sending merchants</li><li>Fixes</li></ui>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
