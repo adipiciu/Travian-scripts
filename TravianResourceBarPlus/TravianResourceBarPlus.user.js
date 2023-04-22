@@ -32,14 +32,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.23.7
+// @version        2.23.8
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.23.7';
+var version = '2.23.8';
 
 notRunYet = false;
 
@@ -3330,7 +3330,7 @@ function marketSend () {
 			if( wantRes < 0 ) wantRes = 0;
 			//if( checkRes[i+1].checked ) rxI[i+1].value = wantRes < resNow[i] ? wantRes: resNow[i];
 			//rxI[i].value = wantRes < resNow[i] ? wantRes: resNow[i];
-			updateInput(rxI[i],wantRes < resNow[i] ? wantRes: resNow[i]);
+			if( checkRes[i].checked ) updateInput1(rxI[i],wantRes < resNow[i] ? wantRes: resNow[i]);
 			//rxI[i].focus();
 			//if (rxI[i].value) rxI[i].select();
 			//document.execCommand('insertText', false, wantRes < resNow[i] ? wantRes: resNow[i]);
@@ -3350,6 +3350,7 @@ function marketSend () {
 		input.dispatchEvent(event);
 	}
 	function updateInput1 (input, value) {
+		if (input.disabled) return;
 		input.focus();
 		if (input.value) input.select();
 		document.execCommand('insertText', false, value);
@@ -3384,61 +3385,51 @@ function marketSend () {
 	}
 	function mhRowsLinkPP () {
 		var maxRTr = getMaxRTr();
-		switch (lPP) {
-			case 0:
-				refP.innerHTML = '&nbsp;%';
-				lPP++;
-				var aRF = [];
-				//for( var i = 0; i < 4; i++ ) if( checkRes[i+1].checked && resNow[i] > 0 ) aRF.push(resNow[i]);
-				for( var i = 0; i < 4; i++ ) aRF.push(resNow[i]);
-				if( aRF.length > 0 ) {
-					aRF.sort(function(a,b){return b-a;});
-					var aRc = 0;
-					var aRc2 = 0;
-					for( i=aRF.length; i>0; i--) {
-						aRc += aRc2;
-						aRc2 = aRF[i-1];
-						if( aRc+aRF[i-1]*i >  maxRTr ) break;
-					}
-					aRc = Math.floor((maxRTr-aRc)/i);
-					for( var i = 0; i < 4; i++ ) {
-						//if( checkRes[i+1].checked ) rxI[i+1].value = aRc > resNow[i] ? resNow[i]: aRc;
-						//rxI[i].value = aRc > resNow[i] ? resNow[i]: aRc;
-						updateInput1(rxI[i],aRc > resNow[i] ? resNow[i]: aRc);
-					}
-					//mhRowUpdate();
+		var aRc = 0;
+		var aRn = 0;
+		for( var i = 0; i < 4; i++ ) if( checkRes[i].checked ) { aRc++; aRn += resNow[i]; }
+		if( aRc > 0 ) {
+			for( var i = 0; i < 4; i++ ) { updateInput1(rxI[i],0); } //reset values so they will not overflow
+			for( var i = 0; i < 4; i++ ) {
+				if( checkRes[i].checked ) {
+					var toRes = Math.floor((resNow[i]/aRn) * maxRTr);
+					//rxI[i].value = toRes < resNow[i] ? toRes : resNow[i];
+					updateInput1(rxI[i],toRes < resNow[i] ? toRes : resNow[i]);
 				}
-				break;
-			case 1:
-				refP.innerHTML = '&nbsp;C';
-				lPP++;
-				var aRc = 0;
-				var aRn = 0;
-				//for( var i = 1; i < 5; i++ ) if( checkRes[i].checked ) { aRc++; aRn += resNow[i-1]; }
-				for( var i = 1; i < 5; i++ ) { aRc++; aRn += resNow[i-1]; }
-				if( aRc > 0 ) {
-					for( var i = 0; i < 4; i++ ) { updateInput(rxI[i],0); } //hack... reset values 
-					for( var i = 0; i < 4; i++ ) {
-						//if( checkRes[i].checked ) {
-							var toRes = Math.floor((resNow[i]/aRn) * maxRTr);
-							//rxI[i].value = toRes < resNow[i] ? toRes : resNow[i];
-							var val = toRes < resNow[i] ? toRes : resNow[i];
-							updateInput1(rxI[i],val);
-						//}
-					}
-					//mhRowUpdate();
-				}
-				break;
-			default:
-				for( var i = 1; i < 5; i++ ) {
-					//if( checkRes[i].checked ) rxI[i].value = '';
-					updateInput1(rxI[i-1],0);
-				}
-				//mhRowUpdate();
-				refP.innerHTML = '&nbsp;=';
-				lPP = 0;
-				break;
+			}
+			//mhRowUpdate();
 		}
+	}
+	function mhRowsLinkEq () {
+		var maxRTr = getMaxRTr();
+		var aRF = [];
+		for( var i = 0; i < 4; i++ ) if( checkRes[i].checked && resNow[i] > 0 ) aRF.push(resNow[i]);
+		if( aRF.length > 0 ) {
+			aRF.sort(function(a,b){return b-a;});
+			var aRc = 0;
+			var aRc2 = 0;
+			for( i=aRF.length; i>0; i--) {
+				aRc += aRc2;
+				aRc2 = aRF[i-1];
+				if( aRc+aRF[i-1]*i >  maxRTr ) break;
+			}
+			aRc = Math.floor((maxRTr-aRc)/i);
+			for( var i = 0; i < 4; i++ ) { updateInput1(rxI[i],0); } //reset values so they will not overflow
+			for( var i = 0; i < 4; i++ ) {
+				//if( checkRes[i+1].checked ) rxI[i+1].value = aRc > resNow[i] ? resNow[i]: aRc;
+				//rxI[i].value = aRc > resNow[i] ? resNow[i]: aRc;
+				if( checkRes[i].checked ) updateInput1(rxI[i],aRc > resNow[i] ? resNow[i]: aRc);
+			}
+			//mhRowUpdate();
+		}
+	}
+	function mhRowsLinkCl () {
+		var maxRTr = getMaxRTr();
+		for( var i = 0; i < 4; i++ ) {
+			//if( checkRes[i].checked ) rxI[i].value = '';
+			if( checkRes[i].checked ) updateInput1(rxI[i],0);
+		}
+		//mhRowUpdate();
 	}
 	function mhRowLinkMPlus () {
 		var xx = parseInt($gn('x')[0].value);
@@ -3509,7 +3500,7 @@ function marketSend () {
 	function checkMerchants () {
 		moC = $gc('merchantsInformation')[0].firstElementChild.firstElementChild;
 		if (moC) {
-			var moCC = moC.innerHTML.onlyText().match(/(\d+)\/(\d+)/);
+			var moCC = moC.innerHTML.onlyText().match(/(\d+)[\/\\](\d+)/);
 			mDiv = $gc('merchantsInformation')[0].firstElementChild;
 			mName = mDiv.textContent.split(":")[0];
 			if (parseInt(moCC[2]) > parseInt(moCC[1])) {
@@ -3527,6 +3518,8 @@ function marketSend () {
 
 	//var basee = $g('send_select');
 	var basee = $g('sendResourcesForm');
+	var resSelector = $gc("resourceSelector")[0];
+	var imgs = $gt("i",resSelector);
 	if( ! basee ) return;
 
 	var moC = null;
@@ -3537,7 +3530,6 @@ function marketSend () {
 	var maxTr = 0;
 	var lastLinkR = [0,0,0,0];
 	var checkRes = [];
-	var lPP = 0;
 	var resnames = ["lumber","clay","iron","crop"];
 
 	if( checkMerchants() ) return;
@@ -3550,7 +3542,7 @@ function marketSend () {
 	fillXY();
 
 	for (var i = 0; i < 4; i++){
-		rxI[i] = $gn(resnames[i])[0];
+		rxI[i] = $gn(resnames[i],basee)[0];
 		//rxI[i].addEventListener('keyup', mhRowUpdate, false);
 		//rxI[i].addEventListener('change', mhRowUpdate, false);
 		/*
@@ -3566,9 +3558,10 @@ function marketSend () {
 		var ref = $a('+',[['href',jsVoid]]);
 		ref.addEventListener('click', function(x) { return function() { mhRowLinkP(x); }}( i ), false);
 		iRow.appendChild($c(ref,[['width','5%']]));
-		checkRes[i] = $e('INPUT',[['type','checkbox'],['checked','checked'],['name',allIDs[18]+i]]);
-		iRow.appendChild($c(checkRes[i],[['width','5%']]));
 		*/
+		checkRes[i] = $e('INPUT',[['type','checkbox'],['checked','checked'],['name',allIDs[18]+i]]);
+		//iRow.appendChild($c(checkRes[i],[['width','5%']]));
+		imgs[i].appendChild(checkRes[i],[['width','5%']]);
 	};
 
 	//maxC = parseInt($g('addRessourcesLink1',basee).innerHTML.match(/(\d+)/)[1]);
@@ -3604,19 +3597,20 @@ function marketSend () {
 	//var ref = $a('-',[['href',jsVoid]]);
 	//ref.addEventListener('click', mhRowsLinkM, false);
 	//newTR.appendChild($c(ref,[['width','5%']]));
-	var newTR = $e('div');
-	var memL = $a('M',[['href',jsVoid],['style','font-size:15px;margin-'+docDir[0]+':10px;']]);
+	var memL = $a('M',[['href',jsVoid],['style','font-size:15px;margin-'+docDir[0]+':20px;']]);
 	memL.addEventListener('click', mhRowLinkMem, false);
-	newTR.appendChild(memL,[['width','5%']]);
-	basee.appendChild(newTR);
 	//var ref = $a('+',[['href',jsVoid]]);
 	//ref.addEventListener('click', mhRowsLinkP, false);
 	//newTR.appendChild($c(ref,[['width','5%']]));
 	//var refP = $a('&nbsp;=',[['href',jsVoid]]);
 	//refP.addEventListener('click', mhRowsLinkPP, false);
 	//newTR.appendChild($c(refP,[['width','5%']]));
-	var refP = $a('&nbsp;=',[['href',jsVoid],['style','font-size:15px;margin-'+docDir[0]+':20px;']]);
+	var refEq = $a('=',[['href',jsVoid],['style','font-size:15px;margin-'+docDir[0]+':20px;']]);
+	refEq.addEventListener('click', mhRowsLinkEq, false);
+	var refP = $a('%',[['href',jsVoid],['style','font-size:15px;margin-'+docDir[0]+':20px;']]);
 	refP.addEventListener('click', mhRowsLinkPP, false);
+	var refCl = $a('C',[['href',jsVoid],['style','font-size:15px;margin-'+docDir[0]+':20px;']]);
+	refCl.addEventListener('click', mhRowsLinkCl, false);
 	var newAllRes = $e('i', [['class','resources_medium']]);
 	var resSelector = $gc("resourceSelector")[0];
 	var pButt = $gc("buttonFramed plus rectangle")[0].cloneNode(true);
@@ -3627,7 +3621,9 @@ function marketSend () {
 	//newDiv.appendChild(mButt);
 	//newDiv.appendChild(pButt);
 	newDiv.appendChild(memL);
+	newDiv.appendChild(refEq);
 	newDiv.appendChild(refP);
+	newDiv.appendChild(refCl);
 	resSelector.appendChild(newAllRes);
 	resSelector.appendChild(newDiv);
 
@@ -9024,7 +9020,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Resource Bar+";
-		content.innerHTML = "What's new in Version "+version+" - Apr 19, 2023:<p></p><ui><li>Added equal/percent/clear market buttons</li><li>Fixed the Memory function to update the resources needed value after sending merchants</li></ui>";
+		content.innerHTML = "What's new in Version "+version+" - Apr 22, 2023:<p></p><ui><li>Added resource selection checkboxes in market</li><li>Added equal/percent/clear market buttons</li><li>Fixed the Memory function to update the resources needed value after sending merchants</li><li>Fixes</li></ui>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
