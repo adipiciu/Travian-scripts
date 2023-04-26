@@ -32,14 +32,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.23.9
+// @version        2.23.10
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.23.9';
+var version = '2.23.10';
 
 notRunYet = false;
 
@@ -3218,6 +3218,12 @@ function marketBuy() {
 
 // market send page :)
 function marketSend () {
+	function updateInput1 (input, value) {
+		if (input.disabled) return;
+		input.focus();
+		if (input.value) input.select();
+		document.execCommand('insertText', false, value);
+	}
 	function setMerchantsCell(tM, colM) {
 		cM.innerHTML = tM;
 		$at(cM, [['style', 'font-size:11px; color:' + colM + ';line-height:16px;']]);
@@ -3282,14 +3288,12 @@ function marketSend () {
 	}
 	function mhRowLinkM ( RC ) {
 		var aR = parseInt(rxI[RC].value);
-		//rxI[RC].value = aR > maxC ? aR - maxC : '';
-		updateInput1(rxI[RC],aR > maxC ? aR - maxC : '');
+		updateInput1(rxI[RC],aR > maxC ? aR - maxC : 0);
 		//mhRowUpdate();
 	}
 	function mhRowLinkP ( RC ) {
 		var aR = parseInt(rxI[RC].value);
 		var i = isNaN(aR) ? maxC : aR + maxC;
-		//rxI[RC].value = i < resNow[RC-1] ? i : resNow[RC-1];
 		updateInput1(rxI[RC],i < resNow[RC] ? i : resNow[RC]);
 		//mhRowUpdate();
 	}
@@ -3311,6 +3315,7 @@ function marketSend () {
 		if (arXY[0] != coordX || arXY[1] != coordY) { sendResourses( RB.wantsMem[4] ); return; }
 		var htR = getTTime( calcDistance(RB.wantsMem[4], village_aid), MTime[parseInt(RB.Setup[2])]*sM, 0, 0 );
 		var ht = parseInt(RB.wantsMem[9]) < htR ? htR - parseInt(RB.wantsMem[9]): 0;
+		for( var i = 0; i < 4; i++ ) { updateInput1(rxI[i],0); } //reset values so they will not overflow
 		for( var i = 0; i < 4; i++ ) {
 			var wantRes = Math.ceil(parseInt(RB.wantsMem[i]) - RB.village_PPH[i]/3600 * ht);
 			if( RB.village_PPH[i] < 0 && ht > 0 ) {
@@ -3330,34 +3335,11 @@ function marketSend () {
 				}
 			}
 			if( wantRes < 0 ) wantRes = 0;
-			//if( checkRes[i+1].checked ) rxI[i+1].value = wantRes < resNow[i] ? wantRes: resNow[i];
-			//rxI[i].value = wantRes < resNow[i] ? wantRes: resNow[i];
 			if( checkRes[i].checked ) updateInput1(rxI[i],wantRes < resNow[i] ? wantRes: resNow[i]);
-			//rxI[i].focus();
-			//if (rxI[i].value) rxI[i].select();
-			//document.execCommand('insertText', false, wantRes < resNow[i] ? wantRes: resNow[i]);
 		}
 		//mhRowUpdate();
 		//sendResourses( RB.wantsMem[4] );
 	}
-	function updateInput (input, value) {
-		let lastValue = input.value;
-		input.value = value;
-		let event = new Event('change', { bubbles: true });
-		// hack React16
-		let tracker = input._valueTracker;
-		if (tracker) {
-			tracker.setValue(lastValue);
-		}
-		input.dispatchEvent(event);
-	}
-	function updateInput1 (input, value) {
-		if (input.disabled) return;
-		input.focus();
-		if (input.value) input.select();
-		document.execCommand('insertText', false, value);
-	}
-	
 	var mcFL = true;
 	function rEL () {
 		$g('button').removeEventListener('DOMNodeInserted',rEL);
@@ -3395,7 +3377,6 @@ function marketSend () {
 			for( var i = 0; i < 4; i++ ) {
 				if( checkRes[i].checked ) {
 					var toRes = Math.floor((resNow[i]/aRn) * maxRTr);
-					//rxI[i].value = toRes < resNow[i] ? toRes : resNow[i];
 					updateInput1(rxI[i],toRes < resNow[i] ? toRes : resNow[i]);
 				}
 			}
@@ -3418,17 +3399,13 @@ function marketSend () {
 			aRc = Math.floor((maxRTr-aRc)/i);
 			for( var i = 0; i < 4; i++ ) { updateInput1(rxI[i],0); } //reset values so they will not overflow
 			for( var i = 0; i < 4; i++ ) {
-				//if( checkRes[i+1].checked ) rxI[i+1].value = aRc > resNow[i] ? resNow[i]: aRc;
-				//rxI[i].value = aRc > resNow[i] ? resNow[i]: aRc;
 				if( checkRes[i].checked ) updateInput1(rxI[i],aRc > resNow[i] ? resNow[i]: aRc);
 			}
 			//mhRowUpdate();
 		}
 	}
 	function mhRowsLinkCl () {
-		var maxRTr = getMaxRTr();
 		for( var i = 0; i < 4; i++ ) {
-			//if( checkRes[i].checked ) rxI[i].value = '';
 			if( checkRes[i].checked ) updateInput1(rxI[i],0);
 		}
 		//mhRowUpdate();
@@ -3497,20 +3474,35 @@ function marketSend () {
 		checkMerchants();
 		maxRM.value = maxM;
 		maxRC.value = maxM * maxC;
-		mhRowUpdate();
+		//mhRowUpdate();
 	}
 	function checkMerchants () {
-		moC = $gc('merchantsInformation')[0].firstElementChild.firstElementChild;
+		var merInfo = $gc('merchantsInformation')[0];
+		if (merInfo.firstElementChild) {
+			if (merInfo.firstElementChild.firstElementChild && merInfo.firstElementChild.nextElementSibling) {
+				moC = merInfo.firstElementChild.firstElementChild;
+			} else return false;
+		} else return false;
 		if (moC) {
 			var moCC = moC.innerHTML.onlyText().match(/(\d+)[\/\\](\d+)/);
-			mDiv = $gc('merchantsInformation')[0].firstElementChild;
+			mDiv = merInfo.firstElementChild;
 			mName = mDiv.textContent.split(":")[0];
+			if( mName != RB.dictionary[2] ) {
+				RB.dictionary[2] = mName;
+				saveCookie( 'Dict', 'dictionary' );
+			}
 			if (parseInt(moCC[2]) > parseInt(moCC[1])) {
 				maxM = parseInt(moCC[1]);
 				merchInWork = parseInt(moCC[2]) - maxM;
 			} else {
 				maxM = parseInt(moCC[2]);
 				merchInWork = parseInt(moCC[1]) - maxM;
+			}
+			maxC = parseInt(merInfo.firstElementChild.nextElementSibling.firstElementChild.textContent.match(/(\d+)/)[1]);
+			maxTr = maxM * maxC;
+			if( maxC != RB.village_Var[0] ) {
+				RB.village_Var[0] = maxC;
+				saveVCookie( 'VV', RB.village_Var );
 			}
 			return false;
 		} else return true;
@@ -3534,14 +3526,10 @@ function marketSend () {
 	var checkRes = [];
 	var resnames = ["lumber","clay","iron","crop"];
 
-	if( checkMerchants() ) return;
+	//if( checkMerchants() ) return;
+	checkMerchants();
 
-	if( mName != RB.dictionary[2] ) {
-		RB.dictionary[2] = mName;
-		saveCookie( 'Dict', 'dictionary' );
-	}
-
-	fillXY();
+	//fillXY();
 
 	for (var i = 0; i < 4; i++){
 		rxI[i] = $gn(resnames[i],basee)[0];
@@ -3563,17 +3551,8 @@ function marketSend () {
 		*/
 		checkRes[i] = $e('INPUT',[['type','checkbox'],['checked','checked'],['name',allIDs[18]+i]]);
 		//iRow.appendChild($c(checkRes[i],[['width','5%']]));
-		imgs[i].appendChild(checkRes[i],[['width','5%']]);
+		imgs[i].appendChild(checkRes[i]);
 	};
-
-	//maxC = parseInt($g('addRessourcesLink1',basee).innerHTML.match(/(\d+)/)[1]);
-	maxC = parseInt($gc('merchantCarryInfo',basee)[0].textContent.match(/(\d+)/)[1]);
-	maxTr = maxM * maxC;
-
-	if( maxC != RB.village_Var[0] ) {
-		RB.village_Var[0] = maxC;
-		saveVCookie( 'VV', RB.village_Var );
-	}
 
 	//var maxRM = $e('INPUT',[['type', 'TEXT'],['size',2],['value',maxM],['style','font-size:80%;']]);
 	//var maxRC = $e('INPUT',[['type', 'TEXT'],['size',5],['value',maxTr],['style','font-size:80%;']]);
@@ -3632,17 +3611,17 @@ function marketSend () {
 
 	addButtonsEvent();
 	
-	var target = $gc('merchantsAvailable')[0];
+	var target = $gc('merchantsInformation')[0];
 	var MutationObserver = window.MutationObserver;
 	var observer = new MutationObserver(function(mutations) {
 		mutations.forEach(function(mutation) {
 			if (mutation.type === 'childList') {
-				reloadMerchants();
+				checkMerchants();
 			}
 		});
 	});
 	var config = { childList: true, subtree: true };
-	//observer.observe(target, config);
+	observer.observe(target, config);
 }
 
 // 'Repeat' offer possition
@@ -3824,7 +3803,7 @@ function marketSumm () {
 	mSInit = false;
 	var merchantsOnTheWay = $g('marketplaceSendResources');
 	if ( !merchantsOnTheWay ) return;
-	var merchantInOut = $gc('listFooter', merchantsOnTheWay);
+	var merchantInOut = $gc('deliveriesOverview', merchantsOnTheWay);
 	if (merchantInOut.length == 0) return;
 	var MutationObserver = window.MutationObserver;
 	var observer = new MutationObserver(function(mutations) {
@@ -6014,7 +5993,7 @@ function AllyBonusPageRefreshRB() {
 	var observer = new MutationObserver(function(mutations) {
 		mutations.forEach(function(mutation) {
 			if (mutation.type === 'childList') {
-				initRes = true; setTimeout(function() { getResources(); progressbar_ReInit(); }, 150);
+				initRes = true; setTimeout(function() { getResources(); progressbar_ReInit(); }, 250);
 			}
 		});
 	});
@@ -9020,7 +8999,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Resource Bar+";
-		content.innerHTML = "What's new in Version "+version+" - Apr 22, 2023:<p></p><ui><li>Added plus/minus all resources buttons</li><li>Added resource selection checkboxes in market</li><li>Added equal/percent/clear market buttons</li><li>Fixed the Memory function to update the resources needed value after sending merchants</li><li>Fixes</li></ui>";
+		content.innerHTML = "What's new in Version "+version+" - Apr 26, 2023:<p></p><ui><li>Added plus/minus all resources buttons</li><li>Added resource selection checkboxes in market</li><li>Added equal/percent/clear market buttons</li><li>Fixed the Memory function to update the resources needed value after sending merchants</li><li>Small fixes</li></ui>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
