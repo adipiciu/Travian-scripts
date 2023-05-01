@@ -1952,7 +1952,7 @@ function createAttackLinks() {
 		if( heroBox[0].firstElementChild == null ) {  //no hero textbox - make one
 			heroBox[0].innerHTML = " <img class='unit uhero' src='/img/x.gif' title='"
 				+aLangTroops[10]+"' onclick='document.snd.t11.value=\"\"; return false;' alt='"+aLangTroops[10]+"' style='cursor:pointer' />"
-				+" <input type='text' class='text' name='t11' value='' />"
+				+" <input type='text' class='text' name='troop[t11]' value='' />"
 				+" <a style='cursor:pointer'>(1)<br />(" +aLangStrings[33]+ ")</a>";
 		}
 		//Set the last line of table to top-aligned
