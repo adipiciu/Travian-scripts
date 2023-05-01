@@ -2368,7 +2368,7 @@ function sendGoldClub2(httpRequest,aTask) {
 			var holder = document.createElement('div');
 			holder.innerHTML = data.lists[0].html;
 			var tInputs = holder.getElementsByTagName('input');
-			var checksum = xpath("//script[contains(text(),'Travian.Game.RaidList.checksum')]", holderFarm, true);
+			var checksum = xpath("//script[contains(text(),'Travian.Game.RaidList.checksum')]", holderFarm, true, holderFarm);
 			if (tInputs.length > 4 ) {
 				var sParams = {};
 				sParams["action"] = "raidList";
