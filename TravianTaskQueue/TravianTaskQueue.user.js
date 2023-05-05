@@ -29,14 +29,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version     2.0.1
+// @version     2.0.2
 // ==/UserScript==
 
 (function () {
 
 function allInOneTTQ () {
 notRunYet = false;
-var sCurrentVersion = "2.0.1";
+var sCurrentVersion = "2.0.2";
 
 //find out if Server errors
 var strTitle = document.title;
@@ -1749,7 +1749,6 @@ function handleRequestResearch(httpRequest, aTask) {
 			var holder = document.createElement('div');
 			holder.innerHTML = httpRequest.responseText;
 			var tConract = holder.getElementsByClassName("contracting");
-			var currResearch = holder.getElementsByClassName("under_progress");
 			var divResearch = holder.getElementsByClassName("research");
 
 			var reqVID = getActiveVillage(holder);
@@ -1775,7 +1774,8 @@ function handleRequestResearch(httpRequest, aTask) {
 					var sURL, i, j;
 					for ( i = 0, j = tConract.length; i < j ; ++i ) {
 						sURL = tConract[i].getAttribute("onclick").split("'")[1];
-						if ( sURL.indexOf("a=" + iTroop) != -1 ) {
+						if ( sURL.startsWith("/") ) { sURL = sURL.substring(1); }
+						if ( sURL.indexOf("t=t" + iTroop) != -1 ) {
 							get(fullName+sURL,handleRequestResearchConfirmation, aTask);
 							return;
 						}
@@ -1893,7 +1893,7 @@ function party(aTask) {
 	printMsg(aLangStrings[6] + " > 1<br><br>" + getTaskDetails(aTask));
 	if(aTask[5] != 'null') var sNewDid = "&newdid=" +aTask[5];
 	else var sNewDid = "";
-	var sUrl = "build.php?id=" + aTask[2] + "&a=" + aTask[3] + sNewDid;
+	var sUrl = "build.php?id=" + aTask[2] + "&gid=24&action=celebration&do=" + aTask[3] + "&t=1" + sNewDid;
 	var myOptions = [aTask, currentActiveVillage];
 	get(fullName+sUrl, handleRequestParty, myOptions);
 	_log(1, "End party("+aTask+")");
@@ -1948,16 +1948,12 @@ function createAttackLinks() {
 		var SndLtrBtn = generateButton(aLangStrings[16], scheduleSendBack);
 	} else {
 		//create textbox for hero if it's not present
-		var heroBox = document.getElementsByClassName ("line-last column-last");
-		if( heroBox[0].firstElementChild == null ) {  //no hero textbox - make one
-			heroBox[0].innerHTML = " <img class='unit uhero' src='/img/x.gif' title='"
-				+aLangTroops[10]+"' onclick='document.snd.t11.value=\"\"; return false;' alt='"+aLangTroops[10]+"' style='cursor:pointer' />"
-				+" <input type='text' class='text' name='t11' value='' />"
-				+" <a style='cursor:pointer'>(1)<br />(" +aLangStrings[33]+ ")</a>";
+		var heroBox = document.getElementsByClassName("line-last column-last");
+		if( heroBox[0].firstElementChild == null ) { //no hero textbox - make one
+			heroBox[0].innerHTML = '<img class="unit uhero" src="/img/x.gif" title="'+aLangTroops[10]+'" alt="'+aLangTroops[10]+'" />'
+				+ '<input type="text" inputmode="numeric" class="text" name="troop[t11]" value="" />'
+				+ '&nbsp;/&nbsp;<a href="#" onclick="jQuery(\'table#troops\').find(\'input[name=\\\'troop[t11]\\\']\').val(1); return false">1 ('+aLangStrings[33]+')</a>';
 		}
-		//Set the last line of table to top-aligned
-		lastline=xpath("//table[@id='troops']/tbody/tr[3]/td");
-		for (var x=0;x<lastline.snapshotLength;x++) {lastline.snapshotItem(x).style.verticalAlign="top";}
 		var SndLtrBtn = generateButton(aLangStrings[16], scheduleAttack);
 	}
 	var oOkBtn = $id('ok');
@@ -2368,7 +2364,7 @@ function sendGoldClub2(httpRequest,aTask) {
 			var holder = document.createElement('div');
 			holder.innerHTML = data.lists[0].html;
 			var tInputs = holder.getElementsByTagName('input');
-			var checksum = xpath("//script[contains(text(),'Travian.Game.RaidList.checksum')]", holderFarm, true);
+			var checksum = xpath("//script[contains(text(),'Travian.Game.RaidList.checksum')]", holderFarm, true, holderFarm);
 			if (tInputs.length > 4 ) {
 				var sParams = {};
 				sParams["action"] = "raidList";
