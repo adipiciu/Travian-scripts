@@ -32,14 +32,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.23.10
+// @version        2.23.11
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.23.10';
+var version = '2.23.11';
 
 notRunYet = false;
 
@@ -3218,15 +3218,15 @@ function marketBuy() {
 
 // market send page :)
 function marketSend () {
-	function updateInput1 (input, value) {
+	function updateInput (input, value) {
 		if (input.disabled) return;
 		input.focus();
 		if (input.value) input.select();
 		document.execCommand('insertText', false, value);
 	}
-	function setMerchantsCell(tM, colM) {
-		cM.innerHTML = tM;
-		$at(cM, [['style', 'font-size:11px; color:' + colM + ';line-height:16px;']]);
+	function setMerchantsCell(tM, tR, colM) {
+		totalResources.textContent = tR;
+		$at(totalResources, [['style', 'justify-self:start; color:' + colM + ';']]);
 	}
 	function getTotTransport() {
 		var totT = 0;
@@ -3239,17 +3239,18 @@ function marketSend () {
 	function mhRowUpdate() {
 		var totTransport = getTotTransport();
 		var totMerchants = Math.ceil(totTransport / maxC);
-		var mhColor = 'darkgreen';
+		var mhColor = 'green';
 		var crtWaste = maxC - (totTransport - (totMerchants-1) * maxC);
 		var crtExceed = totTransport - maxTr;
 
-		var mhText = "<b>" + mName + ": " + totMerchants + " / " + maxM + "<br />"+(ltr?"&#931;":"")+"= " + totTransport;
+		var tMText = mName + ": " + totMerchants + " / " + maxM;
+		var tRText = "Σ = " + totTransport;
 		if (totMerchants > maxM) {
 			mhColor = "red";
-			mhText += " ( "+ crtExceed + " )";
-		} else if ( crtWaste ) mhText += " ( -"+ crtWaste + " )";
- 		mhText += "</b>";
-		//setMerchantsCell(mhText, mhColor);
+			tRText += " ( +"+ crtExceed + " )";
+		} else if ( crtWaste ) tRText += " ( -"+ crtWaste + " )";
+		$at(totalResources, [['style', 'justify-self:start; color:' + mhColor + ';']]);
+		setMerchantsCell(tMText, tRText, mhColor);
 	}
 	function getMaxRTr () {
 		//var maxRRTr = parseInt(maxRC.value);
@@ -3284,18 +3285,18 @@ function marketSend () {
 			if( ++lastLinkR[1] > 1 || ! i ) lastLinkR[0] = 0;
 		}
 		lastLinkR[3] = parseInt(rxI[RC].value);
-		//mhRowUpdate();
+		mhRowUpdate();
 	}
 	function mhRowLinkM ( RC ) {
 		var aR = parseInt(rxI[RC].value);
-		updateInput1(rxI[RC],aR > maxC ? aR - maxC : 0);
-		//mhRowUpdate();
+		updateInput(rxI[RC],aR > maxC ? aR - maxC : 0);
+		mhRowUpdate();
 	}
 	function mhRowLinkP ( RC ) {
 		var aR = parseInt(rxI[RC].value);
 		var i = isNaN(aR) ? maxC : aR + maxC;
-		updateInput1(rxI[RC],i < resNow[RC] ? i : resNow[RC]);
-		//mhRowUpdate();
+		updateInput(rxI[RC],i < resNow[RC] ? i : resNow[RC]);
+		mhRowUpdate();
 	}
 	function mhRowsLinkM () {
 		for( var i = 0; i < 4; i++ )
@@ -3315,7 +3316,7 @@ function marketSend () {
 		if (arXY[0] != coordX || arXY[1] != coordY) { sendResourses( RB.wantsMem[4] ); return; }
 		var htR = getTTime( calcDistance(RB.wantsMem[4], village_aid), MTime[parseInt(RB.Setup[2])]*sM, 0, 0 );
 		var ht = parseInt(RB.wantsMem[9]) < htR ? htR - parseInt(RB.wantsMem[9]): 0;
-		for( var i = 0; i < 4; i++ ) { updateInput1(rxI[i],0); } //reset values so they will not overflow
+		for( var i = 0; i < 4; i++ ) { updateInput(rxI[i],0); } //reset values so they will not overflow
 		for( var i = 0; i < 4; i++ ) {
 			var wantRes = Math.ceil(parseInt(RB.wantsMem[i]) - RB.village_PPH[i]/3600 * ht);
 			if( RB.village_PPH[i] < 0 && ht > 0 ) {
@@ -3335,9 +3336,9 @@ function marketSend () {
 				}
 			}
 			if( wantRes < 0 ) wantRes = 0;
-			if( checkRes[i].checked ) updateInput1(rxI[i],wantRes < resNow[i] ? wantRes: resNow[i]);
+			if( checkRes[i].checked ) updateInput(rxI[i],wantRes < resNow[i] ? wantRes: resNow[i]);
 		}
-		//mhRowUpdate();
+		mhRowUpdate();
 		//sendResourses( RB.wantsMem[4] );
 	}
 	var mcFL = true;
@@ -3373,14 +3374,14 @@ function marketSend () {
 		var aRn = 0;
 		for( var i = 0; i < 4; i++ ) if( checkRes[i].checked ) { aRc++; aRn += resNow[i]; }
 		if( aRc > 0 ) {
-			for( var i = 0; i < 4; i++ ) { updateInput1(rxI[i],0); } //reset values so they will not overflow
+			for( var i = 0; i < 4; i++ ) { updateInput(rxI[i],0); } //reset values so they will not overflow
 			for( var i = 0; i < 4; i++ ) {
 				if( checkRes[i].checked ) {
 					var toRes = Math.floor((resNow[i]/aRn) * maxRTr);
-					updateInput1(rxI[i],toRes < resNow[i] ? toRes : resNow[i]);
+					updateInput(rxI[i],toRes < resNow[i] ? toRes : resNow[i]);
 				}
 			}
-			//mhRowUpdate();
+			mhRowUpdate();
 		}
 	}
 	function mhRowsLinkEq () {
@@ -3397,18 +3398,18 @@ function marketSend () {
 				if( aRc+aRF[i-1]*i >  maxRTr ) break;
 			}
 			aRc = Math.floor((maxRTr-aRc)/i);
-			for( var i = 0; i < 4; i++ ) { updateInput1(rxI[i],0); } //reset values so they will not overflow
+			for( var i = 0; i < 4; i++ ) { updateInput(rxI[i],0); } //reset values so they will not overflow
 			for( var i = 0; i < 4; i++ ) {
-				if( checkRes[i].checked ) updateInput1(rxI[i],aRc > resNow[i] ? resNow[i]: aRc);
+				if( checkRes[i].checked ) updateInput(rxI[i],aRc > resNow[i] ? resNow[i]: aRc);
 			}
-			//mhRowUpdate();
+			mhRowUpdate();
 		}
 	}
 	function mhRowsLinkCl () {
 		for( var i = 0; i < 4; i++ ) {
-			if( checkRes[i].checked ) updateInput1(rxI[i],0);
+			if( checkRes[i].checked ) updateInput(rxI[i],0);
 		}
-		//mhRowUpdate();
+		mhRowUpdate();
 	}
 	function mhRowLinkMPlus () {
 		var xx = parseInt($gn('x')[0].value);
@@ -3422,6 +3423,7 @@ function marketSend () {
 		alert( "Saved: "+ RB.wantsMem[0] +" | "+ RB.wantsMem[1] +" | "+ RB.wantsMem[2] +" | "+ RB.wantsMem[3] );
 	}
 	function mhRowLinkAMem () {
+		initRes = true; setTimeout(function() { getResources(); progressbar_ReInit(); }, 250);
 		var xx = parseInt($gt('input',$gc('coordinateX')[0])[0].value);
 		var yy = parseInt($gt('input',$gc('coordinateY')[0])[0].value);
 		if( isNaN(xx) || isNaN(yy) ) return;
@@ -3474,7 +3476,7 @@ function marketSend () {
 		checkMerchants();
 		maxRM.value = maxM;
 		maxRC.value = maxM * maxC;
-		//mhRowUpdate();
+		mhRowUpdate();
 	}
 	function checkMerchants () {
 		var merInfo = $gc('merchantsInformation')[0];
@@ -3531,7 +3533,7 @@ function marketSend () {
 
 	//fillXY();
 
-	for (var i = 0; i < 4; i++){
+	for (var i = 0; i < 4; i++) {
 		rxI[i] = $gn(resnames[i],basee)[0];
 		//rxI[i].addEventListener('keyup', mhRowUpdate, false);
 		//rxI[i].addEventListener('change', mhRowUpdate, false);
@@ -3558,6 +3560,12 @@ function marketSend () {
 	//var maxRC = $e('INPUT',[['type', 'TEXT'],['size',5],['value',maxTr],['style','font-size:80%;']]);
 	//moC.appendChild($em('SPAN',[maxRM,' Σ=',maxRC],[['style','margin:0px 5px;font-size:12px;']]));
 
+
+	var summary = $gc("summary",basee)[0];
+	var nominator = $gc("nominator",summary)[0];
+	var totalResources = $e('div',[['style','justify-self:start;']]);
+	summary.appendChild(totalResources);
+	summary.childNodes[1].style.justifySelf = "end";
 	/*
 	var newTR = $e('tr');
 	var cM = $c('',[['colspan','3']]);
@@ -3570,7 +3578,7 @@ function marketSend () {
 		insertAfter(newTR,basee.rows[3]);
 	} else basee.appendChild(newTR);
 	*/
-	//mhRowUpdate();
+	mhRowUpdate();
 
 	//var ref = $a('(M)',[['href',jsVoid]]);
 	//ref.addEventListener('click', mhRowLinkMPlus, false);
@@ -3590,10 +3598,10 @@ function marketSend () {
 	var refCl = $a('C',[['href',jsVoid],['style','font-size:15px;']]);
 	refCl.addEventListener('click', mhRowsLinkCl, false);
 	var newAllRes = $e('i', [['class','resources_medium']]);
-	var resSelector = $gc("resourceSelector")[0];
-	var pButt = $gc("buttonFramed plus rectangle")[0].cloneNode(true);
+	var resSelector = $gc("resourceSelector",basee)[0];
+	var pButt = $gc("buttonFramed plus rectangle",basee)[0].cloneNode(true);
 	pButt.addEventListener('click', mhRowsLinkP, false);
-	var mButt = $gc("buttonFramed minus rectangle")[0].cloneNode(true);
+	var mButt = $gc("buttonFramed minus rectangle",basee)[0].cloneNode(true);
 	mButt.addEventListener('click', mhRowsLinkM, false);
 	mButt.removeAttribute('disabled');
 	var newDiv = $e('div',[['style','display:flex;justify-content:space-between;align-items:center;']]);
@@ -3620,8 +3628,16 @@ function marketSend () {
 			}
 		});
 	});
-	var config = { childList: true, subtree: true };
-	observer.observe(target, config);
+	observer.observe(target, { childList: true, subtree: true });
+
+	var observer1 = new MutationObserver(function(mutations) {
+		mutations.forEach(function(mutation) {
+			if (mutation.type === 'characterData') {
+				mhRowUpdate();
+			}
+		});
+	});
+	observer1.observe(nominator, { childList: true, subtree: true, characterData: true });
 }
 
 // 'Repeat' offer possition
@@ -3822,8 +3838,9 @@ function marketSummReal () {
 	var merchantInOut = $gc('group expanded', merchantsOnTheWay);
 	if (merchantInOut.length == 0) return;
 	if( ! mSInit ) {
-		initRes = true; getResources(); progressbar_ReInit(); addSpeedAndRTSend();
+		initRes = true; getResources(); progressbar_ReInit();
 	}
+	addSpeedAndRTSend(merchantsOnTheWay, true);
 	if (merchantInOut.length > 1) {
 		var ownMerchants = $gc('group expanded', merchantsOnTheWay)[1];
 		var aTo = $gc('delivery',ownMerchants);
@@ -6354,8 +6371,8 @@ function showAWake () {
 	} else awD.appendChild($ee('SPAN','--:--',[['title','click me']]));
 }
 
-function addSpeedAndRTSend ( iBl ) {
-	var mLinks = $xf('.//a[contains(@href, "karte.php?")]', 'r', (typeof iBl == 'undefined' ? cont: iBl));
+function addSpeedAndRTSend ( iBl, href ) {
+	var mLinks = $xf('.//a[contains(@href, "' + (typeof href == 'undefined' ? "karte.php?" : "position_details.php?") + '")]', 'r', (typeof iBl == 'undefined' ? cont : iBl));
 	for( var j = 0; j < mLinks.snapshotLength; j++ ) {
 		var existT = $gc(allIDs[29],mLinks.snapshotItem(j));
 		if( existT.length > 0 ) continue; else mLinks.snapshotItem(j).appendChild($e('SPAN',[['class',allIDs[29]]]));
@@ -6363,6 +6380,7 @@ function addSpeedAndRTSend ( iBl ) {
 		distanceTooltip(mLinks.snapshotItem(j),1);
 		sendResTropAdd(mLinks.snapshotItem(j), 1);
 	}
+	if (href) addRefIGM(iBl);
 }
 
 function bigQuickLinks () {
@@ -7498,8 +7516,10 @@ function analyzerBattle () {
 	if( RB.Setup[25] == 0 || RB.dictFL[13] < 3 ) return;
 	var report = $g("reportWrapper");
 	if (! report) return;
-	if (! $g('defender')) return;
-	if (! $g('attacker')) return;
+	var def = $gc('defender');
+	var att = $gc('attacker');
+	if ( def.length < 1 ) return;
+	if ( att.length < 1 ) return;
 	var tt = $gt('TABLE',report);
 	if( tt.length < 2 ) return;
 
@@ -7661,7 +7681,7 @@ function analyzerBattle () {
 	newTABLE.appendChild($ee('TR',$c(toLog,[['colspan',4]])));
 	newTABLE.appendChild($ee('TR',$c(kLog,[['colspan',4]])));
 
-	$g('attacker').parentNode.parentNode.appendChild(newTABLE);
+	$gc('attacker')[0].parentNode.parentNode.appendChild(newTABLE);
 }
 
 function addReport () {
@@ -8999,7 +9019,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Resource Bar+";
-		content.innerHTML = "What's new in Version "+version+" - Apr 26, 2023:<p></p><ui><li>Added plus/minus all resources buttons</li><li>Added resource selection checkboxes in market</li><li>Added equal/percent/clear market buttons</li><li>Fixed the Memory function to update the resources needed value after sending merchants</li><li>Small fixes</li></ui>";
+		content.innerHTML = "What's new in Version "+version+" - May 24, 2023:<p></p><ui><li>Added links in market transports</li><li>Added resources sum in market send page</li><li>Refresh resource bar after sending resources</li><li>Fixed battle analyzer not appearing</li></ui>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
