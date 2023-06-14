@@ -32,14 +32,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.23.11
+// @version        2.23.12
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.23.11';
+var version = '2.23.12';
 
 notRunYet = false;
 
@@ -2887,12 +2887,12 @@ function updatePosition( wn, xy, sh ){
 	if (y + dH > window.innerHeight + window.scrollY) y = y > dH + 16 ? y - dH - 16: 0;
 	ttD.style.top = y + "px";
 }
-function addToolTip (newITT,nd,left) {
+function addToolTip (newITT,nd) {
 	if( newITT ) {
 		tiImg = trImg(allIDs[47]);
 		tiImg.addEventListener("mouseover", function () { makeTooltip(newITT); }, false);
 		tiImg.addEventListener("mouseout", removeTooltip, false);
-		if (left) { $ib(tiImg, nd); } else { nd.appendChild(tiImg); }
+		nd.appendChild(tiImg);
 	}
 }
 /*************drag elements*****************/
@@ -3423,7 +3423,7 @@ function marketSend () {
 		alert( "Saved: "+ RB.wantsMem[0] +" | "+ RB.wantsMem[1] +" | "+ RB.wantsMem[2] +" | "+ RB.wantsMem[3] );
 	}
 	function mhRowLinkAMem () {
-		initRes = true; setTimeout(function() { getResources(); progressbar_ReInit(); }, 250);
+		initRes = true; setTimeout(function() { getResources(); progressbar_ReInit(); }, 500);
 		var xx = parseInt($gt('input',$gc('coordinateX')[0])[0].value);
 		var yy = parseInt($gt('input',$gc('coordinateY')[0])[0].value);
 		if( isNaN(xx) || isNaN(yy) ) return;
@@ -8435,7 +8435,7 @@ function goldClubInfo () {
 			ai[i].checked=this.checked;
 	}
 	function makeChkBox (fListID) {
-		return $e('INPUT',[['type','checkbox'],['onclick','setTimeout(function(){'+allIDs[0]+'('+fListID+');},200)']]);
+		return $e('INPUT',[['type','checkbox']]);
 	}
 	function oasisXY (farmList) {
 		var oXY = $gc('coordinatesWrapper',farmList);
@@ -8470,7 +8470,7 @@ function goldClubInfo () {
 					ad = $xf('.//table[@id="village_info"]','f',adv);
 					if( ad ) chkOasisFL[x[1]][vid] = ad;
 				}
-				addToolTip(chkOasisFL[x[1]][vid],x[0].parentNode,true);
+				addToolTip(chkOasisFL[x[1]][vid],x[0].parentNode);
 				if( chkOasisFL[x[1]][vid] )
 					uncheckOasis(x[0]);
 			}
@@ -8500,21 +8500,23 @@ function goldClubInfo () {
 		chkOasisFL[fListID].fl = false;
 	}
 	function scanGoldRep () {
+		var fTable;
 		function addARLFilter (sc,cl,tag) {
-			var ac = $xf('.//'+tag+'[contains(@class,"'+sc+'")]','f',fList[i].parentNode.parentNode.parentNode.parentNode.tBodies[0]);
+			var ac = $xf('.//'+tag+'[contains(@class,"'+sc+'")]','f',fTable.tBodies[0]);
 			if( ac ) {
 				var nca = makeChkBox(fListID);
 				nca.addEventListener('click',function(i) { return function() { checkUni(i) }}([sc,nca]),false);
 				$am(sp.firstElementChild,[' | ',nca,' ',trImg(cl+' '+sc,ac.getAttribute('alt').split(':')[0])]);
 			}
-			fList[i].parentNode.parentNode.parentNode.parentNode.tFoot.appendChild(sp);
+			fTable.tHead.insertBefore(sp, fTable.tHead.firstChild);
 		}
 		var fList = $gc('markAll',cont);
 		for( var i=0; i < fList.length; i++ ) {
 			if (fList[i].tagName != 'INPUT') continue;
-			var fListID = $gt('INPUT',fList[i].parentNode.parentNode.parentNode.parentNode.tFoot);
-			if( fListID.length != 0 ) continue;
-			fListID = fList[i].getAttribute('id').match(/\d+/)[0];
+			fTable = fList[i].parentNode.parentNode.parentNode.parentNode;
+			var fListInput = $gt('INPUT',fTable.tHead);
+			if( fListInput.length > 1 ) continue;
+			var fListID = fList[i].getAttribute('id').match(/\d+/)[0];
 			fList[i].addEventListener('click',checkAll,false);
 			var nc = makeChkBox(fListID);
 			nc.addEventListener('click',checkGreen,false);
@@ -8524,16 +8526,16 @@ function goldClubInfo () {
 			addARLFilter('full','carry','img');
 			addARLFilter('half','carry','img');
 
-			if( oasisXY(fList[i].parentNode.parentNode.parentNode.parentNode) ) {
+			if( oasisXY(fTable) ) {
 				if( typeof(chkOasisFL[fListID]) == 'undefined'  )
 					chkOasisFL[fListID] = new Object;
 				chkOasisFL[fListID].fl = true;
-				var anim = $em('BUTTON',[trImg('unit u31'),' ??? '],[['onclick','setTimeout(function(){'+allIDs[0]+'('+fListID+');},200);return false;']]);
-				anim.addEventListener('click',function(x) { return function() { findAnim(x[0],x[1],x[2]) }}([fList[i].parentNode.parentNode.parentNode.parentNode,fListID,anim]),false);
+				var anim = $em('BUTTON',[trImg('unit u31'),' ??? '],[['onclick','return false;']]);
+				anim.addEventListener('click',function(x) { return function() { findAnim(x[0],x[1],x[2]) }}([fTable,fListID,anim]),false);
 				$am(sp.firstElementChild,[' | ',anim]);
 			}
 
-			var allBer = $xf('.//a[contains(@href, "report?id=")]','l',fList[i].parentNode.parentNode.parentNode.parentNode);
+			var allBer = $xf('.//a[contains(@href, "report?id=")]','l',fTable);
 			for( var t=0; t < allBer.snapshotLength; t++ ) {
 				var tImg = $gt('IMG',allBer.snapshotItem(t).parentNode);
 				if( tImg.length > 1 )
@@ -9019,7 +9021,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Resource Bar+";
-		content.innerHTML = "What's new in Version "+version+" - May 24, 2023:<p></p><ui><li>Added links in market transports</li><li>Added resources sum in market send page</li><li>Refresh resource bar after sending resources</li><li>Fixed battle analyzer not appearing</li></ui>";
+		content.innerHTML = "What's new in Version "+version+" - Jun 14, 2023:<p></p><ui><li>Moved checkboxes to top of farmlists</li></ui>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
