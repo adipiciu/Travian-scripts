@@ -32,14 +32,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.23.12
+// @version        2.23.13
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.23.12';
+var version = '2.23.13';
 
 notRunYet = false;
 
@@ -4265,8 +4265,8 @@ function showAllTTime ( vType, tVil, arena, art, shoes, leftHand ) {
 		TTime = [
 		[19, [24,63]], // Theutates Thunder, Spotter
 		[17, [23]], // Pathfinder
-		[16, [4,25,54,64,65,75]], // Equites Legati, Druidrider, Sopdu Explorer, Steppe Rider, Marksman, Elpida Rider
-		[15, [55]], // Anhur Guard
+		[16, [4,25,54,64,75]], // Equites Legati, Druidrider, Sopdu Explorer, Steppe Rider, Elpida Rider
+		[15, [55,65]], // Anhur Guard, Marksman
 		[14, [5,66]], // Equites Imperatoris, Marauder
 		[13, [26]], // Haeduan
 		[10, [6,15,56]], // Equites Caesaris, Paladin, Resheph Chariot
@@ -7138,8 +7138,8 @@ function normalProductionCalc ( ires ) {
 	[145,70,85,40],// Spearman
 	[13,12,17,7],// Axeman
 	[16,10,5,5],// Scout
-	[37,27,29,8],// Paladin
-	[45,51,48,8],// Teutonic Knight
+	[74,54,58,15],// Paladin
+	[90,103,96,16],// Teutonic Knight
 	[100,30,35,7],// Ram
 	[90,120,60,6],// Catapult
 // Gauls //
@@ -7159,11 +7159,11 @@ function normalProductionCalc ( ires ) {
 	[45,60,30,15],// Slave Militia
 	[23,20,29,12],// Ash Warden
 	[17,18,22,8],// Khopesh Warrior
-	[35,45,23,6],// Sopdu Explorer
+	[17,15,2,4],// Sopdu Explorer
 	[36,33,28,12],// Anhur Guard
 	[45,56,61,18],// Resheph Chariot
 	[199,115,68,16],// Ram
-	[96,145,63,9],// Stone Catapult
+	[98,151,66,10],// Stone Catapult
 // Huns //
 	[13,8,4,4],// Mercenary
 	[14,11,6,6],// Bowman
@@ -9021,7 +9021,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Resource Bar+";
-		content.innerHTML = "What's new in Version "+version+" - Jun 14, 2023:<p></p><ui><li>Moved checkboxes to top of farmlists</li></ui>";
+		content.innerHTML = "What's new in Version "+version+" - Jun 15, 2023:<p></p><ui><li>Moved checkboxes to top of farmlists</li><li>Updated Marksman speed</li></ui>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
