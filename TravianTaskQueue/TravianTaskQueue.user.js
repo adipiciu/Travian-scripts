@@ -29,14 +29,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version     2.0.2
+// @version     2.0.3
 // ==/UserScript==
 
 (function () {
 
 function allInOneTTQ () {
 notRunYet = false;
-var sCurrentVersion = "2.0.2";
+var sCurrentVersion = "2.0.3";
 
 //find out if Server errors
 var strTitle = document.title;
@@ -2102,9 +2102,9 @@ function attack(aTask) {
 	printMsg(aLangStrings[6] + " > 1<br><br>" + getTaskDetails(aTask));
 	if(aTask[5] != 'null') {  //multiple villages
 		//we need to switch village (while at the same time, setting the target destination)
-		get(fullName+"build.php?gid=16&tt=2&newdid=" + aTask[5] + "&z=" + aTask[2], attack2, aTask);
+		get(fullName+"build.php?gid=16&tt=2&newdid=" + aTask[5] + "&targetMapId=" + aTask[2], attack2, aTask);
 	} else {  //only 1 village. Perform attack immediately
-		post(fullName+"build.php?gid=16&tt=2", "z=" + aTask[2], attack2, aTask);
+		post(fullName+"build.php?gid=16&tt=2", "targetMapId=" + aTask[2], attack2, aTask);
 		_log(2, "The attack was requested.");
 	}
 	_log(1, "End attack("+aTask+")");
@@ -2160,8 +2160,7 @@ function attack2(httpRequest,aTask) {
 						sParams += t + "=" + tInputs[q].value + "&";
 					}
 				}
-				var okBtn = holder.getElementById("ok");
-				sParams += okBtn.name + "=" + okBtn.value;
+				sParams += "ok=ok";
 				post(fullName+'build.php?gid=16&tt=2', sParams, attack3, aTask);
 				return;
 			}
@@ -2367,13 +2366,14 @@ function sendGoldClub2(httpRequest,aTask) {
 			var checksum = xpath("//script[contains(text(),'Travian.Game.RaidList.checksum')]", holderFarm, true, holderFarm);
 			if (tInputs.length > 4 ) {
 				var sParams = {};
-				sParams["action"] = "raidList";
+				sParams["action"] = "farmList";
 				if( checksum ) sParams["checksum"] = checksum.textContent.match(/Travian.Game.RaidList.checksum\s*=\s*'(.*)'/)[1];
 				sParams["method"] = "ActionStartRaid";
 				sParams["listId"] = parseInt(aTask[3]);
 				sParams["loadedLists"] = [aTask[3]];
 				sParams["captcha"] = null;
 				sParams['slots'] = [];
+				sParams['triggeredBySendAll'] = 'false';
 				for( var i=0; i<tInputs.length; i++ ) {
 					if( tInputs[i].hasAttribute('name') ) {
 						if (tInputs[i].getAttribute('name') == 'lid') continue;

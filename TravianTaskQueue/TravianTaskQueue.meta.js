@@ -1,4 +1,4 @@
-﻿// ==UserScript==
+// ==UserScript==
 // @name        Travian Task Queue for Travian 4
 // @namespace   https://github.com/adipiciu/Travian-scripts
 // @author      adipiciu (based on TTQ by Risi and further edited by Nevam and then Pimp Trizkit and Serj_LV)
@@ -29,5 +29,5 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version     2.0.2
+// @version     2.0.3
 // ==/UserScript==
