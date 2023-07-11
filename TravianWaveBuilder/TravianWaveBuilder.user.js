@@ -7,12 +7,12 @@
 // @contributionURL https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=Travian+wave+builder+script&currency_code=EUR
 // @match          https://*.travian.com/build.php*
 
-// @version        2.6
+// @version        2.7
 // ==/UserScript==
 
 function allInOneOpera () {
 
-var version = '2.6';
+var version = '2.7';
 var scriptURL = 'https://github.com/adipiciu/Travian-scripts';
 var defInterval = 200;
 var sLang = detectLanguage();
@@ -183,9 +183,13 @@ function addWave () {
 			sParams += t + "=" + tInputs[i].value + "&";
 		}
 
-		var okBtn = $g('checksum',rpPage);
-		if (!okBtn) { okBtn = $g('c',rpPage); }
-		sParams += okBtn.name + "=" + okBtn.value;
+		// var okBtn = $g('checksum',rpPage);
+		// if (!okBtn) { okBtn = $g('c',rpPage); }
+		// sParams += okBtn.name + "=" + okBtn.value;
+	        var okBtn = $gc('rallyPointConfirm',rpPage);
+		var sOnclick = okBtn[0].getAttribute('onclick');
+	        var checkSum = sOnclick.split(';')[1].split('value = \'')[1].split('\'')[0]
+		sParams += "checksum=" + checkSum;
 
 		var remBtn = $a('-',[['href','#'],['title',langStrings[1]],['onclick',jsNone]]);
 		remBtn.addEventListener('click',remWave,false);
