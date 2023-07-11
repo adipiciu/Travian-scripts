@@ -183,12 +183,9 @@ function addWave () {
 			sParams += t + "=" + tInputs[i].value + "&";
 		}
 
-		// var okBtn = $g('checksum',rpPage);
-		// if (!okBtn) { okBtn = $g('c',rpPage); }
-		// sParams += okBtn.name + "=" + okBtn.value;
-	        var okBtn = $gc('rallyPointConfirm',rpPage);
+	    var okBtn = $gc('rallyPointConfirm',rpPage);
 		var sOnclick = okBtn[0].getAttribute('onclick');
-	        var checkSum = sOnclick.split(';')[1].split('value = \'')[1].split('\'')[0]
+	    var checkSum = sOnclick.split(';')[1].split('value = \'')[1].split('\'')[0];
 		sParams += "checksum=" + checkSum;
 
 		var remBtn = $a('-',[['href','#'],['title',langStrings[1]],['onclick',jsNone]]);
