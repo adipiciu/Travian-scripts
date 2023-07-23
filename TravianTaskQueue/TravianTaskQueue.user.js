@@ -29,7 +29,7 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version     2.0.3
+// @version     2.0.4
 // ==/UserScript==
 
 (function () {
@@ -2225,8 +2225,12 @@ function attack3(httpRequest,aTask){
 						++q;
 					} else sParams += t + "=" + tInputs[q].value + "&";
 				}
-				var okBtn = holder.getElementById("checksum");
-				sParams += okBtn.name + "=" + okBtn.value;
+				//var okBtn = holder.getElementById("checksum");
+				//sParams += okBtn.name + "=" + okBtn.value;
+				var okBtn = holder.getElementsByClassName('rallyPointConfirm');
+				var sOnclick = okBtn[0].getAttribute('onclick');
+	       		var checkSum = sOnclick.split(';')[1].split('value = \'')[1].split('\'')[0]
+				sParams += "checksum=" + checkSum;
 				post(fullName+'build.php?gid=16&tt=2', sParams, handleRequestAttack, aTask);
 				return;
 			}
