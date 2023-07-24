@@ -29,14 +29,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version     2.0.4
+// @version     2.0.5
 // ==/UserScript==
 
 (function () {
 
 function allInOneTTQ () {
 notRunYet = false;
-var sCurrentVersion = "2.0.3";
+var sCurrentVersion = "2.0.5";
 
 //find out if Server errors
 var strTitle = document.title;
