@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           Travian Resource bar plus
 // @namespace      https://github.com/adipiciu/Travian-scripts
-// @description    Shows travian resources (for Travian Legends and Travian Glory of Sparta)
+// @description    Shows travian resources (for Travian Legends and Travian Shores of War)
 // @author         adipiciu (based on Travian Resource bar plus version 2.8.14 by Serj_LV)
 // @license        GPL version 3 or any later version; http://www.gnu.org/copyleft/gpl.html
 // @contributionURL https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR
@@ -32,14 +32,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.23.13
+// @version        2.23.14
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.23.13';
+var version = '2.23.14';
 
 notRunYet = false;
 
@@ -214,8 +214,8 @@ DICT = {
 		EgyptiansAndHunso : ['update','true','false'],
 		EgyptiansAndHunsh : "Server with Egyptians, Huns or Spartans tribes",
 		servertype : "Travian Server Type",
-		servertypeh : "Server types: Travian Legends, Travian Glory of Sparta",
-		servertypeo : ['update','Glory of Sparta','Legends'],
+		servertypeh : "Server types: Travian Legends, Travian Shores of War",
+		servertypeo : ['update','Shores of War','Legends'],
 		speedart : "Speed artefact",
 		racelist : ['Romans','Teutons','Gauls','Nature','Natars','Egyptians','Huns','Spartans'],
 		cranny : "Yellow level of cranny (percent)",
@@ -1238,8 +1238,8 @@ DICT = {
 		sspeed : "Viteza server-ului",
 		sspeedh : "0 - auto, 1 (1x), 2 (2x), 3 (3x aka speed), ... etc.",
 		servertype : "Tipul serverului de Travian",
-		servertypeh : "Tipuri de servere: Travian Legends, Travian Glory of Sparta",
-		servertypeo : ['update','Glory of Sparta','Legends'],
+		servertypeh : "Tipuri de servere: Travian Legends, Travian Shores of War",
+		servertypeo : ['update','Shores of War','Legends'],
 		speedart : "Artefact de viteză",
 		racelist : ['Romani','Barbari','Daci','Natura','Natari','Egipteni','Huni','Spartans'],
 		cranny : "Culoarea galbenă la beci (în procente)",
@@ -2322,8 +2322,8 @@ DICT = {
 		sspeed : "Kecepatan Server",
 		sspeedh : "0 - otomatis, 1 (1x), 2 (2x), 3 (3x als speed), ... dll.",
 		servertype : "Tipe Travian Server",
-		servertypeh : "Tipe Server: Travian Legends, Travian Glory of Sparta",
-		servertypeo : ['pembaruan','Glory of Sparta','Legends'],
+		servertypeh : "Tipe Server: Travian Legends, Travian Shores of War",
+		servertypeo : ['pembaruan','Shores of War','Legends'],
 		speedart : "Speed artefak",
 		racelist : ['Romawi','Teuton','Galia','Alam','Natar','Mesir','Mongol','Spartans'],
 		cranny : "Level kuning dari (persen)",
@@ -7989,7 +7989,8 @@ var bCost = [[0],//dummy
 [910,945,910,340,2,1,1.31], //Waterworks Cost gid = 45
 [320,280,420,360,4,4,1.28], //Hospital Cost gid = 46
 [160,100,80,60,1,0,1.28], //Defensive Wall Cost gid = 47
-[320,280,420,360,5,4,1.28] //Asclepeion Cost gid = 48
+[320,280,420,360,5,4,1.28], //Asclepeion Cost gid = 48
+[1440,1370,1290,495,5,3,1.30] //Harbor Cost gid = 49
 ];
 
 fieldsOfVillage = {
@@ -9021,7 +9022,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Resource Bar+";
-		content.innerHTML = "What's new in Version "+version+" - Jun 15, 2023:<p></p><ui><li>Moved checkboxes to top of farmlists</li><li>Updated Marksman speed</li></ui>";
+		content.innerHTML = "What's new in Version "+version+" - Oct 11, 2023:<p></p><ui><li>Added Harbour building costs</li></ui>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
