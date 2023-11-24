@@ -32,14 +32,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.23.14
+// @version        2.23.15
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.23.14';
+var version = '2.23.15';
 
 notRunYet = false;
 
@@ -3450,8 +3450,7 @@ function marketSend () {
 	}
 	function addButtonsEvent ( fl ) {
 		//var ss = $gt('button',$gn('snd')[0]);
-		var sendForm = $g('sendResourcesForm');
-		var ss = sendForm.querySelectorAll('button[type=submit]');
+		var ss = basee.querySelectorAll('button[type=submit]');
 		//for( i=0; i<ss.length; i++ ) ss[i].addEventListener('click', removeACh, true);
 		for( i=0; i<ss.length; i++ ) ss[i].addEventListener('click', mhRowLinkAMem, true);
 		// travel time
@@ -3460,8 +3459,6 @@ function marketSend () {
 		if( fl ) $gn('dname')[0].value = '';
 	}
 	function checkTargetValidate () {
-		//var basee = $g('target_validate');
-		var basee = $g('sendResourcesForm');
 		if( basee ) {
 			var ss = basee.querySelectorAll('button[type=submit]');
 			//$gc("sendRessources",$gn('snd')[0])[0].addEventListener('click', mhRowLinkAMem, true);
@@ -3514,6 +3511,7 @@ function marketSend () {
 
 	//var basee = $g('send_select');
 	var basee = $g('sendResourcesForm');
+	if( ! basee ) basee = $gc('sendResourcesForm')[0];
 	var resSelector = $gc("resourceSelector")[0];
 	var imgs = $gt("i",resSelector);
 	if( ! basee ) return;
@@ -5002,13 +5000,13 @@ function sendResourses( myVid ) {
 	return false;
 }
 
-// 0-market, 1-barracks, 2-stable, 3-workshop, 4-Tournament Square, 5-Great Barracks, 6-Great Stable
+// 0-market, 1-barracks, 2-stable, 3-workshop, 4-Tournament Square, 5-Great Barracks, 6-Great Stable, 7-Hospital, 8-Asclepeion, 9-Harbor
 function parseDorf2 () {
 	var base = $g('villageContent');
 	if( !(base) ) return;
 	var fl = false;
-	var buildsID = ['g17','g19','g20','g21','g14','g29','g30','g46'];
-	var buildsNum = [0,0,0,0,0,0,0,0];
+	var buildsID = ['g17','g19','g20','g21','g14','g29','g30','g46','g48','g49'];
+	var buildsNum = [0,0,0,0,0,0,0,0,0,0];
 
 	var allIMG = $gt('IMG',base);
 	for( var t=0; t<allIMG.length; t++ ) {
@@ -5036,7 +5034,7 @@ function parseDorf2 () {
 		RB.village_Var[1] = 0;
 		saveVCookie( 'VV', RB.village_Var );
 	}
-	var dictsFL = [['g17',7],['g19',8],['g20',9],['g21',10],['g16',6],['g14',3],['g29',24],['g30',25],['g46',26]];
+	var dictsFL = [['g17',7],['g19',8],['g20',9],['g21',10],['g16',6],['g14',3],['g29',24],['g30',25],['g46',26],['g48',27],['g49',28]];
 	function getBuildingName () {
 		for( var i = 0 ; i < dictsFL.length; i++ ) {
 			if( RB.dictFL[dictsFL[i][1]] == 0 ) {
@@ -7073,11 +7071,6 @@ function buildDispatcher () {
 	gid = gid.split(/\s/)[0];
 	if( gid == 'gid17' ) {
 		setTimeout(marketSend,700); setTimeout(marketSumm,700); marketOffer(); marketBuy(); setTimeout(marketTradeRoutes,700); stopRP();
-		var sendRes = $g("marketplaceSendResources");
-		if (sendRes) {
-			var sendButt = $gt("button",sendRes);
-			if (sendButt.length > 0) { sendButt[0].addEventListener("click",function(x) { setTimeout(marketSend,700); }, 0); }
-		}
 		var gold = $xf('//div[@class="npcMerchant"]//button[contains(@class, "gold")]','l',cont);
 		for( var i = 0; i < gold.snapshotLength; i++ ) {
 			gold.snapshotItem(i).addEventListener('click', function(x) { setTimeout(npcForTroops,500); }, 0);
@@ -7093,7 +7086,7 @@ function buildDispatcher () {
 		}
 	} else if( gid == 'gid23' ) {
 		crannyCalc();
-	} else if( gid == 'gid19' || gid == 'gid20' || gid == 'gid21' || gid == 'gid25' || gid == 'gid26' || gid == 'gid29'|| gid == 'gid30' || gid == 'gid36' || gid == 'gid46' || gid == 'gid48' ) {
+	} else if( gid == 'gid19' || gid == 'gid20' || gid == 'gid21' || gid == 'gid25' || gid == 'gid26' || gid == 'gid29'|| gid == 'gid30' || gid == 'gid36' || gid == 'gid46' || gid == 'gid48' || gid == 'gid49' ) {
 		calcTroopCost();
 		if( RB.Setup[11] > 0 ) calcNPCtroops();
 	} else if( gid == 'gid11' ) {
@@ -7569,36 +7562,27 @@ function analyzerBattle () {
 	kirilloid += kirillS+'Ub#d:'+((RB.Setup[46]==1)?'m9':'');
 	kirilloid = kirilloid.replace(/r0(uUb)?/g,'');
 	atS[0][1] -= atS[1][1];
-	var res = $gc('crannyInfo',tt[1]);
-	var goods = $gc('goods',tt[1]);
-	var ress = [0,0,0,0,0];
-	var resp = [0,0,0,0];
-	for( var k=0; k < res.length; k++ ) {
-		var sp = $gt('span',res[k]);
-		for( var i=0; i < sp.length; i++ ) {
-			resp[i] = resp[i] + parseInt(sp[i].textContent);
-		}
-		ress = [0,resp[0],resp[1],resp[2],resp[3]];
+	var res = $gc('resources',tt[1]);
+	var ress = [];
+	ress[0] = 0;
+	for( var i=1; i <= res.length; i++ ) {
+		var sp = $gt('span',res[i-1]);
+		ress[i] = parseInt(sp[0].textContent);
 	}
 
-	if( goods.length > 1) {
-		var crC = parseInt( res[1].innerHTML.onlyText() );
-		if( ! isNaN(crC) ) {
-			var pbonus = crC;
-			if( pbonus > 0 ) {
-				var newT = $e('TABLE',[['class',allIDs[7]]]);
-				for( i=1; i<11; i++ ) {
-					var trC = troopInfo(i+(parseInt(RB.Setup[2])*10), 8);
-					if( trC > 1 ) {
-						newT.appendChild($em('TR',[$c(trImg('unit u'+(i+parseInt(RB.Setup[2])*10))),$c(Math.ceil(pbonus/trC))]));
-					}
-				}
-				var clone = res[1].cloneNode(true);
-				clone.addEventListener("mouseover", function () { makeTooltip(newT); }, false);
-				clone.addEventListener("mouseout", removeTooltip, false);
-				res[1].parentNode.replaceChild(clone,res[1]);
+	if( res.length === 6) {
+		var pbonus = ress[6];
+		var newT = $e('TABLE',[['class',allIDs[7]]]);
+		for( i=1; i<11; i++ ) {
+			var trC = troopInfo(i+(parseInt(RB.Setup[2])*10), 8);
+			if( trC > 1 ) {
+				newT.appendChild($em('TR',[$c(trImg('unit u'+(i+parseInt(RB.Setup[2])*10))),$c(Math.ceil(pbonus/trC))]));
 			}
 		}
+		var clone = res[5].cloneNode(true);
+		clone.addEventListener("mouseover", function () { makeTooltip(newT); }, false);
+		clone.addEventListener("mouseout", removeTooltip, false);
+		res[5].parentNode.replaceChild(clone,res[5]);
 	}
 
 	var dfS = [[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],0];
@@ -9022,7 +9006,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Resource Bar+";
-		content.innerHTML = "What's new in Version "+version+" - Oct 11, 2023:<p></p><ui><li>Added Harbour building costs</li></ui>";
+		content.innerHTML = "What's new in Version "+version+" - Nov 24, 2023:<p></p><ui><li>Fixes for new market interface</li><li>Fixes for battle analyzer</li><li>Added support for Hospital and Harbor buildings</li></ui>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
