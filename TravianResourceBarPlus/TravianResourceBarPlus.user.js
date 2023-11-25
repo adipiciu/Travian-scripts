@@ -32,14 +32,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.23.15
+// @version        2.23.16
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.23.15';
+var version = '2.23.16';
 
 notRunYet = false;
 
@@ -9043,7 +9043,7 @@ function displayWhatIsNew () {
 
 	if( RB.Setup[2] == 3 || RB.Setup[2] == 4 || RB.Setup[2] > 7 ) { RB.Setup[2] = 0; saveCookie( 'RBSetup', 'Setup' ); }
 	if( RB.Setup[45] == 0 ) { detectServerSpeed(); }
-	var aText = $xf('//script[contains(@src, "/js/default/Travian/Variables.js")]');
+	var aText = $xf('//script[contains(@src, "/Variables.js")]');
 	if (aText) {
 		if (RB.Setup[46] == 0 || RB.Setup[47]  == 0 || RB.Setup[48] == 0) {
 			ajaxRequest(aText.src, 'GET', null, function(ajaxResp) {
