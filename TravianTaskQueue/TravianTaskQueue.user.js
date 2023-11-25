@@ -29,14 +29,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version     2.0.5
+// @version     2.0.6
 // ==/UserScript==
 
 (function () {
 
 function allInOneTTQ () {
 notRunYet = false;
-var sCurrentVersion = "2.0.5";
+var sCurrentVersion = "2.0.6";
 
 //find out if Server errors
 var strTitle = document.title;
@@ -198,7 +198,7 @@ function detectLanguage() {
 function detectMapSize () {
 	var mapSize = getOption("MAP_SIZE", 0, "integer");
 	if( mapSize !== 0 ) return mapSize;
-	var aText = xpath('//script[contains(@src, "/js/default/Travian/Variables.js")]',document, true);
+	var aText = xpath('//script[contains(@src, "/js/Variables.js")]',document, true);
 	if (aText) {
 		get(aText.src, function(ajaxResp) {
 			var ad = ajaxNDIV(ajaxResp);
@@ -2303,6 +2303,11 @@ function createGoldClubBtn () {
 		var SndLtrBtn = generateButton(aLangStrings[16], scheduleSendClub);
 		arrList[i].appendChild(SndLtrBtn);
 	}
+	var arrList = $gc('farmListWrapper');
+	for (var i = 0; i < arrList.length; i++) {
+		var SndLtrBtn = generateButton(aLangStrings[16], scheduleSendClub);
+		arrList[i].parentNode.insertBefore(SndLtrBtn, arrList[i].parentNode.firstChild);
+	}
 	_log(3, "End createGoldClubBtn()");
 }
 
@@ -2313,6 +2318,13 @@ function scheduleSendClub () {
 	if (listNameClass.length > 0) {
 		var listName = $gc("listName",list)[0].textContent.replace('|','&#124;').replace(',','&#44;').trim();
 		var listID = list.id.substring(8);
+	} else {
+		listNameClass = list.querySelectorAll('[data-list]');
+		if (listNameClass.length > 0) {
+			var listName = $gc("farmListName",list)[0].textContent.replace('|','&#124;').replace(',','&#44;').trim();
+			var listID = listNameClass[0].getAttribute('data-list');
+		}
+		return;
 	}
 	displayTimerForm(9,listName,listID);
 	_log(3, "End scheduleSendClub()");
@@ -2323,8 +2335,10 @@ function sendGoldClub (aTask) {
 	_log(1,"Begin attack from gold-club ("+aTask+")");
 	printMsg(aLangStrings[6] + " > 1<br><br>" + getTaskDetails(aTask));
 	var sParams = '{"listConfigs":[{"id":'+aTask[3]+'}]}';
+	//var sParams = '{"action":"farmList","lists":[{"id":'+aTask[3]+'}]}';
 	_log(3,"sParams:"+sParams);
 	post(fullName+'api/v1/raid-list/slots', sParams, sendGoldClub1, aTask);
+	//post(fullName+'api/v1/farm-list/send', sParams, sendGoldClub1, aTask);
 	_log(2, "The attack was requested.");
 	_log(1, "End attack from gold-club ("+aTask+")");
 }
@@ -2394,6 +2408,7 @@ function sendGoldClub2(httpRequest,aTask) {
 				}
 				_log(3,"parameters: "+sParams);
 				post(fullName+'api/v1/raid-list', JSON.stringify(sParams), sendGoldClubConfirmation, aTask);
+				//post(fullName+'api/v1/farm-list', JSON.stringify(sParams), sendGoldClubConfirmation, aTask);
 				return;
 			}
 			if ( reqVID != currentActiveVillage ) switchActiveVillage ( currentActiveVillage );
@@ -2436,16 +2451,19 @@ function sendGoldClubConfirmation (httpRequest, aTask) {
 function createTrainLinks(buildingID) {
 	_log(3,"Begin createTrainLinks()");
 	switch(buildingID) {
-		case 29: //great barracks
-		case 30: //great stables
-		case 19: //barracks
-		case 20: //stables
-		case 21: //workshop
+		case 19: //Barracks
+		case 20: //Stable
+		case 21: //Workshop
+		case 29: //Great barracks
+		case 30: //Great stables
 		case 36: //Trapper
+		case 46: //Hospital
+		case 48: //Asclepeion
+		case 49: //Harbor
 			break;
-		case 25: //residence
-		case 26: //palace
-		case 44: //command center
+		case 25: //Residence
+		case 26: //Palace
+		case 44: //Command center
 			break;
 		default:
 			_log(2, "No train links needed.");
@@ -3978,7 +3996,8 @@ function onLoad() {
 				case 22:	createResearchLinks(tY);
 							break;
 				case 19:	case 20:	case 21:	case 36:
-				case 25:	case 26:	case 29:	case 30:	case 44:
+				case 25:	case 26:	case 29:	case 30:	
+				case 44:	case 46:	case 48:	case 49:
 							createTrainLinks(tY);
 							break;
 				case 24:	createPartyLinks();
@@ -3989,6 +4008,7 @@ function onLoad() {
 							break;
 				case 16:	if( $gn('s1') ) createAttackLinks();
 							if( $id('raidList') ) createGoldClubBtn();
+							//if( $id('rallyPointFarmList') ) setTimeout(createGoldClubBtn,700)
 							break;
 				default:	_log(2, "This building (gid="+tY+") has no more links to create.");
 			}
