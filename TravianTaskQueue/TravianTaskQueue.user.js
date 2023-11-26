@@ -29,14 +29,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version     2.0.6
+// @version     2.0.7
 // ==/UserScript==
 
 (function () {
 
 function allInOneTTQ () {
 notRunYet = false;
-var sCurrentVersion = "2.0.6";
+var sCurrentVersion = "2.0.7";
 
 //find out if Server errors
 var strTitle = document.title;
@@ -152,7 +152,10 @@ function post(url, data, callback, options) {
 	httpRequest.onreadystatechange = function() {
 		callback(httpRequest, options)
 	};
-	if (url.includes("api/v1/")){
+	if (url.includes("api/v1/farm-list")){
+		httpRequest.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+	}
+	else if (url.includes("api/v1/")){
 		httpRequest.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
 		httpRequest.setRequestHeader('Authorization', 'Bearer ' + getAjaxToken());
 	} else {
@@ -2298,11 +2301,6 @@ function handleRequestAttack(httpRequest, aTask) {
 // writed by Serj_LV
 function createGoldClubBtn () {
 	_log(3,"Begin createGoldClubBtn()");
-	var arrList = $gc('raidList');
-	for (var i = 0; i < arrList.length; i++) {
-		var SndLtrBtn = generateButton(aLangStrings[16], scheduleSendClub);
-		arrList[i].appendChild(SndLtrBtn);
-	}
 	var arrList = $gc('farmListWrapper');
 	for (var i = 0; i < arrList.length; i++) {
 		var SndLtrBtn = generateButton(aLangStrings[16], scheduleSendClub);
@@ -2314,17 +2312,10 @@ function createGoldClubBtn () {
 function scheduleSendClub () {
 	_log(3,"Begin scheduleSendClub()");
 	var list = this.parentNode;	
-	var listNameClass = $gc("listName",list);
+	listNameClass = list.querySelectorAll('[data-list]');
 	if (listNameClass.length > 0) {
-		var listName = $gc("listName",list)[0].textContent.replace('|','&#124;').replace(',','&#44;').trim();
-		var listID = list.id.substring(8);
-	} else {
-		listNameClass = list.querySelectorAll('[data-list]');
-		if (listNameClass.length > 0) {
-			var listName = $gc("farmListName",list)[0].textContent.replace('|','&#124;').replace(',','&#44;').trim();
-			var listID = listNameClass[0].getAttribute('data-list');
-		}
-		return;
+		var listName = $gc("farmListName",list)[0].textContent.replace('|','&#124;').replace(',','&#44;').trim();
+		var listID = listNameClass[0].getAttribute('data-list');
 	}
 	displayTimerForm(9,listName,listID);
 	_log(3, "End scheduleSendClub()");
@@ -2334,11 +2325,8 @@ var data;
 function sendGoldClub (aTask) {
 	_log(1,"Begin attack from gold-club ("+aTask+")");
 	printMsg(aLangStrings[6] + " > 1<br><br>" + getTaskDetails(aTask));
-	var sParams = '{"listConfigs":[{"id":'+aTask[3]+'}]}';
-	//var sParams = '{"action":"farmList","lists":[{"id":'+aTask[3]+'}]}';
-	_log(3,"sParams:"+sParams);
-	post(fullName+'api/v1/raid-list/slots', sParams, sendGoldClub1, aTask);
-	//post(fullName+'api/v1/farm-list/send', sParams, sendGoldClub1, aTask);
+	//post(fullName+'api/v1/raid-list/slots', sParams, sendGoldClub1, aTask);
+	get(fullName+"build.php?id=39&gid=16&tt=99", sendGoldClub2, aTask);
 	_log(2, "The attack was requested.");
 	_log(1, "End attack from gold-club ("+aTask+")");
 }
@@ -2350,28 +2338,6 @@ function getActiveVillage (el,adoc) {
 	} else { reqVID = -1; }
 	return reqVID;
 }
-function sendGoldClub1(httpRequest,aTask) {
-	if (httpRequest.readyState == 4) {
-		printMsg(aLangStrings[6] + " > 1 > 2<br><br>" + getTaskDetails(aTask));
-		if (httpRequest.status == 200 && httpRequest.responseText) {
-			data = JSON.parse(httpRequest.responseText);
-			/*
-			var strError = data.errorMsg;
-			if ( data.error == true ) {
-				_log(1, "sendGoldClub2> I could not send the troops. Reason: " + strError);
-				printMsg(aTask, false, aLangStrings[13] + ": "+strError, true);
-				addToHistory(aTask, false, aLangStrings[13] + ": "+strError);
-				return false;
-			}
-			*/
-			get(fullName+"build.php?id=39&gid=16&tt=99", sendGoldClub2, aTask);
-			return;
-		}
-		_log(1, "Your attack could not be sent. Bad response from server when sending request. (Server: Page Failed 1)");
-		printMsg(aTask, false, aLangStrings[74] + " " + aLangStrings[46]+" 1", true);
-		addToHistory(aTask, false, aLangStrings[74] + " " + aLangStrings[46]+" 1");
-	}
-}
 function sendGoldClub2(httpRequest,aTask) {
 	if (httpRequest.readyState == 4) {
 		printMsg(aLangStrings[6] + " > 1 > 2<br><br>" + getTaskDetails(aTask));
@@ -2379,8 +2345,38 @@ function sendGoldClub2(httpRequest,aTask) {
 			var parser = new DOMParser();
 			var holderFarm = parser.parseFromString(httpRequest.responseText, "text/html");
 			var holder = document.createElement('div');
-			holder.innerHTML = data.lists[0].html;
-			var tInputs = holder.getElementsByTagName('input');
+			holder.innerHTML = httpRequest.responseText;
+			var build = holder.getElementsByClassName('gid16');
+			var scripts = build[0].getElementsByTagName('script');
+			data = JSON.parse(scripts[0].textContent.match(/viewData:.*}}/)[0].replace('viewData','{ "viewData"').replace(new RegExp('}}$'), '}}}'));
+			var farmLists = data.viewData.ownPlayer.farmLists;
+			var targets = [];
+			var sParams;
+			for (var i=0; i<farmLists.length; i++) {
+				if (farmLists[i].id == aTask[3]) {
+					if (farmLists[i].isExpanded == true) { //farmlist loaded
+						for (var j=0; j<farmLists[i].slots.length; j++) {
+							var village = farmLists[i].slots[j];
+							if (village.isActive == true && village.lastRaid.icon != 2 && village.lastRaid.icon != 3) { //ignore farmlists with casualties
+								targets.push(farmLists[i].slots[j].id);
+							}
+							sParams = '{"action":"farmList","lists":[{"id":'+aTask[3]+',"targets":'+JSON.stringify(targets)+'}]}';
+						}
+					} else {
+						slotStates = farmLists[i].slotStates;
+						for (var j=0; j<slotStates.length; j++) {
+							if (slotStates[j].isActive == true) {
+								targets.push(slotStates[j].id);
+							}
+						}
+						sParams = '{"action":"farmList","lists":[{"id":'+aTask[3]+'}]}';
+					}
+					break;
+				}
+			}
+			_log(3,"parameters: "+sParams);
+			post(fullName+'api/v1/farm-list/send', sParams, sendGoldClubConfirmation, aTask);
+			return;
 			var checksum = xpath("//script[contains(text(),'Travian.Game.RaidList.checksum')]", holderFarm, true, holderFarm);
 			if (tInputs.length > 4 ) {
 				var sParams = {};
@@ -2408,7 +2404,6 @@ function sendGoldClub2(httpRequest,aTask) {
 				}
 				_log(3,"parameters: "+sParams);
 				post(fullName+'api/v1/raid-list', JSON.stringify(sParams), sendGoldClubConfirmation, aTask);
-				//post(fullName+'api/v1/farm-list', JSON.stringify(sParams), sendGoldClubConfirmation, aTask);
 				return;
 			}
 			if ( reqVID != currentActiveVillage ) switchActiveVillage ( currentActiveVillage );
@@ -2417,7 +2412,7 @@ function sendGoldClub2(httpRequest,aTask) {
 			addToHistory(aTask, false, aLangStrings[74]+" "+aLangStrings[11]+" 1");
 			return;
 		}
-		switchActiveVillage(currentActiveVillage);
+		//switchActiveVillage(currentActiveVillage);
 		_log(1, "Your attack could not be sent. Bad response from server when sending request. (Server: Page Failed 1)");
 		printMsg(aTask, false, aLangStrings[74] + " " + aLangStrings[46]+" 1", true);
 		addToHistory(aTask, false, aLangStrings[74] + " " + aLangStrings[46]+" 1");
@@ -2428,16 +2423,15 @@ function sendGoldClubConfirmation (httpRequest, aTask) {
 		printMsg(aLangStrings[6] + " > 1 > 2<br><br>" + getTaskDetails(aTask));
 		if ( httpRequest.status == 200 && httpRequest.responseText ) {
 			data = JSON.parse(httpRequest.responseText);
-			if ( data.startedRaids ) {
+			if ( !data.lists[0].error ) {
 				_log(1, "I think those troops were sent.");
 				printMsg(aLangStrings[18]+", "+aTask[2]);
 				addToHistory(aTask, true);
 			} else {
-				_log(1, "I'm not so sure those troops were sent. Confirmation failed.");
-				printMsg(aLangStrings[19] + " >> " +aTask[2]+ " (" + aLangStrings[75]+")", true);
+				_log(1, "I'm not so sure those troops were sent. Confirmation failed. " + data.lists[0].error);
+				printMsg(aLangStrings[19] + " >> " +aTask[2]+ " (" + aLangStrings[75]+")" + data.lists[0].error, true);
 				addToHistory(aTask, false, aLangStrings[75]);
 			}
-			//if( getActiveVillage(holder) != currentActiveVillage ) switchActiveVillage(currentActiveVillage);
 			return;
 		}
 		_log(1, "Farm request was sent, however, I could not confirm. Bad response from server when trying to confirm. (Confirmation Failed, Server: Page Failed 3)");
@@ -4008,7 +4002,7 @@ function onLoad() {
 							break;
 				case 16:	if( $gn('s1') ) createAttackLinks();
 							if( $id('raidList') ) createGoldClubBtn();
-							//if( $id('rallyPointFarmList') ) setTimeout(createGoldClubBtn,700)
+							if( $id('rallyPointFarmList') ) setTimeout(createGoldClubBtn,700)
 							break;
 				default:	_log(2, "This building (gid="+tY+") has no more links to create.");
 			}
