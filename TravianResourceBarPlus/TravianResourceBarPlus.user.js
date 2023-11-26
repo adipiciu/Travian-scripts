@@ -32,14 +32,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.23.16
+// @version        2.23.17
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.23.16';
+var version = '2.23.17';
 
 notRunYet = false;
 
@@ -3311,9 +3311,12 @@ function marketSend () {
 		loadVCookie('vPPH', 'village_PPH', RB.wantsMem[4]);
 		if( RB.wantsMem[4] == 0 ) return;
 		var arXY = id2xy( RB.wantsMem[4] );
-		var coordX = parseInt($gt('input',$gc('coordinateX')[0])[0].getAttribute("value"));
-		var coordY = parseInt($gt('input',$gc('coordinateY')[0])[0].getAttribute("value"));
-		if (arXY[0] != coordX || arXY[1] != coordY) { sendResourses( RB.wantsMem[4] ); return; }
+		var coordXInput = $gt('input',$gc('coordinateX')[0])[0];
+		var coordYInput = $gt('input',$gc('coordinateY')[0])[0];
+		var coordX = parseInt(coordXInput.getAttribute("value"));
+		var coordY = parseInt(coordYInput.getAttribute("value"));
+		if (arXY[0] != coordX) updateInput(coordXInput,arXY[0]);
+		if (arXY[1] != coordY) updateInput(coordYInput,arXY[1]);
 		var htR = getTTime( calcDistance(RB.wantsMem[4], village_aid), MTime[parseInt(RB.Setup[2])]*sM, 0, 0 );
 		var ht = parseInt(RB.wantsMem[9]) < htR ? htR - parseInt(RB.wantsMem[9]): 0;
 		for( var i = 0; i < 4; i++ ) { updateInput(rxI[i],0); } //reset values so they will not overflow
@@ -7783,7 +7786,7 @@ function detectAttack () {
 	function triggerAlarm () {
 		var audioT = $g(allIDs[22]);
 		if( audioT ) audioT.parentNode.removeChild(audioT);
-		cont.appendChild($e('AUDIO',[['id',allIDs[22]],['src',RB.Setup[29]],['autoplay','true'],['loop','true']]));
+		document.body.appendChild($e('AUDIO',[['id',allIDs[22]],['src',RB.Setup[29]],['autoplay','true'],['loop','true']]));
 	}
 	function noAttack () {
 		RB.attackList[0] = Date.now();
@@ -7818,9 +7821,7 @@ function detectAttack () {
 				FreezeScreen(false);
 				showAtt();
 				if( RB.attackList.length > 1 ) {
-					var audioT = $g(allIDs[22]);
-					if( audioT ) audioT.parentNode.removeChild(audioT);
-					cont.appendChild($e('AUDIO',[['id',allIDs[22]],['src',RB.Setup[29]],['autoplay','true'],['loop','true']]));
+					triggerAlarm();
 					//show_alert();
 				}
 			}
@@ -7851,7 +7852,7 @@ function detectAttack () {
 		var aLink = fullName +'dorf1.php';
 		ajaxRequest(aLink, 'GET', null, function(ajaxResp) {
 			var ad = ajaxNDIV(ajaxResp);
-			var move = $xf('.//li[contains(@class,"attack")]','f',ad);
+			var move = $xf('.//div[contains(@class,"listEntry") and contains(@class,"attack")]','f',ad);
 			ad = null;
 			if (move) { 
 				triggerAlarm();
@@ -9006,7 +9007,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Resource Bar+";
-		content.innerHTML = "What's new in Version "+version+" - Nov 24, 2023:<p></p><ui><li>Fixes for new market interface</li><li>Fixes for battle analyzer</li><li>Added support for Hospital and Harbor buildings</li></ui>";
+		content.innerHTML = "What's new in Version "+version+" - Nov 26, 2023:<p></p><ui><li>Fixes for new market interface</li><li>Fixes for battle analyzer</li><li>Added support for Hospital and Harbor buildings</li><li>Fixed attack detector</li><li>Improved market M(emory) function</li></ui>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
