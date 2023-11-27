@@ -225,7 +225,7 @@ function addWave () {
 		if (ships.length>0) {
 			var shipsRow = $gc('shipAvailability',bld)[0].cloneNode(true);
 			var shipsDiv = ships[0].cloneNode(true);
-			shipsDiv.style.margin = "0px"
+			shipsDiv.style.margin = "0px";
 			var shipsInp = $gt('input',shipsDiv);
 			shipsInp[0].name = shipsInp[0].name+"twb"+tbl.tBodies.length;
 			shipsInp[0].removeAttribute("onchange");
