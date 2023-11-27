@@ -7,12 +7,12 @@
 // @contributionURL https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=Travian+wave+builder+script&currency_code=EUR
 // @match          https://*.travian.com/build.php*
 
-// @version        2.8
+// @version        2.9
 // ==/UserScript==
 
 function allInOneOpera () {
 
-var version = '2.8';
+var version = '2.9';
 var scriptURL = 'https://github.com/adipiciu/Travian-scripts';
 var defInterval = 200;
 var sLang = detectLanguage();
@@ -175,11 +175,10 @@ function addWave () {
 		var tc = new Array(12);
 		for( i=0; i<tInputs.length; i++ ) {
 			var t = tInputs[i].name;
-			if( /^t\d/.test(t) ) {
-				tc[t.match(/\d+/)[0]] = tInputs[i].value;
-			} if( /\[t\d/.test(t) ) {
+			if( /\[t\d/.test(t) ) {
 				tc[t.match(/\[t(\d+)/)[1]] = tInputs[i].value;
 			} if (tInputs[i].className == "radio") continue;
+			if ( /useShip/.test(t) ) continue;
 			sParams += t + "=" + tInputs[i].value + "&";
 		}
 
@@ -210,19 +209,31 @@ function addWave () {
 		var nbody = $ee('TBODY',nrow);
 		tInputs = $gt('SELECT',bld);
 		var tSpy = $gc('radio',bld);
+		var ships = $gc('useShip',bld);
 		nrow = $e('TR');
 		if (tInputs.length>0) {
 			nrow.appendChild($c(tInputs[0],[['colspan',6]]));
 		} else if (tSpy.length>0) {
-			$at(tSpy[0],[['name',tSpy[0].name+"twb"+tbl.tBodies.length]]);
-			if (tSpy.length>1) $at(tSpy[1],[['name',tSpy[1].name+"twb"+tbl.tBodies.length]]);
-			$at(tSpy[0].parentNode.parentNode,[['colspan',6]]);
+			tSpy[0].name = tSpy[0].name+"twb"+tbl.tBodies.length;
+			if (tSpy.length>1) tSpy[1].name = tSpy[1].name+"twb"+tbl.tBodies.length;
+			tSpy[0].parentNode.parentNode.colSpan = 6;
 			nrow.appendChild(tSpy[0].parentNode.parentNode);
 		} else {
 			nrow.appendChild($c('-',[['colspan',6]]));
 		}
 		nrow.appendChild($c(tInputs.length>0 ? tInputs[0]: '-',[['colspan',5]]));
-		nrow.appendChild($e('TD'));
+		if (ships.length>0) {
+			var shipsRow = $gc('shipAvailability',bld)[0].cloneNode(true);
+			var shipsDiv = ships[0].cloneNode(true);
+			shipsDiv.style.margin = "0px"
+			var shipsInp = $gt('input',shipsDiv);
+			shipsInp[0].name = shipsInp[0].name+"twb"+tbl.tBodies.length;
+			shipsInp[0].removeAttribute("onchange");
+			shipsRow.appendChild(shipsDiv.cloneNode(true));
+			nrow.appendChild($c(shipsRow,[['style','text-align:right;']]));
+		} else {
+			nrow.appendChild($e('TD'));
+		}
 		nbody.appendChild(nrow);
 		tbl.appendChild(nbody);
 		setTimeout(ok, getRandom(1200));
@@ -259,6 +270,8 @@ function sendTroops (x) {
 	sParams += tInputs.length>1 ? "&" + tInputs[1].name + "=" + tInputs[1].value : '';
 	var tSpy = $gc('radio',wBody);
 	sParams += tSpy.length>0 ? "&" + tSpy[0].name.substring(0, tSpy[0].name.indexOf('twb')) + "=" + (tSpy[0].checked ? '1' : '2') : '';
+	var ShipsInp = $gc('useShips',wBody);
+	sParams += (ShipsInp.length>0 && ShipsInp[0].checked) ? "&" + ShipsInp[0].name.substring(0, ShipsInp[0].name.indexOf('twb')) + "=1" : '';
 
 	function logWaves (a,b) {
 		wlog += "<span style='color:"+(b?'green':'red')+"'> "+a+" </span>";
@@ -328,7 +341,7 @@ var intervaltxt = $ee('SPAN',langStrings[7],[['style','display:inline-block;padd
 var unitTimetxt = $ee('SPAN',langStrings[8],[['style','display:inline-block;padding:0 5px;']]);
 tbl.appendChild($ee('TFOOT',$ee('TR',$em('TD',[intervaltxt,interval,unitTimetxt,sendBtn,
 	$a(' (v'+version+') ',[['href',scriptURL],['target','_blank']])],
-	[['colspan',13],['style','text-align:center !important;']]))));
+	[['colspan',13],['style','text-align:center !important;padding:3px;']]))));
 
 build.appendChild(tbl);
 

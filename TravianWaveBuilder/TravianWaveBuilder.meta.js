@@ -7,5 +7,5 @@
 // @contributionURL https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=Travian+wave+builder+script&currency_code=EUR
 // @match          https://*.travian.com/build.php*
 
-// @version        2.8
+// @version        2.9
 // ==/UserScript==
