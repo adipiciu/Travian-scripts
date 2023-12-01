@@ -32,14 +32,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.23.17
+// @version        2.23.18
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.23.17';
+var version = '2.23.18';
 
 notRunYet = false;
 
@@ -6956,56 +6956,6 @@ function a2bInfo () {
 	else if( $g('raidListSlot') ) insertAfter(rP, $g('raidListSlot'));
 }
 
-function detectServerType () {
-	var aText = $xf('//script[contains(text(),"T4_feature_flags")]');
-	if( aText ) {
-		if ( /T4_feature_flags\s*=\s*(.*)};/.test(aText.textContent) ) {
-			var T4_feature_flags = JSON.parse(aText.textContent.match( /T4_feature_flags\s*=\s*(.*});/)[1]);
-			if (T4_feature_flags.territory == true) {
-				RB.Setup[46] = 1;
-				saveCookie( 'RBSetup', 'Setup' );
-			} else {
-				RB.Setup[46] = 2;
-				saveCookie( 'RBSetup', 'Setup' );
-			}
-		}
-	}
-}
-
-function detectEgyptiansAndHuns () {
-	var aText = $xf('//script[contains(text(),"T4_feature_flags")]');
-	if( aText ) {
-		if ( /T4_feature_flags\s*=\s*(.*)};/.test(aText.textContent) ) {
-			var T4_feature_flags = JSON.parse(aText.textContent.match( /T4_feature_flags\s*=\s*(.*});/)[1]);
-			if (T4_feature_flags.tribesEgyptiansAndHuns == true) {
-				RB.Setup[47] = 1;
-				saveCookie( 'RBSetup', 'Setup' );
-			} else {
-				RB.Setup[47] = 2;
-				saveCookie( 'RBSetup', 'Setup' );
-			}
-		}
-	}
-}
-
-function detectMapSize () {
-	var aText = $xf('//script[contains(text(),"TravianDefaults")]');
-	if( aText ) {
-		if ( /{"Map":{"Size":{"width":(\d+),/.test(aText.textContent) ) {
-			mapSize = JSON.parse(aText.textContent.match(/{"Map":{"Size":{"width":(\d+),/)[1]);
-			RB.Setup[48] = mapSize;
-			saveCookie( 'RBSetup', 'Setup' );
-		}
-	}
-}
-
-function detectServerSpeed () {
-	if (/\.x(\d+)\./.test(crtName)) {
-		RB.Setup[45] = crtName.match(/\.x(\d+)\./)[1];
-		saveCookie( 'RBSetup', 'Setup' );
-	}
-}
-
 function show_alert () {
 	var nt = Date.now();
 	if( lastAlert > nt-5e3 ) return;
@@ -9007,7 +8957,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Resource Bar+";
-		content.innerHTML = "What's new in Version "+version+" - Nov 26, 2023:<p></p><ui><li>Fixes for new market interface</li><li>Fixes for battle analyzer</li><li>Added support for Hospital and Harbor buildings</li><li>Fixed attack detector</li><li>Improved market M(emory) function</li></ui>";
+		content.innerHTML = "What's new in Version "+version+" - Dec 1, 2023:<p></p><ui><li>Fixes for new market interface</li><li>Fixes for battle analyzer</li><li>Added support for Hospital and Harbor buildings</li><li>Fixed attack detector</li><li>Improved market M(emory) function</li><li>Updated server settings detection</li></ui>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
@@ -9043,25 +8993,25 @@ function displayWhatIsNew () {
 	loadCookie ( 'DictFL', 'dictFL' );
 
 	if( RB.Setup[2] == 3 || RB.Setup[2] == 4 || RB.Setup[2] > 7 ) { RB.Setup[2] = 0; saveCookie( 'RBSetup', 'Setup' ); }
-	if( RB.Setup[45] == 0 ) { detectServerSpeed(); }
 	var aText = $xf('//script[contains(@src, "/Variables.js")]');
 	if (aText) {
-		if (RB.Setup[46] == 0 || RB.Setup[47]  == 0 || RB.Setup[48] == 0) {
+		if (RB.Setup[45] == 0 || RB.Setup[46] == 0 || RB.Setup[47] == 0 || RB.Setup[48] == 0) {
 			ajaxRequest(aText.src, 'GET', null, function(ajaxResp) {
 				var ad = ajaxNDIV(ajaxResp);
 				T4_Variables = JSON.parse(ad.textContent.match(/Travian.Variables\s*=\s*(.*});/)[1]);
 				ad = null;
+				if (RB.Setup[45] == 0) { RB.Setup[45] = T4_Variables.Speed; }
 				if (RB.Setup[46] == 0) { RB.Setup[46] = T4_Variables.feature_flags.territory ? 1 : 2; }
-				if (RB.Setup[47] == 0) { RB.Setup[47] = 1; }
+				if (RB.Setup[47] == 0) {
+					if (T4_Variables.tribeIds[2]) RB.Setup[47] = 2; //Romans, Gauls, Teutons
+					if (T4_Variables.tribeIds[4]) RB.Setup[47] = 1; //Huns & Egyptians
+				}
 				if (RB.Setup[48] == 0) { RB.Setup[48] = T4_Variables.Map.Size.width; }
 				saveCookie( 'RBSetup', 'Setup' );
 			});
 			return;
 		}
 	}
-	if (RB.Setup[46] == 0) { detectServerType(); }
-	if (RB.Setup[47] == 0) { detectEgyptiansAndHuns(); }
-	if (RB.Setup[48] == 0) { detectMapSize(); }
 
 	var mapWidth = RB.Setup[48];
 	var mapRadius = (mapWidth - 1) / 2;
