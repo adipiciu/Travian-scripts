@@ -32,14 +32,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.23.18
+// @version        2.23.19
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.23.18';
+var version = '2.23.19';
 
 notRunYet = false;
 
@@ -3311,8 +3311,8 @@ function marketSend () {
 		loadVCookie('vPPH', 'village_PPH', RB.wantsMem[4]);
 		if( RB.wantsMem[4] == 0 ) return;
 		var arXY = id2xy( RB.wantsMem[4] );
-		var coordXInput = $gt('input',$gc('coordinateX')[0])[0];
-		var coordYInput = $gt('input',$gc('coordinateY')[0])[0];
+		var coordXInput = $gt('input',$gc('coordinateX',basee)[0])[0];
+		var coordYInput = $gt('input',$gc('coordinateY',basee)[0])[0];
 		var coordX = parseInt(coordXInput.getAttribute("value"));
 		var coordY = parseInt(coordYInput.getAttribute("value"));
 		if (arXY[0] != coordX) updateInput(coordXInput,arXY[0]);
@@ -3363,8 +3363,8 @@ function marketSend () {
 		//if( $gn('x').length < 1 ) return;
 		//var xx = parseInt($gn('x')[0].value);
 		//var yy = parseInt($gn('y')[0].value);
-		var xx = parseInt($gt('input',$gc('coordinateX')[0])[0].value);
-		var yy = parseInt($gt('input',$gc('coordinateY')[0])[0].value);
+		var xx = parseInt($gt('input',$gc('coordinateX',basee)[0])[0].value);
+		var yy = parseInt($gt('input',$gc('coordinateY',basee)[0])[0].value);
 		if( isNaN(xx) || isNaN(yy) ) return;
 		if( xy2id(xx,yy) == RB.wantsMem[4] ) {
 			RB.wantsMem[3] = parseInt(RB.wantsMem[3]) - extNegat;
@@ -3427,8 +3427,8 @@ function marketSend () {
 	}
 	function mhRowLinkAMem () {
 		initRes = true; setTimeout(function() { getResources(); progressbar_ReInit(); }, 500);
-		var xx = parseInt($gt('input',$gc('coordinateX')[0])[0].value);
-		var yy = parseInt($gt('input',$gc('coordinateY')[0])[0].value);
+		var xx = parseInt($gt('input',$gc('coordinateX',basee)[0])[0].value);
+		var yy = parseInt($gt('input',$gc('coordinateY',basee)[0])[0].value);
 		if( isNaN(xx) || isNaN(yy) ) return;
 		if( xy2id(xx,yy) != RB.wantsMem[4] ) return;
 		loadVCookie('vPPH', 'village_PPH', RB.wantsMem[4]);
@@ -6570,8 +6570,8 @@ function addRefIGM ( idBlock ) {
 		if( uid ) uid = uid[1]; else continue;
 		if( uid != userID && uid != 1 ) {
 			al.style.display = 'inline';
-			if( RB.Setup[19] > 0 ) al.parentNode.insertBefore($ee('A',trImg(allIDs[37]),[['href',userActivityServers( RB.Setup[19], uid, true )[1]],['target','_blank']]), al.nextSibling);
-			if( RB.Setup[18] > 0 ) al.parentNode.insertBefore($ee('A',trImg(allIDs[36]),[['href','/messages/write?to='+uid]]), al.nextSibling);
+			if( RB.Setup[19] > 0 ) al.parentNode.insertBefore($ee('A',trImg(allIDs[37]),[['href',userActivityServers( RB.Setup[19], uid, true )[1]],['style','width:18px;'],['target','_blank']]), al.nextSibling);
+			if( RB.Setup[18] > 0 ) al.parentNode.insertBefore($ee('A',trImg(allIDs[36]),[['href','/messages/write?to='+uid],['style','width:18px;']]), al.nextSibling);
 		}
 	}
 	if( RB.Setup[19] > 0 ) {
@@ -8957,7 +8957,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Resource Bar+";
-		content.innerHTML = "What's new in Version "+version+" - Dec 1, 2023:<p></p><ui><li>Fixes for new market interface</li><li>Fixes for battle analyzer</li><li>Added support for Hospital and Harbor buildings</li><li>Fixed attack detector</li><li>Improved market M(emory) function</li><li>Updated server settings detection</li></ui>";
+		content.innerHTML = "What's new in Version "+version+" - Dec 5, 2023:<p></p><ui><li>Fixes for new market interface</li><li>Fixes for battle analyzer</li><li>Added support for Hospital and Harbor buildings</li><li>Fixed attack detector</li><li>Improved market M(emory) function</li><li>Updated server settings detection</li><li>Fixes for M(emory) function on market</li></ui>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
