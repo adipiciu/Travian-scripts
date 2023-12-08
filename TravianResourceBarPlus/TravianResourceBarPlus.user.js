@@ -32,14 +32,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.23.19
+// @version        2.23.20
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.23.19';
+var version = '2.23.20';
 
 notRunYet = false;
 
@@ -3856,6 +3856,12 @@ function marketSummReal () {
 	//var aT = $gc('traders',incomingMerchants[0]);
 	var aT = $gc('delivery',incomingMerchants);
 	if( aT.length == 0 ) return;
+	var showAll = $gc('showAll',merchantsOnTheWay);
+	if ( showAll.length>0 ) {
+		for (i = 0; i < showAll.length; i++) {
+			showAll[i].addEventListener('click', function() { setTimeout(marketSummReal,500); }, false);
+		}
+	}
 	/*
 	if( $gc(allIDs[29],aT[0]).length > 0 ) return;
 	var cH4 = $gt('H4');
@@ -8957,7 +8963,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Resource Bar+";
-		content.innerHTML = "What's new in Version "+version+" - Dec 5, 2023:<p></p><ui><li>Fixes for new market interface</li><li>Fixes for battle analyzer</li><li>Added support for Hospital and Harbor buildings</li><li>Fixed attack detector</li><li>Improved market M(emory) function</li><li>Updated server settings detection</li><li>Fixes for M(emory) function on market</li></ui>";
+		content.innerHTML = "What's new in Version "+version+" - Dec 8, 2023:<p></p><ui><li>Fixes for new market interface</li><li>Fixes for battle analyzer</li><li>Added support for Hospital and Harbor buildings</li><li>Fixed attack detector</li><li>Improved market M(emory) function</li><li>Updated server settings detection</li><li>Fixes for M(emory) function on market</li><li>Refresh market info when using Show all button</li></ui>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
