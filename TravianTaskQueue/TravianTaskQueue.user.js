@@ -29,14 +29,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version     2.0.8
+// @version     2.0.9
 // ==/UserScript==
 
 (function () {
 
 function allInOneTTQ () {
 notRunYet = false;
-var sCurrentVersion = "2.0.8";
+var sCurrentVersion = "2.0.9";
 
 //find out if Server errors
 var strTitle = document.title;
@@ -2342,13 +2342,15 @@ function sendGoldClub2(httpRequest,aTask) {
 	if (httpRequest.readyState == 4) {
 		printMsg(aLangStrings[6] + " > 1 > 2<br><br>" + getTaskDetails(aTask));
 		if (httpRequest.status == 200 && httpRequest.responseText) {
+			_log(3,"Preparing sending farm list...");
 			var parser = new DOMParser();
 			var holderFarm = parser.parseFromString(httpRequest.responseText, "text/html");
 			var holder = document.createElement('div');
 			holder.innerHTML = httpRequest.responseText;
 			var build = holder.getElementsByClassName('gid16');
 			var scripts = build[0].getElementsByTagName('script');
-			data = JSON.parse(scripts[0].textContent.match(/viewData:.*}}/)[0].replace('viewData','{ "viewData"').replace(new RegExp('}}$'), '}}}'));
+			_log(3,"Script content: "+scripts[0].textContent);
+			data = JSON.parse(scripts[0].textContent.match(/viewData:.*}} /)[0].replace('viewData','{ "viewData"').replace(new RegExp('}} $'), '}}}'));
 			var farmLists = data.viewData.ownPlayer.farmLists;
 			var targets = [];
 			var sParams;
