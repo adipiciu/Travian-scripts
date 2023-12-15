@@ -29,14 +29,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version     2.0.7
+// @version     2.0.8
 // ==/UserScript==
 
 (function () {
 
 function allInOneTTQ () {
 notRunYet = false;
-var sCurrentVersion = "2.0.7";
+var sCurrentVersion = "2.0.8";
 
 //find out if Server errors
 var strTitle = document.title;
@@ -201,7 +201,7 @@ function detectLanguage() {
 function detectMapSize () {
 	var mapSize = getOption("MAP_SIZE", 0, "integer");
 	if( mapSize !== 0 ) return mapSize;
-	var aText = xpath('//script[contains(@src, "/js/Variables.js")]',document, true);
+	var aText = xpath('//script[contains(@src, "/Variables.js")]',document, true);
 	if (aText) {
 		get(aText.src, function(ajaxResp) {
 			var ad = ajaxNDIV(ajaxResp);
@@ -426,7 +426,7 @@ function initialize() {
 		}
 	}
 	if (myPlayerID == null) {
-		_log(0,"Init> Unknown page. TTQ is not running. Possible Login screen. Attempting Auto-Login in a few seconds...");
+		_log(1,"Init> Unknown page. TTQ is not running. Possible Login screen. Attempting Auto-Login in a few seconds...");
 		return false;
 	}
 }
@@ -448,7 +448,7 @@ if (init) {
 	var nLangBuildings = ["", "Woodcutter", "Clay Pit", "Iron Mine", "Cropland", "Sawmill", "Brickyard", "Iron Foundry", "Grain Mill", "Bakery", "Warehouse", "Granary", "<No Building>", "Smithy", "Tournament Square", "Main Building", "Rally Point", "Marketplace", "Embassy", "Barracks", "Stable", "Workshop", "Academy", "Cranny", "Town Hall", "Residence", "Palace", "Treasury", "Trade Office", "Great Barracks", "Great Stable", "City Wall", "Earth Wall", "Palisade", "Stonemason's Lodge", "Brewery", "Trapper", "Hero's Mansion", "Great Warehouse", "Great Granary", "Wonder Of The World", "Horse Drinking Trough", "Stone Wall", "Makeshift Wall", "Command Center", "Waterworks", "Hospital"];
 	var nLangTasks = ["Build", "Upgrade", "Attack", "Research", "Train", "Party", "Demolish", "Send Merchants", "Send Back/Withdraw"];
 	var nLangStrings = ["Build later", "Upgrade later", "Unknown Town", "Research later", "Schedule this Task for Later", "We started building ", "<center>HALT!</center><br>Please wait, TTQ is processing this task!<br>Step", "Traps", " build request sent. However, it appears that the building is not building.", "was attempted but the server redirected us.", "The task was scheduled.", "Redirected", "We can't schedule this task right now.", "Error", "Scheduled Tasks", "Delete", "Send later", "No troops were selected.", "Your troops were sent to", "Your troops could not be sent to", "Reinforcement", "Attack", "Raid", "Catapults will aim at", "random", "at", "or after", "seconds", "minutes", "hours", "days", "Spy for resources and troops", "Spy for troops and defenses", "away", "The attack cannot be scheduled because no destination was specified.", "at site no.", "Sort by:", "type ", "time ", "target ", "options ", "village ", "Task History", "Flush History", "We started researching ", " cannot be researched.", "Page Failed", "Spy", "train later", "troops.", "... May have not happened!", "We started training ", " cannot be trained.", "Party Later", " but not today.", "We started to ", "Close", "Add/Edit Task Schedule", "Edit and Close", "Add and Close", "Add", "Are you sure you want to [s1] [s2]?", "Demolish Later", "Demolishing", "Cannot demolish", "Invalid coordinates or no resources selected.", "Using Local Time", "Using Server Time", " was attempted but we could not find the link.", " was attempted but failed. Reason: ", "No Link", " was attempted but the building was not found.", "No Building", " was attempted but the server returned an error.", "Server:", "Confirmation Failed", "Sorry, I <b>may</b> have built the building in the wrong town.", "Misbuild:", "Sent Back/Withdrew troops.<br>Troops are going home to:", "Sent Back/Withdrew troops Failed (I think).<br>Troops were supposed to go home to: ", "Click to make this your Active Village." , "Click to see this Village Details screen.", "Timeout or TTQ Crash"];
-	var nLangMenuOptions = ["TTQ: ", "Use server time", "Use local time", "Set your tribe", "Task History", "Reset", "\nHow many past tasks do we keep in history?\n(Type 0 to disable task history.) \nCurrently: ", " What is your tribe on this server?\nType 0 for Romans, 1 for Teutons, 2 for Gauls, 5 for Egyptians, 6 for Huns, 7 for Spartans. Or a negative number to enable autodetect (ie: -1)\nCurrently: ", "Are you sure you want to reset all TTQ variables?"];
+	var nLangMenuOptions = ["TTQ: ", "Use server time", "Use local time", "Set your tribe", "Task History", "Reset", "\nHow many past tasks do we keep in history?\n(Type 0 to disable task history.) \nCurrently: ", " What is your tribe on this server?\nType 0 for Romans, 1 for Teutons, 2 for Gauls, 5 for Egyptians, 6 for Huns, 7 for Spartans. Or a negative number to enable autodetect (ie: -1)\nCurrently: ", "Are you sure you want to reset all TTQ variables?", "Debug", "Enable debug log on screen. Debug level values:\n0 - quiet, 1 - nearly quite, 2 - verbose, 3 - detailed"];
 	// The english troop names are not really needed. But they are provided here in the situation that the the troop name autodetect (rip) does not work. (ie. no rally point)
 	var nLangTroops = new Array();
 	nLangTroops.push( ["Legionnaire", "Praetorian", "Imperian", "Equites Legati", "Equites Imperatoris", "Equites Caesaris", "Battering Ram", "Fire Catapult", "Senator", "Settler", "Hero", nLangStrings[7]] );
@@ -746,11 +746,11 @@ function TTQ_showMenuCommand() {
 	// Fix language arrays, replace zeros with english
 	if ( aLangBuildings == 0 ) aLangBuildings = nLangBuildings;
 	if ( aLangTasks == 0 ) aLangTasks = nLangTasks;
-	else for ( tX = 0 ; tX < 9 ; ++tX ) if ( typeof(aLangTasks[tX]) == "undefined" || !aLangTasks[tX] ) aLangTasks[tX] = nLangTasks[tX];
+	else for ( tX = 0 ; tX < nLangTasks.length; ++tX ) if ( typeof(aLangTasks[tX]) == "undefined" || !aLangTasks[tX] ) aLangTasks[tX] = nLangTasks[tX];
 	if ( aLangStrings == 0 ) aLangStrings = nLangStrings;
-	else for ( tX = 0, tY = nLangStrings.length ; tX < tY ; ++tX ) if ( typeof(aLangStrings[tX]) == "undefined" || !aLangStrings[tX] ) aLangStrings[tX] = nLangStrings[tX];
+	else for ( tX = 0, tY = nLangStrings.length; tX < tY ; ++tX ) if ( typeof(aLangStrings[tX]) == "undefined" || !aLangStrings[tX] ) aLangStrings[tX] = nLangStrings[tX];
 	if ( aLangMenuOptions == 0 ) aLangMenuOptions = nLangMenuOptions;
-	else for ( tX = 0 ; tX < 9 ; ++tX ) if ( typeof(aLangMenuOptions[tX]) == "undefined" || !aLangMenuOptions[tX] ) aLangMenuOptions[tX] = nLangMenuOptions[tX];
+	else for ( tX = 0 ; tX < nLangMenuOptions.length; ++tX ) if ( typeof(aLangMenuOptions[tX]) == "undefined" || !aLangMenuOptions[tX] ) aLangMenuOptions[tX] = nLangMenuOptions[tX];
 	var myID = myPlayerID; // Save off into Recycled Variable for later use
 	//Get Player ID  (uid)
 	//myPlayerID = myID.src.match(/uid=(\d+)/)[1];
@@ -1629,7 +1629,7 @@ function upgradebuild(aTask) {
 }
 
 function handleRequestBuild(httpRequest, aTask) {
-//	_log(0,"Begin handleRequestBuild("+httpRequest+", "+aTask+")");
+//	_log(1,"Begin handleRequestBuild("+httpRequest+", "+aTask+")");
 	if (httpRequest.readyState == 4) {
 		var buildingName = aTask[3].split("_")[1];
 		var oldVID = parseInt(aTask[5]);
@@ -3958,6 +3958,16 @@ function promptLang() {
 	window.location.reload();
 }
 
+function promptDebug() {
+	var aDebugVal = prompt(aLangMenuOptions[10], getOption("DEBUG", 0, "integer"));
+	switch ( aDebugVal ) {
+		case "0": case "1":	case "2":	case "3":
+			setOption("DEBUG", parseInt(aDebugVal));
+			window.location.reload();
+			break;
+	}
+}
+
 // *** End GreaseMonkey Menu Block ***
 
 // *** Begin document listener Block ***
@@ -3968,8 +3978,11 @@ function onLoad() {
 
 	TTQ_registerMenuCommand(aLangMenuOptions[3], promptRace);
 	TTQ_registerMenuCommand(aLangMenuOptions[4], promptHistory);
-	TTQ_registerMenuCommand(aLangMenuOptions[5], promptReset);
 	TTQ_registerMenuCommand("Language", promptLang);
+	TTQ_registerMenuCommand(aLangMenuOptions[5], promptReset);
+	TTQ_registerMenuCommand(aLangMenuOptions[9], promptDebug);
+
+	LOG_LEVEL = getOption("DEBUG", 0, "integer");
 
     tA = /.*build\.php.*/i;
 
@@ -4073,7 +4086,7 @@ if (init) {
 //	ttqAddEventListener ( window,   "load",      onLoad,    false );
 	ttqAddEventListener ( window,   "unload",    unLoad,    false );
 	var inittime = Date.now();
-	_log(0, "TTQ starting...");
+	_log(1, "TTQ starting...");
 	var tmp = Math.round(ttqRandomNumber()*60000);
 	setOption('RELOAD_AT', Math.floor((tmp + inittime)/1000));
 	inittime -= starttime;
@@ -4098,7 +4111,7 @@ if (init) {
     var oSysMsg = xpath("//div[@id='sysmsg']");
 	var oLoginBtn = xpath("//table[@id='loginForm']//button[@type='submit']");
     if ( oLoginBtn.snapshotLength < 1 && (oLogout.snapshotLength > 0 || oSysMsg.snapshotLength > 0) ) {
-        _log(0, "Error screen or something. Game is not loaded. Did not start TTQ.");
+        _log(1, "Error screen or something. Game is not loaded. Did not start TTQ.");
     } else if ( oLoginBtn.snapshotLength == 1 ) {  //Auto-Login, this assumes that FF has saved your username and password
 		var loginFL = false;
 		var oLogin = xpath("//input[@name='name'][@class='text'][@type='text']").snapshotItem(0);
@@ -4117,9 +4130,9 @@ if (init) {
 			}, false);
 		}
 		if( loginFL ) setTimeout("document.getElementById('loginForm').getElementsByTagName('button')[0].click();",Math.round(ttqRandomNumber()*111)); // 333 - roughly 1.6 to 3.3 with default random min/max settings
-		else _log(0,"Auto-Login failed. You must have Firefox/Chrome store the username and password. TTQ does not.");
+		else _log(1,"Auto-Login failed. You must have Firefox/Chrome store the username and password. TTQ does not.");
 	} else {
-		_log(0, "Initialization failed, Auto-login failed. Travian Task Queue is not running");
+		_log(1, "Initialization failed, Auto-login failed. Travian Task Queue is not running");
 	}
 }
 
