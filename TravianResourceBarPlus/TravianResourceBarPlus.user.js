@@ -32,14 +32,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.23.20
+// @version        2.23.21
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.23.20';
+var version = '2.23.21';
 
 notRunYet = false;
 
@@ -216,6 +216,8 @@ DICT = {
 		servertype : "Travian Server Type",
 		servertypeh : "Server types: Travian Legends, Travian Shores of War",
 		servertypeo : ['update','Shores of War','Legends'],
+		traveloveredge : "Travel over the map's edge",
+		traveloveredgeo : ['update','Yes','No'],
 		speedart : "Speed artefact",
 		racelist : ['Romans','Teutons','Gauls','Nature','Natars','Egyptians','Huns','Spartans'],
 		cranny : "Yellow level of cranny (percent)",
@@ -2583,8 +2585,8 @@ function printCoords ( vID ) {
 function calcDistance ( id1, id2 ) {
 	var myXY = id2xy( id1 );
 	var dXY = id2xy( id2 );
-	dX = Math.min(Math.abs(dXY[0] - myXY[0]), Math.abs(mapWidth - Math.abs(dXY[0] - myXY[0])));
-	dY = Math.min(Math.abs(dXY[1] - myXY[1]), Math.abs(mapWidth - Math.abs(dXY[1] - myXY[1])));
+	dX = (RB.Setup[50] == 2) ? Math.abs(dXY[0] - myXY[0]) : Math.min(Math.abs(dXY[0] - myXY[0]), Math.abs(mapWidth - Math.abs(dXY[0] - myXY[0])));
+	dY = (RB.Setup[50] == 2) ? Math.abs(dXY[1] - myXY[1]) : Math.min(Math.abs(dXY[1] - myXY[1]), Math.abs(mapWidth - Math.abs(dXY[1] - myXY[1])));
 	return Math.sqrt(Math.pow(dX, 2) + Math.pow(dY, 2));
 }
 
@@ -5097,7 +5099,8 @@ RB.dSetup = [//	0	1	2	3	4	5	6	7	8	9
 	/* 1 */		2,	1,	2,	0,	1,	1,	2,	0,	1,	3,
 	/* 2 */		1,	1,	1,	10,	80,	1,	1,	0,	0,	audiofile,
 	/* 3 */		0,	15,	1,	1,	0,	0,	1,	1,	1,	0,
-	/* 4 */		'',	'',	'',	'',	'',	0,	0,  0,  0,  1
+	/* 4 */		'',	'',	'',	'',	'',	0,	0,  0,  0,  1,
+	/* 5 */		0,	0,	0,	0,	0,	0,	0,  0,  0,  0
 			];
 RB.Setup = RB.dSetup.slice();
 
@@ -5116,8 +5119,9 @@ function rbSetup () {
 			['SEL', 2, gtext("yourrace"), gtext("racelist")],
 			['T', 45, gtext("sspeed"), gtext("sspeedh")],
 			['T', 48, gtext("smapsize"), gtext("smapsizeh")],
-			['SEL', 47, gtext("EgyptiansAndHuns"), gtext("EgyptiansAndHunso"),gtext("EgyptiansAndHunsh")],
-			['SEL', 46, gtext("servertype"), gtext("servertypeo"),gtext("servertypeh")],
+			['SEL', 47, gtext("EgyptiansAndHuns"), gtext("EgyptiansAndHunso"), gtext("EgyptiansAndHunsh")],
+			['SEL', 46, gtext("servertype"), gtext("servertypeo"), gtext("servertypeh")],
+			['SEL', 50, gtext("traveloveredge"), gtext("traveloveredgeo")],
 			['SEL', 3, gtext("speedart"), [gtext('none'),'x0.33','x0.5','x0.67','x1.5','x2','x3']],
 			['SEL', 9, arena, [gtext("auto"),0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]],
 			['T', 24, gtext("cranny"), gtext("crannyh")],
@@ -8962,8 +8966,8 @@ function displayWhatIsNew () {
 		var homepage = $ee('div',$a('Homepage',[['href',homepageurl],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:center;']]);
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
-		header.textContent = "About Resource Bar+";
-		content.innerHTML = "What's new in Version "+version+" - Dec 8, 2023:<p></p><ui><li>Fixes for new market interface</li><li>Fixes for battle analyzer</li><li>Added support for Hospital and Harbor buildings</li><li>Fixed attack detector</li><li>Improved market M(emory) function</li><li>Updated server settings detection</li><li>Fixes for M(emory) function on market</li><li>Refresh market info when using Show all button</li></ui>";
+		header.textContent = "About Travian Resource Bar+";
+		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Dec 13, 2023:</p> <ui><li>New option: Travel over the map's edge</li></ui> <p>Version 2.23.20 - Dec 8, 2023:</p> <ui><li>Refresh market info when using Show all button</li></ui> <p>Version 2.23.19 - Dec 5, 2023:</p> <ui><li>Fixes for M(emory) function on market</li></ui>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
@@ -9001,7 +9005,7 @@ function displayWhatIsNew () {
 	if( RB.Setup[2] == 3 || RB.Setup[2] == 4 || RB.Setup[2] > 7 ) { RB.Setup[2] = 0; saveCookie( 'RBSetup', 'Setup' ); }
 	var aText = $xf('//script[contains(@src, "/Variables.js")]');
 	if (aText) {
-		if (RB.Setup[45] == 0 || RB.Setup[46] == 0 || RB.Setup[47] == 0 || RB.Setup[48] == 0) {
+		if (RB.Setup[45] == 0 || RB.Setup[46] == 0 || RB.Setup[47] == 0 || RB.Setup[48] == 0 || RB.Setup[50] == 0) {
 			ajaxRequest(aText.src, 'GET', null, function(ajaxResp) {
 				var ad = ajaxNDIV(ajaxResp);
 				T4_Variables = JSON.parse(ad.textContent.match(/Travian.Variables\s*=\s*(.*});/)[1]);
@@ -9013,6 +9017,7 @@ function displayWhatIsNew () {
 					if (T4_Variables.tribeIds[4]) RB.Setup[47] = 1; //Huns & Egyptians
 				}
 				if (RB.Setup[48] == 0) { RB.Setup[48] = T4_Variables.Map.Size.width; }
+				if (RB.Setup[50] == 0) { RB.Setup[50] = T4_Variables.feature_flags.travelOverTheWorldEdge ? 1 : 2; }
 				saveCookie( 'RBSetup', 'Setup' );
 			});
 			return;
