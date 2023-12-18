@@ -29,14 +29,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version     2.0.9
+// @version     2.0.10
 // ==/UserScript==
 
 (function () {
 
 function allInOneTTQ () {
 notRunYet = false;
-var sCurrentVersion = "2.0.9";
+var sCurrentVersion = "2.0.10";
 
 //find out if Server errors
 var strTitle = document.title;
@@ -2359,7 +2359,7 @@ function sendGoldClub2(httpRequest,aTask) {
 					if (farmLists[i].isExpanded == true) { //farmlist loaded
 						for (var j=0; j<farmLists[i].slots.length; j++) {
 							var village = farmLists[i].slots[j];
-							if (village.isActive == true && village.lastRaid.icon != 2 && village.lastRaid.icon != 3) { //ignore farmlists with casualties
+							if (village.isActive == true) { //farmlists with casualties are automatically inactivated
 								targets.push(farmLists[i].slots[j].id);
 							}
 							sParams = '{"action":"farmList","lists":[{"id":'+aTask[3]+',"targets":'+JSON.stringify(targets)+'}]}';
