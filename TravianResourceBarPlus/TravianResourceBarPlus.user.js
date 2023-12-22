@@ -32,14 +32,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.23.21
+// @version        2.23.22
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.23.21';
+var version = '2.23.22';
 
 notRunYet = false;
 
@@ -106,10 +106,6 @@ if (document.body.className.includes('rtl')) { docDir = ['right', 'left']; ltr =
 var sK = 0;
 var sM = 1;
 var sC = [1.6,1000];
-if( /[xyz]3|speed/i.test(crtPath) ) { sM = 3; sC = [16/3,100]; }
-if( /[xyz]2|t1|final/i.test(crtPath) ) { sM = 2; sC = [8,100]; }
-if( /[xyz]5/i.test(crtPath) ) { sM = 5; sC = [3.2,100]; }
-if( /[xyz]10/i.test(crtPath) ) { sM = 10; sC = [1.6,100]; }
 
 var RB = new Object();
 	RB.village_dorf1 = [0];
@@ -2479,7 +2475,7 @@ function ajaxRequest(url, aMethod, param, onSuccess, onFailure) {
 	if (aMethod == 'POST') {
 		if (url.includes("api/v1/")){
 			aR.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
-			aR.setRequestHeader('Authorization', 'Bearer ' + getAjaxToken());
+			//aR.setRequestHeader('Authorization', 'Bearer ' + getAjaxToken());
 		} else {
 			aR.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=utf-8');
 		}
@@ -5365,10 +5361,11 @@ function overviewWarehouse () {
 	return overviewD;
 }
 
-function trImg ( cl, et ) {
+function trImg ( cl, et, imgTag ) {
 	var ecl = [['class', cl],['src', '/img/x.gif'],['style','display: inline-block;vertical-align: middle;']];
 	if( typeof et != 'undefined' ) ecl.push(['title',et]);
-	return $e('IMG',ecl);
+	var tag = imgTag ? imgTag : 'IMG';
+	return $e(tag,ecl);
 }
 
 function humanRF ( num ) {
@@ -5854,14 +5851,17 @@ function detectNameAttaker() {
 		var tlink = linkCache[thref[num]];
 		var aname = anameCache[thref[num]];
 		if( ! tname ){
-			ajaxRequest(fullName+thref[num], 'GET', null, function(ajaxResp) {
-				var resb = ajaxResp.responseText;
-				var res = resb.match(/<td class=\"player\"><a href=\"\/profile\/(.+?)\">(.+)<\/a/i);
+			var xy = id2xy(thref[num]);
+			param = '{"x":'+xy[0]+',"y":'+xy[1]+'}';
+			ajaxRequest(fullName+'api/v1/map/tile-details', 'POST', param, function(ajaxResp) {
+				var resb = JSON.parse(ajaxResp.responseText);
+				var adv = resb.html.toString();
+				var res = adv.match(/<td class=\"player\"><a href=\"\/profile\/(.+?)\">(.+)<\/a/i);
 				tlink = res[1];
 				tname = res[2];
 				nameCache[thref[num]] = tname;
 				linkCache[thref[num]] = tlink;
-				res = resb.match(/<td class=\"alliance\"><a href=\"\/(alliance\/.+?)\">(.*)<\/a/i);
+				res = adv.match(/<td class=\"alliance\"><a href=\"\/(alliance\/.+?)\">(.*)<\/a/i);
 				aname = res[2];
 				anameCache[thref[num]] = aname;
 				var tTD = $xf('tbody[@class="units"]/tr/th', 'f', ttable[num]);
@@ -5883,6 +5883,7 @@ function detectNameAttaker() {
 			thref[i] = $xf('thead/tr/td[@class="role"]/a', 'f', ttable[i]).getAttribute('href');
 			thref[i] = thref[i].substring(1);
 			hrefCache[thref[i]] = true;
+			thref[i] = thref[i].match(/d=(\d+)/i)[1];
 			curTO += hrefCache[thref[i]] ? 1: getRandom(500,2000);
 			setTimeout(function(x) { return function() { nameAttaker(x); }}(i), curTO);
 		}
@@ -8365,18 +8366,19 @@ function saveHeroMount () {
 
 function goldClubInfo () {
 	function checkClass (clName,chkbox) {
-		var ac = $xf('.//tr[.//img[contains(@class,"'+clName+'")]|.//i[contains(@class,"'+clName+'") and not(contains(@class, "inactive"))]]','l',chkbox.parentNode.parentNode.parentNode.parentNode.tBodies[0]);
-		for( var t=0; t < ac.snapshotLength; t++ )
-			var ad = $gt('INPUT',ac.snapshotItem(t))[0].checked=chkbox.checked;
+		var ac = $xf('.//tr[(.//i[contains(@class,"'+clName+'")]) and not(contains(@class, "disabled"))]','l',chkbox.parentNode.parentNode.parentNode.parentNode.tBodies[0]);
+		for( var t=0; t < ac.snapshotLength; t++ ) {
+			$gt('INPUT',ac.snapshotItem(t))[0].checked=chkbox.checked;
+		}	
 	}
 	function checkGreen () {
-		checkClass('iReport1',this);
+		checkClass('attack_won_withoutLosses_small',this);
 	}
 	function checkUni (a) {
 		checkClass(a[0],a[1]);
 	}
 	function checkAll () {
-		var ai = $gt('INPUT',this.parentNode);
+		var ai = $gt('INPUT',this.parentNode.parentNode.parentNode.parentNode.parentNode.tBodies[0]);
 		for( var i=1; i<ai.length; i++ )
 			ai[i].checked=this.checked;
 	}
@@ -8386,9 +8388,9 @@ function goldClubInfo () {
 	function oasisXY (farmList) {
 		var oXY = $gc('coordinatesWrapper',farmList);
 		for(var i=0; i<oXY.length; i++) {
-			var xy = id2xy(getVidFromCoords(oXY[i].innerHTML));
-			var newA = '<a href="position_details.php?x='+xy[0]+'&y='+xy[1]+'">'+oXY[i].innerHTML+'</a>';
-			oXY[i].innerHTML = newA;
+			//var xy = id2xy(getVidFromCoords(oXY[i].innerHTML));
+			//var newA = '<a href="position_details.php?x='+xy[0]+'&y='+xy[1]+'">'+oXY[i].innerHTML+'</a>';
+			//oXY[i].innerHTML = newA;
 		}
 		return i;
 	}
@@ -8396,7 +8398,7 @@ function goldClubInfo () {
 		while (nd.parentNode) {
 			nd = nd.parentNode;
 			if (nd.tagName === 'TR') {
-				$gc('markSlot',nd)[0].checked=false;
+				$gt('input',nd)[0].checked=false;
 				break;
 			}
 		}
@@ -8452,26 +8454,27 @@ function goldClubInfo () {
 			if( ac ) {
 				var nca = makeChkBox(fListID);
 				nca.addEventListener('click',function(i) { return function() { checkUni(i) }}([sc,nca]),false);
-				$am(sp.firstElementChild,[' | ',nca,' ',trImg(cl+' '+sc,ac.getAttribute('alt').split(':')[0])]);
+				$am(sp.firstElementChild,[' | ',nca,' ',trImg(cl+' '+sc,'','i')]);
 			}
 			fTable.tHead.insertBefore(sp, fTable.tHead.firstChild);
 		}
-		var fList = $gc('markAll',cont);
-		for( var i=0; i < fList.length; i++ ) {
+		var fList = $gn('selectAll',cont);
+
+		for( var i=0; i < fList.length; i+=2 ) {
 			if (fList[i].tagName != 'INPUT') continue;
-			fTable = fList[i].parentNode.parentNode.parentNode.parentNode;
+			fTable = fList[i].parentNode.parentNode.parentNode.parentNode.parentNode;
+			if (fTable.parentElement.parentElement.classList.contains('collapsed') ) continue;
 			var fListInput = $gt('INPUT',fTable.tHead);
 			if( fListInput.length > 1 ) continue;
-			var fListID = fList[i].getAttribute('id').match(/\d+/)[0];
+			var fListID = fList[i].getAttribute('data-farm-list-id');
 			fList[i].addEventListener('click',checkAll,false);
 			var nc = makeChkBox(fListID);
 			nc.addEventListener('click',checkGreen,false);
-			var sp = $em('TR',[$em('td',[nc,trImg('iReport iReport1',RB.dictRp[0])],[['colspan','7']])]);
-			addARLFilter('iReport3','iReport iReport3','img');
-			addARLFilter('att','att2','i');
-			addARLFilter('full','carry','img');
-			addARLFilter('half','carry','img');
-
+			var sp = $em('TR',[$em('td',[nc,trImg('lastRaidState attack_won_withoutLosses_small',RB.dictRp[0],'i')],[['colspan','8']])]);
+			addARLFilter('attack_small','','i');
+			addARLFilter('bounty_full_small','','i');
+			addARLFilter('bounty_half_small','','i');
+			
 			if( oasisXY(fTable) ) {
 				if( typeof(chkOasisFL[fListID]) == 'undefined'  )
 					chkOasisFL[fListID] = new Object;
@@ -8483,11 +8486,14 @@ function goldClubInfo () {
 
 			var allBer = $xf('.//a[contains(@href, "report?id=")]','l',fTable);
 			for( var t=0; t < allBer.snapshotLength; t++ ) {
-				var tImg = $gt('IMG',allBer.snapshotItem(t).parentNode);
-				if( tImg.length > 1 )
-					tImg[0].addEventListener('click', function(x) { return function() { selectMessage(x); }}([allBer.snapshotItem(t).getAttribute('href'),offsetPosition(tImg[0])]), true);
+				var tImg = $gt('i',allBer.snapshotItem(t));
+				if( tImg.length > 0 ) {
+					allBer.snapshotItem(t).addEventListener('click', function(x) { return function() { selectMessage(x); }}([allBer.snapshotItem(t).getAttribute('href'),offsetPosition(tImg[0])]), true);
+					allBer.snapshotItem(t).removeAttribute('href');
+				}
 			}
 
+			/*
 			var flID = $gt('INPUT',fList[i].parentNode)[0].getAttribute("onclick").match(/\d+/)[0];
 			if( flID != RB.village_Var[2] ) {
 				RB.village_Var[2] = flID;
@@ -8506,6 +8512,7 @@ function goldClubInfo () {
 					}
 				}
 			}
+			*/
 		}
 	}
 	function selectMessage ( a ) {
@@ -8526,10 +8533,12 @@ function goldClubInfo () {
 		var chkOasisFL = new Object();
 		setInterval(scanGoldRep, 1000);
 
+		/*
 		document.head.appendChild($ee('SCRIPT','function '+allIDs[0]+'(a){'+
 		'$("#list"+a).find(".markSlot").each(function(c,d){'+
 			'Travian.Game.RaidList.data[a].slots[d.name.match(/\\d+/)[0]].marked=d.checked;'+
 		'});Travian.Game.RaidList.updateTroopSummaryForAList(a);};',[['type',"text/javascript"]]));
+		*/
 
 	} else {
 		if( xy > 0 ) {
@@ -8967,7 +8976,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Travian Resource Bar+";
-		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Dec 13, 2023:</p> <ui><li>New option: Travel over the map's edge</li></ui> <p>Version 2.23.20 - Dec 8, 2023:</p> <ui><li>Refresh market info when using Show all button</li></ui> <p>Version 2.23.19 - Dec 5, 2023:</p> <ui><li>Fixes for M(emory) function on market</li></ui>";
+		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Dec 22, 2023:</p> <ui><li>Fixed troops speed calculation</li><li>Fixed detect attacker's name function</li><li>Added back farm list helper functions</li></ui> <p>Version 2.23.21 - Dec 13, 2023:</p> <ui><li>New option: Travel over the map's edge</li></ui> <p>Version 2.23.20 - Dec 8, 2023:</p> <ui><li>Refresh market info when using Show all button</li></ui> <p>Version 2.23.19 - Dec 5, 2023:</p> <ui><li>Fixes for M(emory) function on market</li></ui>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
@@ -9071,7 +9080,7 @@ function displayWhatIsNew () {
 
 	var cont = $g(pageElem[1]);
 
-	if( RB.Setup[45] > 1 && sM < 2 ) { sM = parseInt(RB.Setup[45]); sC = [16/sM,100]; }
+	if( RB.Setup[45] > 0 ) { sM = parseInt(RB.Setup[45]); sC = [16/sM,100]; }
 	if( /dorf1.php/.test(crtPath) ) { troopsDorf1(); normalizeProduction(); }
 	villageHintEdit();
 	if( /dorf2.php/.test(crtPath) ) { parseDorf2(); if( RB.Setup[37] > 0 ) villageBMover(); }
@@ -9104,7 +9113,8 @@ function displayWhatIsNew () {
 	if( RB.Setup[12] > 0 ) showLinks();
 	if( RB.Setup[17] == 1 ) rbNotes();
 	addSpeedRTSendMessageInLLinks();
-	if( RB.Setup[20] > 0 ) if( RB.dictFL[13] < 3 || RB.Setup[20] == 2 || RB.Setup[45] == 10) scanTroopsData();
+	//if( RB.dictFL[13] < 3 || RB.Setup[20] == 2) scanTroopsData();
+	scanTroopsData();
 	returnQuickHelp();
 	if( RB.Setup[32] == 1 ) centerNumber();
 	if( RB.Setup[34] == 1 ) overviewAll();
