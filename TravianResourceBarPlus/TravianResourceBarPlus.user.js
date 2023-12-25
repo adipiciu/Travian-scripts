@@ -32,14 +32,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.23.22
+// @version        2.23.23
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.23.22';
+var version = '2.23.23';
 
 notRunYet = false;
 
@@ -3305,21 +3305,24 @@ function marketSend () {
 			if( checkRes[i].checked ) mhRowLinkP ( i );
 	}
 	var extNegat = 0;
-	function mhRowLinkMem () {
+	function mhRowLinkMem (ratio) {
 		loadVCookie('vPPH', 'village_PPH', RB.wantsMem[4]);
 		if( RB.wantsMem[4] == 0 ) return;
 		var arXY = id2xy( RB.wantsMem[4] );
-		var coordXInput = $gt('input',$gc('coordinateX',basee)[0])[0];
-		var coordYInput = $gt('input',$gc('coordinateY',basee)[0])[0];
-		var coordX = parseInt(coordXInput.getAttribute("value"));
-		var coordY = parseInt(coordYInput.getAttribute("value"));
-		if (arXY[0] != coordX) updateInput(coordXInput,arXY[0]);
-		if (arXY[1] != coordY) updateInput(coordYInput,arXY[1]);
+		var coordX = parseInt($gt('input',$gc('coordinateX',basee)[0])[0].getAttribute("value"));
+		var coordY = parseInt($gt('input',$gc('coordinateY',basee)[0])[0].getAttribute("value"));
+		if (arXY[0] != coordX || arXY[1] != coordY) { sendResourses( RB.wantsMem[4] ); return; }
+		//var coordXInput = $gt('input',$gc('coordinateX',basee)[0])[0];
+		//var coordYInput = $gt('input',$gc('coordinateY',basee)[0])[0];
+		//var coordX = parseInt(coordXInput.getAttribute("value"));
+		//var coordY = parseInt(coordYInput.getAttribute("value"));
+		//if (arXY[0] != coordX) updateInput(coordXInput,arXY[0]);
+		//if (arXY[1] != coordY) updateInput(coordYInput,arXY[1]);
 		var htR = getTTime( calcDistance(RB.wantsMem[4], village_aid), MTime[parseInt(RB.Setup[2])]*sM, 0, 0 );
 		var ht = parseInt(RB.wantsMem[9]) < htR ? htR - parseInt(RB.wantsMem[9]): 0;
 		for( var i = 0; i < 4; i++ ) { updateInput(rxI[i],0); } //reset values so they will not overflow
 		for( var i = 0; i < 4; i++ ) {
-			var wantRes = Math.ceil(parseInt(RB.wantsMem[i]) - RB.village_PPH[i]/3600 * ht);
+			var wantRes = Math.ceil(parseInt((RB.wantsMem[i]) - RB.village_PPH[i]/3600 * ht)/ratio);
 			if( RB.village_PPH[i] < 0 && ht > 0 ) {
 				var deltaTime = RB.village_PPH[12] > 0 ? Math.round((Date.now())/1000) - parseInt(RB.village_PPH[12]): 0;
 				var leftResInV = Math.floor(RB.village_PPH[i]/3600 * (deltaTime + ht) + RB.village_PPH[i+4]);
@@ -3510,9 +3513,7 @@ function marketSend () {
 
 	//if( checkTargetValidate() ) return;
 
-	//var basee = $g('send_select');
-	var basee = $g('sendResourcesForm');
-	if( ! basee ) basee = $gc('sendResourcesForm')[0];
+	var basee = $g('marketplaceSendResources');
 	var resSelector = $gc("resourceSelector")[0];
 	var imgs = $gt("i",resSelector);
 	if( ! basee ) return;
@@ -3586,7 +3587,11 @@ function marketSend () {
 	//ref.addEventListener('click', mhRowsLinkM, false);
 	//newTR.appendChild($c(ref,[['width','5%']]));
 	var memL = $a('M',[['href',jsVoid],['style','font-size:15px;']]);
-	memL.addEventListener('click', mhRowLinkMem, false);
+	memL.addEventListener('click', function() { mhRowLinkMem(1); }, false);
+	var memL2 = $a('M/2',[['href',jsVoid],['style','font-size:15px;']]);
+	memL2.addEventListener('click', function() { mhRowLinkMem(2); }, false);
+	var memL3 = $a('M/3',[['href',jsVoid],['style','font-size:15px;']]);
+	memL3.addEventListener('click', function() { mhRowLinkMem(3); }, false);
 	//var ref = $a('+',[['href',jsVoid]]);
 	//ref.addEventListener('click', mhRowsLinkP, false);
 	//newTR.appendChild($c(ref,[['width','5%']]));
@@ -3606,6 +3611,8 @@ function marketSend () {
 	var newDiv = $e('div',[['style','display:flex;justify-content:space-between;align-items:center;']]);
 	newDiv.appendChild(mButt);
 	newDiv.appendChild(memL);
+	newDiv.appendChild(memL2);
+	newDiv.appendChild(memL3);
 	newDiv.appendChild(refEq);
 	newDiv.appendChild(refP);
 	newDiv.appendChild(refCl);
@@ -4954,9 +4961,10 @@ function fillXYMarket ( nXY ) {
 	var myVid = nXY || RB_getValue(GMcookieID + 'next', -1);
 	if( myVid > 0 ) {
 		var arXY = id2xy( myVid );
-		if( $gc('coordinateX')[0].length < 1 ) return;
-		var coordX = $gt('input',$gc('coordinateX')[0])[0];
-		var coordY = $gt('input',$gc('coordinateY')[0])[0];
+		var basee = $g('marketplaceSendResources');
+		if( $gc('coordinateX',basee)[0].length < 1 ) return;
+		var coordX = $gt('input',$gc('coordinateX',basee)[0])[0];
+		var coordY = $gt('input',$gc('coordinateY',basee)[0])[0];
 		coordX.value = arXY[0];
 		coordY.value = arXY[1];
 		nextFL = false;
@@ -4998,8 +5006,9 @@ function sendArmy( myVid ) {
 
 function sendResourses( myVid ) {
 	if( $g('sendResourcesForm1') ) {
-		fillXYMarket( myVid );
-		showDistanceIn( -1 );
+	//if( $g('marketplaceSendResources') ) {
+		//fillXYMarket( myVid ); doesn't work
+		//showDistanceIn( -1 );
 	} else {
 		if( myVid != village_aid ) RB_setValue(GMcookieID + 'next', myVid);
 		document.location.href='/build.php?gid=17&z=' + myVid + '&t=5';
@@ -6513,8 +6522,10 @@ function karteDistance4 () {
 					if( newTip != activeTip ) {
 						activeTip = newTip;
 						if( newTip != '' ) {
-							var titleElem = $gc('title elementTitle',tipE[0])[0];
-							titleElem.appendChild($ee('span',newTip,[['style','color:#77FF77;margin:0px 10px;']]));
+							var titleElem = $gc('title elementTitle',tipE[0]);
+							if( titleElem.length > 0 ) {
+								titleElem[0].appendChild($ee('span',newTip,[['style','color:#77FF77;margin:0px 10px;']]));
+							}
 						}
 					}
 					var dTTK = showAllTTime(0, tipC, RB.village_Var[1]);
@@ -8368,7 +8379,8 @@ function goldClubInfo () {
 	function checkClass (clName,chkbox) {
 		var ac = $xf('.//tr[(.//i[contains(@class,"'+clName+'")]) and not(contains(@class, "disabled"))]','l',chkbox.parentNode.parentNode.parentNode.parentNode.tBodies[0]);
 		for( var t=0; t < ac.snapshotLength; t++ ) {
-			$gt('INPUT',ac.snapshotItem(t))[0].checked=chkbox.checked;
+			var inp = $gt('INPUT',ac.snapshotItem(t))[0];
+			inp.checked=chkbox.checked;
 		}	
 	}
 	function checkGreen () {
@@ -8471,9 +8483,11 @@ function goldClubInfo () {
 			var nc = makeChkBox(fListID);
 			nc.addEventListener('click',checkGreen,false);
 			var sp = $em('TR',[$em('td',[nc,trImg('lastRaidState attack_won_withoutLosses_small',RB.dictRp[0],'i')],[['colspan','8']])]);
+			//addARLFilter('lastRaidState attack_lost_small','','i');
 			addARLFilter('attack_small','','i');
 			addARLFilter('bounty_full_small','','i');
 			addARLFilter('bounty_half_small','','i');
+			addARLFilter('bounty_empty_small','','i');
 			
 			if( oasisXY(fTable) ) {
 				if( typeof(chkOasisFL[fListID]) == 'undefined'  )
@@ -8976,7 +8990,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Travian Resource Bar+";
-		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Dec 22, 2023:</p> <ui><li>Fixed troops speed calculation</li><li>Fixed detect attacker's name function</li><li>Added back farm list helper functions</li></ui> <p>Version 2.23.21 - Dec 13, 2023:</p> <ui><li>New option: Travel over the map's edge</li></ui> <p>Version 2.23.20 - Dec 8, 2023:</p> <ui><li>Refresh market info when using Show all button</li></ui> <p>Version 2.23.19 - Dec 5, 2023:</p> <ui><li>Fixes for M(emory) function on market</li></ui>";
+		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Dec 25, 2023:</p> <ui><li>Added M/2 and M/3 memory functions</li><li>Changed back the Memory behavior because it was unreliable if the village coordinates were wrong</li><li>Fixed an error when checking oasis on the map</li></ui> <p>Version 2.23.22 - Dec 22, 2023:</p> <ui><li>Fixed troops speed calculation</li><li>Fixed detect attacker's name function</li><li>Added back farm list helper functions</li></ui> <p>Version 2.23.21 - Dec 13, 2023:</p> <ui><li>New option: Travel over the map's edge</li></ui> <p>Version 2.23.20 - Dec 8, 2023:</p> <ui><li>Refresh market info when using Show all button</li></ui> <p>Version 2.23.19 - Dec 5, 2023:</p> <ui><li>Fixes for M(emory) function on market</li></ui>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
