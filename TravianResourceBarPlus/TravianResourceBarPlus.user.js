@@ -32,14 +32,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.23.23
+// @version        2.23.24
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.23.23';
+var version = '2.23.24';
 
 notRunYet = false;
 
@@ -6929,7 +6929,7 @@ function getTroopsInOasis ( vf ) {
 		ITTb.appendChild($em('TR',[$c(trImg('unit u'+tt)),$c(humanRF(ti[0])),$c(humanRF(ti[1])),$c(humanRF(ti[2])),$c(humanRF(ti[3]))]));
 	}
 	var tHead = $ee('THEAD',$em('TR',[$c('&#931;'),$c(humanRF(ts[0])),$c(humanRF(ts[1])),$c(humanRF(ts[2])),$c(humanRF(ts[3]))]));
-	tHead.appendChild($em('TR',[$c(''),$c(trImg('def_i')),$c(trImg('def_c')),$c(trImg('itemCategory itemCategory_cage')),$c($e('i',[['class','r5']]))]));
+	tHead.appendChild($em('TR',[$c(''),$c(trImg('def_i')),$c(trImg('def_c')),$c(trImg('iReport iReport20')),$c($e('i',[['class','r5']]))]));
 	newITT.appendChild(tHead);
 	return newITT;
 }
@@ -8380,7 +8380,7 @@ function goldClubInfo () {
 		var ac = $xf('.//tr[(.//i[contains(@class,"'+clName+'")]) and not(contains(@class, "disabled"))]','l',chkbox.parentNode.parentNode.parentNode.parentNode.tBodies[0]);
 		for( var t=0; t < ac.snapshotLength; t++ ) {
 			var inp = $gt('INPUT',ac.snapshotItem(t))[0];
-			inp.checked=chkbox.checked;
+			if (inp.checked != chkbox.checked ) inp.click();
 		}	
 	}
 	function checkGreen () {
@@ -8410,7 +8410,7 @@ function goldClubInfo () {
 		while (nd.parentNode) {
 			nd = nd.parentNode;
 			if (nd.tagName === 'TR') {
-				$gt('input',nd)[0].checked=false;
+				if ($gt('input',nd)[0].checked) $gt('input',nd)[0].click();
 				break;
 			}
 		}
@@ -8479,7 +8479,7 @@ function goldClubInfo () {
 			var fListInput = $gt('INPUT',fTable.tHead);
 			if( fListInput.length > 1 ) continue;
 			var fListID = fList[i].getAttribute('data-farm-list-id');
-			fList[i].addEventListener('click',checkAll,false);
+			//fList[i].addEventListener('click',checkAll,false);
 			var nc = makeChkBox(fListID);
 			nc.addEventListener('click',checkGreen,false);
 			var sp = $em('TR',[$em('td',[nc,trImg('lastRaidState attack_won_withoutLosses_small',RB.dictRp[0],'i')],[['colspan','8']])]);
@@ -8488,12 +8488,12 @@ function goldClubInfo () {
 			addARLFilter('bounty_full_small','','i');
 			addARLFilter('bounty_half_small','','i');
 			addARLFilter('bounty_empty_small','','i');
-			
+
 			if( oasisXY(fTable) ) {
 				if( typeof(chkOasisFL[fListID]) == 'undefined'  )
 					chkOasisFL[fListID] = new Object;
 				chkOasisFL[fListID].fl = true;
-				var anim = $em('BUTTON',[trImg('unit u31'),' ??? '],[['onclick','return false;']]);
+				var anim = $em('BUTTON',[trImg('unit u31'),' ??? '],[['type','button'],['onclick','return false;']]);
 				anim.addEventListener('click',function(x) { return function() { findAnim(x[0],x[1],x[2]) }}([fTable,fListID,anim]),false);
 				$am(sp.firstElementChild,[' | ',anim]);
 			}
@@ -8990,7 +8990,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Travian Resource Bar+";
-		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Dec 25, 2023:</p> <ui><li>Added M/2 and M/3 memory functions</li><li>Changed back the Memory behavior because it was unreliable if the village coordinates were wrong</li><li>Fixed an error when checking oasis on the map</li></ui> <p>Version 2.23.22 - Dec 22, 2023:</p> <ui><li>Fixed troops speed calculation</li><li>Fixed detect attacker's name function</li><li>Added back farm list helper functions</li></ui> <p>Version 2.23.21 - Dec 13, 2023:</p> <ui><li>New option: Travel over the map's edge</li></ui> <p>Version 2.23.20 - Dec 8, 2023:</p> <ui><li>Refresh market info when using Show all button</li></ui> <p>Version 2.23.19 - Dec 5, 2023:</p> <ui><li>Fixes for M(emory) function on market</li></ui>";
+		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Dec 29, 2023:</p> <ui><li>Fixed farm list buttons</li><li>Updated missing cage icon</li></ui> <p>Version 2.23.23 - Dec 25, 2023:</p> <ui><li>Added M/2 and M/3 memory functions</li><li>Changed back the Memory behavior because it was unreliable if the village coordinates were wrong</li><li>Fixed an error when checking oasis on the map</li></ui> <p>Version 2.23.22 - Dec 22, 2023:</p> <ui><li>Fixed troops speed calculation</li><li>Fixed detect attacker's name function</li><li>Added back farm list helper functions</li></ui> <p>Version 2.23.21 - Dec 13, 2023:</p> <ui><li>New option: Travel over the map's edge</li></ui> <p>Version 2.23.20 - Dec 8, 2023:</p> <ui><li>Refresh market info when using Show all button</li></ui> <p>Version 2.23.19 - Dec 5, 2023:</p> <ui><li>Fixes for M(emory) function on market</li></ui>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
