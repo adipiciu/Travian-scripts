@@ -29,14 +29,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version     2.0.10
+// @version     2.0.11
 // ==/UserScript==
 
 (function () {
 
 function allInOneTTQ () {
 notRunYet = false;
-var sCurrentVersion = "2.0.10";
+var sCurrentVersion = "2.0.11";
 
 //find out if Server errors
 var strTitle = document.title;
@@ -108,6 +108,7 @@ var RB = new Object();
 	RB.vList = [];
 var crtPath = window.location.href;
 var fullName = window.location.origin + "/";
+var urlParams = window.location.search;
 
 // Custom log function
 function _log(level, msg) {
@@ -160,7 +161,7 @@ function post(url, data, callback, options) {
 		httpRequest.setRequestHeader('Authorization', 'Bearer ' + getAjaxToken());
 	} else {
 		data = encodeURI(data);
-		httpRequest.setRequestHeader("Content-type", "application/x-www-form-urlencoded; charset=utf-8");
+		httpRequest.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	}
 	httpRequest.send(data);
 }
@@ -1947,8 +1948,10 @@ function createAttackLinks() {
 	}
 
 	// create the button //Add the new button after the original
-	if ( /[&?]d=\d+/.test(location.search) && $gn("snd").length == 0 ) { //At Send Troops Back screen
+	if ( /[&?]from=\d+/.test(location.search) && $gn("snd").length == 0 ) { //At Send Troops Back screen
 		var SndLtrBtn = generateButton(aLangStrings[16], scheduleSendBack);
+		var oOkBtn = $id('checksum');
+		oOkBtn.after(SndLtrBtn);
 	} else {
 		//create textbox for hero if it's not present
 		var heroBox = document.getElementsByClassName("line-last column-last");
@@ -1958,16 +1961,16 @@ function createAttackLinks() {
 				+ '&nbsp;/&nbsp;<a href="#" onclick="jQuery(\'table#troops\').find(\'input[name=\\\'troop[t11]\\\']\').val(1); return false">1 ('+aLangStrings[33]+')</a>';
 		}
 		var SndLtrBtn = generateButton(aLangStrings[16], scheduleAttack);
+		var oOkBtn = $id('ok');
+		oOkBtn.after(SndLtrBtn);
 	}
-	var oOkBtn = $id('ok');
-	oOkBtn.after(SndLtrBtn);
 	_log(3, "End createAttackLinks()");
 }
 
 function scheduleSendBack(e) {
 	_log(2,"ScheduleSendBack> Begin.");
 	var aTroops = new Array();
-	aTroops[0] = location.search.match(/[&?]d=(\d+)/)[1]; // the d value
+	aTroops[0] = urlParams;
 	var xpathRes = xpath("//table//td/input[@type='text']");
 	var bNoTroops = true;
 	var c = 0;
@@ -1975,7 +1978,7 @@ function scheduleSendBack(e) {
 	if(xpathRes.snapshotLength > 0) {
 		for (var i = 1; i < 12; ++i) {
 			aThisInput = xpathRes.snapshotItem(c);
-			if ( aThisInput != null ) iTroopId = parseInt(aThisInput.name.split("[")[1].split("]")[0]);
+			if ( aThisInput != null ) iTroopId = parseInt(aThisInput.name.split("[t")[1].split("]")[0]);
 			else iTroopId = 0;
 			if ( iTroopId == i ) {
 				aTroops[i] = (aThisInput.value != '') ? aThisInput.value : 0;
@@ -2002,11 +2005,34 @@ function sendbackwithdraw (aTask) {
 	_log(2,"sendbackwithdraw> Begin. aTask = " + aTask);
 	printMsg(aLangStrings[6] + " > 1<br><br>" + getTaskDetails(aTask));
 	var aTroops = aTask[3].split("_");
-	var sParm = "id=39&a=3&d=" + aTroops[0];
-	for ( var i = 1 ; i < 12 ; ++i ) if ( parseInt(aTroops[i]) > 0 ) sParm += "&t["+i+"]="+aTroops[i];
-	sParm += "&s1=ok";
-	post(fullName+"build.php",sParm, handleSendBackRequestConfirmation, aTask);
+	get(fullName+"build.php" + aTroops[0], sendbackwithdraw2, aTask);
 	_log(3,"sendbackwithdraw> End.");
+}
+
+function sendbackwithdraw2 (httpRequest,aTask) {
+	_log(2,"sendbackwithdraw2> Begin. aTask = " + aTask);
+	printMsg(aLangStrings[6] + " > 1 > 2<br><br>" + getTaskDetails(aTask));
+	
+	if (httpRequest.status == 200 && httpRequest.responseText) {
+		var parser = new DOMParser();
+		var holder = parser.parseFromString(httpRequest.responseText, "text/html");
+		var err = holder.getElementsByClassName("error");
+		if ( err.length > 0 ) {
+			err = "["+err[0].innerHTML+"]";
+			_log(1, "attack2> I could not send the troops. Reason: " + err);
+			printMsg(sFromName + aLangStrings[19] + " >> " +sPlaceName + " " + aLangStrings[69] + " (" + aLangStrings[13] + ": "+err+")", true);
+			addToHistory(aTask, false, aLangStrings[13] + ": "+err);
+			return false;
+		}
+		var aTroops = aTask[3].split("_");
+		var sParams = "action=troopsSend";
+		for ( var i = 1 ; i < 12 ; ++i ) if ( parseInt(aTroops[i]) > 0 ) sParams += "&troop[t"+i+"]="+aTroops[i];
+		var okBtn = holder.getElementsByName('checksum');
+		var checkSum = okBtn[0].value;
+		sParams += "&checksum=" + checkSum;
+		post(fullName+"build.php" + aTroops[0], sParams, handleSendBackRequestConfirmation, aTask);
+	}
+	_log(3,"sendbackwithdraw2> End.");
 }
 
 function handleSendBackRequestConfirmation (httpRequest, options) {
@@ -2144,9 +2170,9 @@ function attack2(httpRequest,aTask) {
 			if ( oldVID == reqVID && bld.getElementsByClassName("a2b").length == 1 && k > 15 ) {
 				for (var q = 0 ; q < k ; ++q ) {
 					t = tInputs[q].name;
-					if (t == 'villageName') continue;
 					if (t.indexOf('troop[t') !== -1) {
-						var troopsNr = aTroops[parseInt(tInputs[q].name.match(/troop\[t(\d+)\]/)[1])];
+						if (tInputs[q].disabled == true) continue;
+						var troopsNr = aTroops[parseInt(t.match(/troop\[t(\d+)\]/)[1])];
 						if (troopsNr == 0 ) {
 							sParams += t + "=&";
 						} else {
@@ -2210,6 +2236,9 @@ function attack3(httpRequest,aTask){
 				aTroops = aTask[3].split("_");
 				var sParams = '';
 				var tSelect = bld.getElementsByTagName('select');
+				var okBtn = holder.getElementsByClassName('rallyPointConfirm');
+				var sOnclick = okBtn[0].getAttribute('onclick');
+	       		var checkSum = sOnclick.split(';')[1].split('value = \'')[1].split('\'')[0];
 				for (q = 0 ; q < tSelect.length ; ++q) {
 					t = tSelect[q].name;
 					if ( /kata\W/.test(t) ) {
@@ -2226,14 +2255,10 @@ function attack3(httpRequest,aTask){
 						if ( aTroops[14] > -1 ) sParams += t + "=" + aTroops[14] + "&";
 						else sParams += "spy=1&";  //"Spy troops  and resources" by default
 						++q;
-					} else sParams += t + "=" + tInputs[q].value + "&";
+					} else if (t=='checksum') sParams += "checksum=" + checkSum + "&";
+					else sParams += t + "=" + tInputs[q].value + "&";
 				}
-				//var okBtn = holder.getElementById("checksum");
-				//sParams += okBtn.name + "=" + okBtn.value;
-				var okBtn = holder.getElementsByClassName('rallyPointConfirm');
-				var sOnclick = okBtn[0].getAttribute('onclick');
-	       		var checkSum = sOnclick.split(';')[1].split('value = \'')[1].split('\'')[0]
-				sParams += "checksum=" + checkSum;
+				if (sParams.charAt(sParams.length - 1) == '&') { sParams = sParams.slice(0, -1); }
 				post(fullName+'build.php?gid=16&tt=2', sParams, handleRequestAttack, aTask);
 				return;
 			}
@@ -2321,7 +2346,6 @@ function scheduleSendClub () {
 	_log(3, "End scheduleSendClub()");
 }
 
-var data;
 function sendGoldClub (aTask) {
 	_log(1,"Begin attack from gold-club ("+aTask+")");
 	printMsg(aLangStrings[6] + " > 1<br><br>" + getTaskDetails(aTask));
@@ -2344,34 +2368,22 @@ function sendGoldClub2(httpRequest,aTask) {
 		if (httpRequest.status == 200 && httpRequest.responseText) {
 			_log(3,"Preparing sending farm list...");
 			var parser = new DOMParser();
-			var holderFarm = parser.parseFromString(httpRequest.responseText, "text/html");
-			var holder = document.createElement('div');
-			holder.innerHTML = httpRequest.responseText;
+			var holder = parser.parseFromString(httpRequest.responseText, "text/html");
 			var build = holder.getElementsByClassName('gid16');
 			var scripts = build[0].getElementsByTagName('script');
 			_log(3,"Script content: "+scripts[0].textContent);
-			data = JSON.parse(scripts[0].textContent.match(/viewData:.*}} /)[0].replace('viewData','{ "viewData"').replace(new RegExp('}} $'), '}}}'));
+			var data = JSON.parse(scripts[0].textContent.match(/viewData:.*}} /)[0].replace('viewData','{ "viewData"').replace(new RegExp('}} $'), '}}}'));
 			var farmLists = data.viewData.ownPlayer.farmLists;
 			var targets = [];
 			var sParams;
 			for (var i=0; i<farmLists.length; i++) {
 				if (farmLists[i].id == aTask[3]) {
-					if (farmLists[i].isExpanded == true) { //farmlist loaded
-						for (var j=0; j<farmLists[i].slots.length; j++) {
-							var village = farmLists[i].slots[j];
-							if (village.isActive == true) { //farmlists with casualties are automatically inactivated
-								targets.push(farmLists[i].slots[j].id);
-							}
-							sParams = '{"action":"farmList","lists":[{"id":'+aTask[3]+',"targets":'+JSON.stringify(targets)+'}]}';
+					for (var j=0; j<farmLists[i].slotStates.length; j++) {
+						var village = farmLists[i].slotStates[j];
+						if (village.isActive == true) { //farmlists with casualties are automatically inactivated
+							targets.push(village.id);
 						}
-					} else {
-						slotStates = farmLists[i].slotStates;
-						for (var j=0; j<slotStates.length; j++) {
-							if (slotStates[j].isActive == true) {
-								targets.push(slotStates[j].id);
-							}
-						}
-						sParams = '{"action":"farmList","lists":[{"id":'+aTask[3]+'}]}';
+						sParams = '{"action":"farmList","lists":[{"id":'+aTask[3]+',"targets":'+JSON.stringify(targets)+'}]}';
 					}
 					break;
 				}
@@ -2379,42 +2391,7 @@ function sendGoldClub2(httpRequest,aTask) {
 			_log(3,"parameters: "+sParams);
 			post(fullName+'api/v1/farm-list/send', sParams, sendGoldClubConfirmation, aTask);
 			return;
-			var checksum = xpath("//script[contains(text(),'Travian.Game.RaidList.checksum')]", holderFarm, true, holderFarm);
-			if (tInputs.length > 4 ) {
-				var sParams = {};
-				sParams["action"] = "farmList";
-				if( checksum ) sParams["checksum"] = checksum.textContent.match(/Travian.Game.RaidList.checksum\s*=\s*'(.*)'/)[1];
-				sParams["method"] = "ActionStartRaid";
-				sParams["listId"] = parseInt(aTask[3]);
-				sParams["loadedLists"] = [aTask[3]];
-				sParams["captcha"] = null;
-				sParams['slots'] = [];
-				sParams['triggeredBySendAll'] = 'false';
-				for( var i=0; i<tInputs.length; i++ ) {
-					if( tInputs[i].hasAttribute('name') ) {
-						if (tInputs[i].getAttribute('name') == 'lid') continue;
-						if ( tInputs[i].hasAttribute('value') ) {
-							sParams[tInputs[i].getAttribute('name')] = tInputs[i].getAttribute('value');
-						}
-						if ( tInputs[i].hasAttribute('data-slot') ) {
-							var ac = xpath('.//img[contains(@class,"iReport iReport3")]',tInputs[i].parentNode.parentNode);
-							if ( ac.snapshotLength == 0 ) {
-								sParams['slots'].push(parseInt(tInputs[i].getAttribute('data-slot')));
-							}
-						}
-					}
-				}
-				_log(3,"parameters: "+sParams);
-				post(fullName+'api/v1/raid-list', JSON.stringify(sParams), sendGoldClubConfirmation, aTask);
-				return;
-			}
-			if ( reqVID != currentActiveVillage ) switchActiveVillage ( currentActiveVillage );
-			_log(1, "Your attack could not be sent. It seems I am at the wrong screen. (Server: Redirected 1)");
-			printMsg(aTask, false, aLangStrings[74]+" "+aLangStrings[11]+" 1", true);
-			addToHistory(aTask, false, aLangStrings[74]+" "+aLangStrings[11]+" 1");
-			return;
 		}
-		//switchActiveVillage(currentActiveVillage);
 		_log(1, "Your attack could not be sent. Bad response from server when sending request. (Server: Page Failed 1)");
 		printMsg(aTask, false, aLangStrings[74] + " " + aLangStrings[46]+" 1", true);
 		addToHistory(aTask, false, aLangStrings[74] + " " + aLangStrings[46]+" 1");
@@ -2424,7 +2401,7 @@ function sendGoldClubConfirmation (httpRequest, aTask) {
 		if (httpRequest.readyState == 4 ){
 		printMsg(aLangStrings[6] + " > 1 > 2<br><br>" + getTaskDetails(aTask));
 		if ( httpRequest.status == 200 && httpRequest.responseText ) {
-			data = JSON.parse(httpRequest.responseText);
+			var data = JSON.parse(httpRequest.responseText);
 			if ( !data.lists[0].error ) {
 				_log(1, "I think those troops were sent.");
 				printMsg(aLangStrings[18]+", "+aTask[2]);
@@ -4015,7 +3992,7 @@ function onLoad() {
 							break;
 				case 17:	createMarketLinks();
 							break;
-				case 16:	if( $gn('s1') ) createAttackLinks();
+				case 16:	if( $gc('a2b').length ) createAttackLinks();
 							if( $id('raidList') ) createGoldClubBtn();
 							if( $id('rallyPointFarmList') ) setTimeout(createGoldClubBtn,700)
 							break;
