@@ -16,8 +16,11 @@ Example: ts31.x3.europe.travian.com
 **User script manager**
 Example: Tampermonkey, Violentmonkey, Greasemonkey, Userscripts
 
+**Browser**
+Example: Chrome/Chromium, Firefox, Safari
+
 **Operating System**
-Example: Windows 10, Android 9, iOS 14
+Example: Windows 10, Android 12, iOS 14
 
 **Describe the bug**
 A clear and concise description of what the bug is.
@@ -29,8 +32,5 @@ Steps to reproduce the behavior:
 3. Scroll down to '....'
 4. See error
 
-**Expected behavior**
-A clear and concise description of what you expected to happen.
-
-**Additional context**
-Add any other context about the problem here.
+**Copy any errors from the browser's console**
+Press F12 in the browser to open the developer tools. Go to Console tab and see if there any errors appearing. Copy and paste all the errors here.
