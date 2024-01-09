@@ -32,14 +32,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.23.24
+// @version        2.24.1
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.23.24';
+var version = '2.24.1';
 
 notRunYet = false;
 
@@ -2477,7 +2477,7 @@ function ajaxRequest(url, aMethod, param, onSuccess, onFailure) {
 			aR.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
 			//aR.setRequestHeader('Authorization', 'Bearer ' + getAjaxToken());
 		} else {
-			aR.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=utf-8');
+			aR.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 		}
 	}
 	aR.send(param);
@@ -8990,7 +8990,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Travian Resource Bar+";
-		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Dec 29, 2023:</p> <ui><li>Fixed farm list buttons</li><li>Updated missing cage icon</li></ui> <p>Version 2.23.23 - Dec 25, 2023:</p> <ui><li>Added M/2 and M/3 memory functions</li><li>Changed back the Memory behavior because it was unreliable if the village coordinates were wrong</li><li>Fixed an error when checking oasis on the map</li></ui> <p>Version 2.23.22 - Dec 22, 2023:</p> <ui><li>Fixed troops speed calculation</li><li>Fixed detect attacker's name function</li><li>Added back farm list helper functions</li></ui> <p>Version 2.23.21 - Dec 13, 2023:</p> <ui><li>New option: Travel over the map's edge</li></ui> <p>Version 2.23.20 - Dec 8, 2023:</p> <ui><li>Refresh market info when using Show all button</li></ui> <p>Version 2.23.19 - Dec 5, 2023:</p> <ui><li>Fixes for M(emory) function on market</li></ui>";
+		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Dec 29, 2023:</p> <ui><li>Fixed showing message links in alliance page</li></ui>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
@@ -9105,6 +9105,7 @@ function displayWhatIsNew () {
 	if( /karte.php\?(.*&)?[zdxy]=/.test(crtPath) ) { distanceToMyVillages(); linkOnT4Karte(); }
 	if( /karte.php/.test(crtPath) ) { karteDistance(); cropFind(); }
 	if( /position_details.php\?(.*&)?[zdxy]=/.test(crtPath) ) { troopsOasis(); distanceToMyVillages(); viewMessageIWK(); linkOnT4Karte(); }
+	if( ! /dorf.\.php/.test(crtPath) ) addRefIGM();
 	if( crtPath.indexOf('alliance') != -1 ) {
 		if( $g('offs') ) { viewMessageIWK(); addAReportFilter(); }
 		var allianceTable = $gc('allianceMembers',cont);
@@ -9117,7 +9118,6 @@ function displayWhatIsNew () {
 		if ( ! $g('PlayerProfileEditor') ) { parseSpieler(); spielerSort(); }
 	}
 	if( /report.+id=/.test(crtPath) ) { addSpeedAndRTSend(); analyzerBattle(); getTroopNames(); }
-	if( ! /dorf.\.php/.test(crtPath) && ! /profile/.test(crtPath) ) addRefIGM();
 	if( /hero/.test(crtPath) ) { speedBids(); timeToBids(); neededResAdd(); restHeroTime(); saveHeroSpeed(); saveHeroPower(); saveHeroMount(); addSpeedAndRTSend(); addSpeedAndRTSend($gc('boxes',cont)[0]); }
 	if( /build.php/.test(crtPath) ) { neededResAdd(); buildDispatcher(); addSpeedAndRTSend(); }
 
