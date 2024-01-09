@@ -7,12 +7,12 @@
 // @contributionURL https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=Travian+wave+builder+script&currency_code=EUR
 // @match          https://*.travian.com/build.php*
 
-// @version        2.9
+// @version        2.10
 // ==/UserScript==
 
 function allInOneOpera () {
 
-var version = '2.9';
+var version = '2.10';
 var scriptURL = 'https://github.com/adipiciu/Travian-scripts';
 var defInterval = 200;
 var sLang = detectLanguage();
@@ -65,7 +65,7 @@ function ajaxRequest(url, aMethod, param, onSuccess, onFailure) {
 		else if (aR.readyState == 4 && aR.status != 200) { onFailure(aR); }
 	};
 	aR.open(aMethod, url, true);
-	if (aMethod == 'POST') aR.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=utf-8');
+	if (aMethod == 'POST') aR.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 	aR.send(param);
 }
 
