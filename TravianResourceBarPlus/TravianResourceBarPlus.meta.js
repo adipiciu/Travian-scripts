@@ -7,30 +7,10 @@
 // @contributionURL https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR
 // @include        *://*.travian.*
 // @include        *://*/*.travian.*
-// @exclude     *://*.travian*.*/hilfe.php*
-// @exclude     *://*.travian*.*/log*.php*
-// @exclude     *://*.travian*.*/index.php*
-// @exclude     *://*.travian*.*/anleitung.php*
-// @exclude     *://*.travian*.*/impressum.php*
-// @exclude     *://*.travian*.*/anmelden.php*
-// @exclude     *://*.travian*.*/gutscheine.php*
-// @exclude     *://*.travian*.*/spielregeln.php*
-// @exclude     *://*.travian*.*/links.php*
-// @exclude     *://*.travian*.*/geschichte.php*
-// @exclude     *://*.travian*.*/tutorial.php*
-// @exclude     *://*.travian*.*/manual.php*
-// @exclude     *://*.travian*.*/ajax.php*
-// @exclude     *://*.travian*.*/ad/*
-// @exclude     *://*.travian*.*/chat/*
-// @exclude     *://forum.travian*.*
-// @exclude     *://board.travian*.*
-// @exclude     *://shop.travian*.*
-// @exclude     *://*.travian*.*/activate.php*
-// @exclude     *://*.travian*.*/support.php*
-// @exclude     *://help.travian*.*
-// @exclude     *://*.answers.travian*.*
+// @exclude     *://support.travian.*
+// @exclude     *://blog.travian.*
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.24.1
+// @version        2.24.2
 // ==/UserScript==

@@ -7,39 +7,19 @@
 // @contributionURL https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR
 // @include        *://*.travian.*
 // @include        *://*/*.travian.*
-// @exclude     *://*.travian*.*/hilfe.php*
-// @exclude     *://*.travian*.*/log*.php*
-// @exclude     *://*.travian*.*/index.php*
-// @exclude     *://*.travian*.*/anleitung.php*
-// @exclude     *://*.travian*.*/impressum.php*
-// @exclude     *://*.travian*.*/anmelden.php*
-// @exclude     *://*.travian*.*/gutscheine.php*
-// @exclude     *://*.travian*.*/spielregeln.php*
-// @exclude     *://*.travian*.*/links.php*
-// @exclude     *://*.travian*.*/geschichte.php*
-// @exclude     *://*.travian*.*/tutorial.php*
-// @exclude     *://*.travian*.*/manual.php*
-// @exclude     *://*.travian*.*/ajax.php*
-// @exclude     *://*.travian*.*/ad/*
-// @exclude     *://*.travian*.*/chat/*
-// @exclude     *://forum.travian*.*
-// @exclude     *://board.travian*.*
-// @exclude     *://shop.travian*.*
-// @exclude     *://*.travian*.*/activate.php*
-// @exclude     *://*.travian*.*/support.php*
-// @exclude     *://help.travian*.*
-// @exclude     *://*.answers.travian*.*
+// @exclude     *://support.travian.*
+// @exclude     *://blog.travian.*
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.24.1
+// @version        2.24.2
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.24.1';
+var version = '2.24.2';
 
 notRunYet = false;
 
@@ -4306,6 +4286,24 @@ function showAllTTime ( vType, tVil, arena, art, shoes, leftHand ) {
 		[3, [8,18,28]] // Fire Catapult, Catapult, Trebuchet
 		];
 	}
+	if (crtName.startsWith('cw.x')) { //Community Week – Restoring Rome (Roman tribe balancing)
+		TTime = [
+		[19, [24,63]], // Theutates Thunder, Spotter
+		[17, [23]], // Pathfinder
+		[16, [4,25,54,64,75]], // Equites Legati, Druidrider, Sopdu Explorer, Steppe Rider, Elpida Rider
+		[15, [5,55,65]], // Equites Imperatoris, Anhur Guard, Marksman
+		[14, [66]], // Marauder
+		[13, [26]], // Haeduan
+		[10, [6,15,56]], // Equites Caesaris, Paladin, Resheph Chariot
+		[9, [14,16,72,76]], // Scout, Teutonic Knight, Sentinel, Corinthian
+		[8, [73]], // Shieldsman
+		[7, [1,3,11,12,21,51,53]], // Legionnaire, Imperian, Clubswinger, Spearman, Phalanx, Slave Militia, Khopesh Warrior
+		[6, [2,13,22,52,61,62,71,74]], // Praetorian, Axeman, Swordsman, Ash Warden, Mercenary, Bowman, Hoplite, Twinsteel
+		[5, [10,20,29,30,60,69,70,80]], // Settler, Chieftain, Logades
+		[4, [7,9,17,19,27,57,59,67,77,79]], // Battering Ram, Senator, Ram, Chief, Ram, Ram (Egyptians), Nomarch, Ram (Huns), Ram (Spartans), Ephor
+		[3, [8,18,28,58,68,78]] // Fire Catapult, Catapult, Trebuchet, Stone Catapult, Ballista
+		];
+	}
 
 	function appendTTime ( htt ) {
 		var htg = formatTime(htt, 0);
@@ -6830,7 +6828,7 @@ function scanTroopsData () {
 				 40,20,5,95,75,40,40,7*m,60,1, 10,35,60,145,70,85,40,7*m,40,1, 60,30,30,130,120,170,70,6*m,50,1,0, 10,5,160,100,50,50,9*m,0,1, 55,100,40,370,270,290,75,10*m,110,2, 150,50,75,450,515,480,80,9*m,80,3, 65,30,80,1000,300,350,70,4*m,0,3, 50,60,10,900,1200,600,60,3*m,0,6, 40,60,40,35500,26600,25000,27200,4*m,0,4, 10,80,80,5800,4400,4600,5200,5*m,3000,1,
 				 //Gauls
 				 15,40,50,100,130,55,30,7*m,35,1, 65,35,20,140,150,185,60,6*m,45,1, 0,20,10,170,150,20,40,17*m,0,2, 100,25,40,350,450,230,60,19*m,75,2, 45,115,55,360,330,280,120,16*m,35,2, 140,60,165,500,620,675,170,13*m,65,3, 50,30,105,950,555,330,75,4*m,0,3, 70,45,10,960,1450,630,90,3*m,0,6, 40,50,50,30750,45400,31000,37500,5*m,0,4, 0,80,80,4400,5600,4200,3900,5*m,3000,1,
-				 //Nature http://t4.answers.travian.com/index.php?aid=109
+				 //Nature
 				 10,25,20,0,0,0,0,20,0,1, 20,35,40,0,0,0,0,20,0,1, 60,40,60,0,0,0,0,20,0,1, 80,66,50,0,0,0,0,20,0,1, 50,70,33,0,0,0,0,20,0,2, 100,80,70,0,0,0,0,20,0,2, 250,140,200,0,0,0,0,20,0,3, 450,380,240,0,0,0,0,20,0,3, 200,170,250,0,0,0,0,20,0,3, 600,440,520,0,0,0,0,20,0,5, 
 				 //Natars
 				 20,35,50,0,0,0,0,0,0,0, 65,30,10,0,0,0,0,0,0,0, 100,90,75,0,0,0,0,0,0,0, 0,10,0,0,0,0,0,0,0,0, 155,80,50,0,0,0,0,0,0,0, 170,140,80,0,0,0,0,0,0,0, 250,120,150,0,0,0,0,0,0,0, 60,45,10,0,0,0,0,0,0,0, 80,50,50,0,0,0,0,0,0,0, 30,40,40,0,0,0,0,0,0,0, 
@@ -8990,7 +8988,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Travian Resource Bar+";
-		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Dec 29, 2023:</p> <ui><li>Fixed showing message links in alliance page</li></ui>";
+		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Jan 22, 2024:</p> <ui><li>Updated Roman troops speed for Community Week - Restoring Rome servers</li></ui> <p>Version 2.24.1 - Jan 9, 2024:</p> <ui><li>Fixed showing message links in alliance page</li></ui>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
