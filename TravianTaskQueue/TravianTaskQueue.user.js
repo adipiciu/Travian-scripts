@@ -7,36 +7,19 @@
 // @contributionURL https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=TTQ4+script&currency_code=EUR
 // @include     *://*.travian.*
 // @include     *://*/*.travian.*
-// @exclude     *://*.travian*.*/hilfe.php*
-// @exclude     *://*.travian*.*/index.php*
-// @exclude     *://*.travian*.*/anleitung.php*
-// @exclude     *://*.travian*.*/impressum.php*
-// @exclude     *://*.travian*.*/anmelden.php*
-// @exclude     *://*.travian*.*/gutscheine.php*
-// @exclude     *://*.travian*.*/spielregeln.php*
-// @exclude     *://*.travian*.*/links.php*
-// @exclude     *://*.travian*.*/geschichte.php*
-// @exclude     *://*.travian*.*/tutorial.php*
-// @exclude     *://*.travian*.*/manual.php*
-// @exclude     *://*.travian*.*/ajax.php*
-// @exclude     *://*.travian*.*/ad/*
-// @exclude     *://*.travian*.*/chat/*
-// @exclude     *://wbb.forum.travian*.*
-// @exclude     *://*.travian*.*/activate.php*
-// @exclude     *://*.travian*.*/support.php*
-// @exclude     *://help.travian*.*
-// @exclude     *://*.answers.travian*.*
+// @exclude     *://support.travian.*
+// @exclude     *://blog.travian.*
 // @exclude     *.css
 // @exclude     *.js
 
-// @version     2.0.11
+// @version     2.0.12
 // ==/UserScript==
 
 (function () {
 
 function allInOneTTQ () {
 notRunYet = false;
-var sCurrentVersion = "2.0.11";
+var sCurrentVersion = "2.0.12";
 
 //find out if Server errors
 var strTitle = document.title;
@@ -154,10 +137,10 @@ function post(url, data, callback, options) {
 		callback(httpRequest, options)
 	};
 	if (url.includes("api/v1/farm-list")){
-		httpRequest.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+		httpRequest.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
 	}
 	else if (url.includes("api/v1/")){
-		httpRequest.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+		httpRequest.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
 		httpRequest.setRequestHeader('Authorization', 'Bearer ' + getAjaxToken());
 	} else {
 		data = encodeURI(data);
@@ -2334,9 +2317,21 @@ function createGoldClubBtn () {
 	_log(3, "End createGoldClubBtn()");
 }
 
+function createGoldClubBtnAll () {
+	_log(3,"Begin createGoldClubBtnAll()");
+	var arrList = $gc('startAllFarmLists');
+	if (arrList.length > 0) {
+		arrList[0].parentNode.parentNode.style.marginTop = "130px";
+		var SndLtrBtn = generateButton(aLangStrings[16], scheduleSendClubAll);
+		arrList[0].parentNode.appendChild(document.createElement("div"));
+		arrList[0].parentNode.appendChild(SndLtrBtn);
+	}
+	_log(3, "End createGoldClubBtnAll()");
+}
+
 function scheduleSendClub () {
 	_log(3,"Begin scheduleSendClub()");
-	var list = this.parentNode;	
+	var list = this.parentNode;
 	listNameClass = list.querySelectorAll('[data-list]');
 	if (listNameClass.length > 0) {
 		var listName = $gc("farmListName",list)[0].textContent.replace('|','&#124;').replace(',','&#44;').trim();
@@ -2344,6 +2339,19 @@ function scheduleSendClub () {
 	}
 	displayTimerForm(9,listName,listID);
 	_log(3, "End scheduleSendClub()");
+}
+
+function scheduleSendClubAll () {
+	_log(3,"Begin scheduleSendClubAll()");
+	var lists = $id('rallyPointFarmList');
+	listNameClass = lists.querySelectorAll('[data-list]');
+	var listIDs = '';
+	for (var i = 0; i < listNameClass.length; i++) {
+		var listName = $gc("startAllFarmLists")[0].textContent.replace('|','&#124;').replace(',','&#44;').trim();
+		listIDs += listNameClass[i].getAttribute('data-list') + ";";
+	}
+	displayTimerForm(9,listName,listIDs);
+	_log(3, "End scheduleSendClubAll()");
 }
 
 function sendGoldClub (aTask) {
@@ -2374,22 +2382,34 @@ function sendGoldClub2(httpRequest,aTask) {
 			_log(3,"Script content: "+scripts[0].textContent);
 			var data = JSON.parse(scripts[0].textContent.match(/viewData:.*}} /)[0].replace('viewData','{ "viewData"').replace(new RegExp('}} $'), '}}}'));
 			var farmLists = data.viewData.ownPlayer.farmLists;
-			var targets = [];
 			var sParams;
-			for (var i=0; i<farmLists.length; i++) {
-				if (farmLists[i].id == aTask[3]) {
-					for (var j=0; j<farmLists[i].slotStates.length; j++) {
-						var village = farmLists[i].slotStates[j];
-						if (village.isActive == true) { //farmlists with casualties are automatically inactivated
-							targets.push(village.id);
+			aTask[3] = aTask[3].replace(/;$/, "");
+			var listIDs = aTask[3].split(';');
+			for (var k=0; k<listIDs.length; k++) {
+				for (var i=0; i<farmLists.length; i++) {
+					if (farmLists[i].id == listIDs[k]) {
+						var targets = [];
+						for (var j=0; j<farmLists[i].slotStates.length; j++) {
+							var village = farmLists[i].slotStates[j];
+							if (village.isActive == true) { //farmlists with casualties are automatically inactivated
+								targets.push(village.id);
+							}
 						}
-						sParams = '{"action":"farmList","lists":[{"id":'+aTask[3]+',"targets":'+JSON.stringify(targets)+'}]}';
+						if (listIDs.length == 1) {
+							sParams = '{"action":"farmList","lists":[{"id":'+listIDs[k]+',"targets":'+JSON.stringify(targets)+'}]}';
+						} else{
+							if (k==0) {
+								sParams = '{"action":"farmList","lists":[{"id":'+listIDs[k]+',"targets":'+JSON.stringify(targets)+'}], "startedAll": true}';
+							} else {
+								sParams = '{"action":"farmList","lists":[{"id":'+listIDs[k]+',"targets":'+JSON.stringify(targets)+'}], "triggeredBySendAll": true}';
+							}
+						}
+						_log(3,"parameters: "+sParams);
+						post(fullName+'api/v1/farm-list/send', sParams, sendGoldClubConfirmation, aTask);
+						break;
 					}
-					break;
 				}
 			}
-			_log(3,"parameters: "+sParams);
-			post(fullName+'api/v1/farm-list/send', sParams, sendGoldClubConfirmation, aTask);
 			return;
 		}
 		_log(1, "Your attack could not be sent. Bad response from server when sending request. (Server: Page Failed 1)");
@@ -3993,8 +4013,10 @@ function onLoad() {
 				case 17:	createMarketLinks();
 							break;
 				case 16:	if( $gc('a2b').length ) createAttackLinks();
-							if( $id('raidList') ) createGoldClubBtn();
-							if( $id('rallyPointFarmList') ) setTimeout(createGoldClubBtn,700)
+							if( $id('rallyPointFarmList') ) { 
+								setTimeout(createGoldClubBtn,700);
+								setTimeout(createGoldClubBtnAll,700);
+							}
 							break;
 				default:	_log(2, "This building (gid="+tY+") has no more links to create.");
 			}
