@@ -12,14 +12,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.24.2
+// @version        2.24.3
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.24.2';
+var version = '2.24.3';
 
 notRunYet = false;
 
@@ -4141,12 +4141,7 @@ function loadVCookie ( nameCoockie, contentCookie, vID, cType ) {
 	var cvID = vID || village_aid;
 	var cvT = cType || 0;
 	var RCookie = RB_getValue(GMcookieID + nameCoockie,'');
-	if (nameCoockie == 'vPPH') {
-		Rej = new RegExp("(^"+cvID+"|\\.\\/"+cvID + cookieDelim[cvT][0]);
-	}
-	else {
-		Rej = new RegExp("(" + cvID + cookieDelim[cvT][0]);
-	}
+	Rej = new RegExp("(?:^|#_|\\.\\/)(" + cvID + cookieDelim[cvT][0]);
 	var oneCookie = RCookie.match(Rej);
 	if( cvT == 1 ) RB[contentCookie].length = 0;
 	if( oneCookie != undefined ) {
@@ -4178,12 +4173,7 @@ function saveVCookie ( nameCoockie, contentCookie, cType ) {
 				if( contentCookie[j] !== undefined ) newCookie += esc(contentCookie[j]) + cookieDelim[cvT][1];
 			}
 		} else {
-			if (nameCoockie == 'vPPH') {
-				Rej = new RegExp("(^"+villages_id[i]+"|\\.\\/" + villages_id[i] + cookieDelim[cvT][0]);
-			}
-			else {
-				Rej = new RegExp("(" + villages_id[i] + cookieDelim[cvT][0]);
-			}
+			Rej = new RegExp("(?:^|#_|\\.\\/)(" + villages_id[i] + cookieDelim[cvT][0]);
 			var oldOneCookie = oldCookie.match(Rej);
 			if( oldOneCookie != undefined ) newCookie += oldOneCookie[2];
 		}
@@ -4589,7 +4579,7 @@ function progressbar_updValues() {
 	for (var j = 0; j < 4; j++) {
 		var spaceLeft = fullRes[j] - resNow[j];
 		var percentUsed2 = resNow[j] / fullRes[j] * 100;
-		var percentUsed = Math.round(percentUsed2);
+		var percentUsed = Math.floor(percentUsed2);
 
 		timerRB[j].pb.setAttribute("style", "width: " + Math.round(percentUsed2 * 2.1) + "px;");
 		timerRB[j].pval.innerHTML = percentUsed + "%";
@@ -4774,7 +4764,6 @@ function progressbar_init() {
 	var cell = $em('TH',[hideP,alink,alink2,aImg2,aImg,alink3]);
 
 	var pphSpan = $ee('SPAN','&#931;/h',[['title',ssPPH]]);
-	pphSpan.addEventListener('click', function (x) { return function() { bodyHide(x); }}([tblBody,0]), false);
 	var tblHead = $ee("thead",$em('TR',[cell,$c(pphSpan,[['class',allIDs[12]]])]));
 
 	var tbl = $em('TABLE',[tblHead,tblBody],[['cellspacing', '1'],['cellpadding', '1'],['id', allIDs[1]]]);
@@ -5336,7 +5325,7 @@ function overviewWarehouse () {
 			if( nowResInV < 0 ) nowResInV = 0;
 			var secLeft = RB.village_PPH[i] > 0 ? Math.round((RB.village_PPH[i+8] - nowResInV) / (RB.village_PPH[i]/3600)) : Math.round( nowResInV / (RB.village_PPH[i]/3600));
 			if( secLeft < minLeft ) minLeft = secLeft;
-			var nowResInVP = Math.round(nowResInV / RB.village_PPH[i+8]*100);
+			var nowResInVP = Math.floor(nowResInV / RB.village_PPH[i+8]*100);
 			var clr;
 			if( secLeft < parseFloat(RB.Setup[6])*3600) {
 				clr = 3;
@@ -8988,7 +8977,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Travian Resource Bar+";
-		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Jan 22, 2024:</p> <ui><li>Updated Roman troops speed for Community Week - Restoring Rome servers</li></ui> <p>Version 2.24.1 - Jan 9, 2024:</p> <ui><li>Fixed showing message links in alliance page</li></ui>";
+		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Jan 27, 2024:</p> <ui><li>Fixed rare bug, resource bar not storing/showing data properly</li><li>Fixed resource percentage display, rounding down</li></ui> <p>Version 2.24.2 - Jan 22, 2024:</p> <ui><li>Updated Roman troops speed for Community Week - Restoring Rome servers</li></ui> <p>Version 2.24.1 - Jan 9, 2024:</p> <ui><li>Fixed showing message links in alliance page</li></ui>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
