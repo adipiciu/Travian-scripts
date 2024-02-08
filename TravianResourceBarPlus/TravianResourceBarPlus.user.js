@@ -48,6 +48,8 @@ var timerB3 = [];
 var timerOv = [];
 var timerN = [];
 var villages_id = [];
+var villageId = 0;
+var nonceValue = "";
 var village_aid = 0;
 var village_aNum = 0;
 var villages_count = 0;
@@ -1067,7 +1069,7 @@ DICT = {
 		color4 : "Completamente Evoluido"
 	},
 	bg: { // Bulgarian language, thx Dushevadeca
-		// ingame messages 
+		// ingame messages
 		ok : "Потвърди",
 		cancel : "Отмени",
 		close : "Затвори",
@@ -2102,7 +2104,7 @@ DICT = {
 		sendres : "εμφάνισε «στείλε ύλες/στρατεύματα» εικονίδια",
 		sendmess : "εμφάνισε «στείλε μήνυμα» εικονίδιο",
 		analyzer : "World analyzer",
-		bigicon : "εμφάνισε πλατεία συγκέντρωσης ειδών",	
+		bigicon : "εμφάνισε πλατεία συγκέντρωσης ειδών",
 		addvtable : "Εμφάνιση επιπλέον πίνακα χωριών",
 		addvtableo : ['ανενεργό','ενεργό','κολλημένο'],
 		opennote : "άνοιξε αυτόματα σημειωματάριο",
@@ -2447,15 +2449,22 @@ function $xf(xpath, xpt, startnode, aDoc) {
 function ajaxRequest(url, aMethod, param, onSuccess, onFailure) {
 	var aR = new XMLHttpRequest();
 	aR.onreadystatechange = function() {
-		if( aR.readyState == 4 && (aR.status == 200 || aR.status == 304))
+		if( aR.readyState == 4 && (aR.status == 200 || aR.status == 204 || aR.status == 304)){
+            nonceValue = aR.getResponseHeader('X-Nonce');
 			onSuccess(aR);
-		else if (aR.readyState == 4 && aR.status != 200) onFailure(aR);
+        }else if (aR.readyState == 4 && aR.status != 200){
+            onFailure(aR);
+        }
 	};
 	aR.open(aMethod, url, true);
-	if (aMethod == 'POST') {
+	if (aMethod == 'POST' || aMethod == 'PUT') {
 		if (url.includes("api/v1/")){
 			aR.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
 			//aR.setRequestHeader('Authorization', 'Bearer ' + getAjaxToken());
+            if (nonceValue != "") {
+                aR.setRequestHeader('X-Nonce', nonceValue);
+                nonceValue = "";
+            }
 		} else {
 			aR.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 		}
@@ -2596,7 +2605,7 @@ function getUserID() {
 			var ad = ajaxNDIV(ajaxResp);
 			var aV = $xf('//td[contains(@class,"pla")]/a[contains(@href,"profile") and text() = "' + uName + '"]', 'f', ad);
 			ad = null;
-			if (aV) { 
+			if (aV) {
 				var uId = aV.href.match(/profile\/(\d+)/)[1];
 				uidcookie += uName +"\/@_"+ uId +"@@_";
 				RB_setValue(crtName + '-TRBP-UID', uidcookie);
@@ -2807,7 +2816,7 @@ acss = "table#"+allIDs[0]+" {width:100%; border-collapse:collapse; font-size:8pt
 	"."+allIDs[38]+" { height:12px;width:16px;background: url("+img_edit+") no-repeat 0px 0px;cursor:pointer; }" +
 	"."+allIDs[39]+" { height:12px;width:16px;background: url("+img_del+") no-repeat 0px 0px;cursor:pointer; }" +
 	"."+allIDs[47]+" { height:12px;width:12px;background: url("+img_tinfo+") no-repeat 0px 0px;margin:0px 5px; display: inline-block; }" +
-	"img."+allIDs[45]+" {margin:0px 5px;} ."+allIDs[46]+" * {background-color:#ECECEC !important;} ";	
+	"img."+allIDs[45]+" {margin:0px 5px;} ."+allIDs[46]+" * {background-color:#ECECEC !important;} ";
 
 if( /karte|position/.test(crtPath) ) acss += "."+allIDs[40]+" { height:12px;width:16px;background: url("+img_clipIn+") no-repeat 0px 0px;cursor:pointer; }"+
 	"."+allIDs[41]+" { height:12px;width:16px;background: url("+img_clipOut+") no-repeat 0px 0px;cursor:pointer; }";
@@ -2900,7 +2909,7 @@ var dragMaster = (function() {
 		}
 	}
 	function mouseMove(e){
-		var ev = touchFL?e.touches[0]:e; 
+		var ev = touchFL?e.touches[0]:e;
 		if (mouseDownAt) if (Math.abs(mouseDownAt.x-ev.pageX)<10 && Math.abs(mouseDownAt.y-ev.pageY)<10) return;
 		with(dragObject.style) {
 			position = 'absolute';
@@ -3002,7 +3011,7 @@ function bodyHide ( body ) {
 
 // begin Travian - add needed resources automatically under build/upgrade link
 function needed_show( base ) {
-	function saveWantsMem ( wantsResM ) {
+	function saveWantsMem ( wantsResM, mem_alert = true ) {
 		var noplace = '';
 		var ofFL = false;
 		for( var i = 0; i< 4; i++ ) if( wantsResM[i+5] > fullRes[i] ) ofFL = true;
@@ -3012,8 +3021,59 @@ function needed_show( base ) {
 		} else RB.wantsMem = wantsResM.slice();
 		RB.wantsMem[4] = village_aid;
 		saveCookie('Mem', 'wantsMem');
-		alert( noplace +"\nSaved: "+ RB.wantsMem[0] +" | "+ RB.wantsMem[1] +" | "+ RB.wantsMem[2] +" | "+ RB.wantsMem[3] );
+		if(mem_alert) alert( noplace +"\nSaved: "+ RB.wantsMem[0] +" | "+ RB.wantsMem[1] +" | "+ RB.wantsMem[2] +" | "+ RB.wantsMem[3] );
 	}
+    function getInstantResource(wantsResM){
+        // Pull Resource - get Resource Id
+        saveWantsMem(wantsResM, false); // Reload resource.
+
+        // Check Resource Id
+        ajaxRequest(fullName + 'api/v1/hero/v2/screen/inventory', "GET", null, function getResourceId(AjaxResponse){
+            var r1=0,r2=0,r3=0,r4=0;
+            var res_json = JSON.parse(AjaxResponse.responseText);
+            for (let i = 0; i < res_json.viewData.itemsInventory.length; i++) {
+                switch(res_json.viewData.itemsInventory[i].typeId){
+                    case 145 : r1 = res_json.viewData.itemsInventory[i].id; break;
+                    case 146 : r2 = res_json.viewData.itemsInventory[i].id; break;
+                    case 147 : r3 = res_json.viewData.itemsInventory[i].id; break;
+                    case 148 : r4 = res_json.viewData.itemsInventory[i].id; break;
+                }
+            }
+
+
+            // Pull Resource - Hero
+            if(RB.wantsMem[0] > 0 && r1 > 0){
+            param = '{"action":"inventory","itemId":'+r1+',"amount":'+RB.wantsMem[0]+',"villageId":'+villageId+'}';
+            ajaxRequest(fullName + 'api/v1/hero/v2/inventory/use-item', "PUT", param, function getResourcePut(Response){
+                ajaxRequest(fullName + 'api/v1/hero/v2/inventory/use-item', "POST", param, function onSuccessRedirect(Res){
+                    location.reload();
+                }, dummy);
+            }, dummy);
+            }else if(RB.wantsMem[1] > 0 && r2 > 0){
+                param = '{"action":"inventory","itemId":'+r2+',"amount":'+RB.wantsMem[1]+',"villageId":'+villageId+'}';
+                ajaxRequest(fullName + 'api/v1/hero/v2/inventory/use-item', "PUT", param, function getResourcePut(Response){
+                    ajaxRequest(fullName + 'api/v1/hero/v2/inventory/use-item', "POST", param, function onSuccessRedirect(Res){
+                        location.reload();
+                    }, dummy);
+                }, dummy);
+            }else if(RB.wantsMem[2] > 0 && r3 > 0){
+                param = '{"action":"inventory","itemId":'+r3+',"amount":'+RB.wantsMem[2]+',"villageId":'+villageId+'}';
+                ajaxRequest(fullName + 'api/v1/hero/v2/inventory/use-item', "PUT", param, function getResourcePut(Response){
+                    ajaxRequest(fullName + 'api/v1/hero/v2/inventory/use-item', "POST", param, function onSuccessRedirect(Res){
+                        location.reload();
+                    }, dummy);
+                }, dummy);
+            } else if(RB.wantsMem[3] > 0 && r4 > 0){
+                param = '{"action":"inventory","itemId":'+r4+',"amount":'+RB.wantsMem[3]+',"villageId":'+villageId+'}';
+                ajaxRequest(fullName + 'api/v1/hero/v2/inventory/use-item', "PUT", param, function getResourcePut(Response){
+                    ajaxRequest(fullName + 'api/v1/hero/v2/inventory/use-item', "POST", param, function onSuccessRedirect(Res){
+                        location.reload();
+                    }, dummy);
+                }, dummy);
+            }
+
+        }, dummy);
+    }
 	function showPlusTimer () {
 		if (RB.Setup[10] > 2 && $g('merchantsOnTheWay')) return;
 		var j=timerB.length;
@@ -3057,6 +3117,9 @@ function needed_show( base ) {
 		timerB[j].obj = $eT('SPAN', timerB[j].time, 0);
 		beforeThis.appendChild($em('SPAN',['(',trImg('npc_inactive'),' ',timerB[j].obj,') ']));
 	}
+	var memP = $a('(Pull Resource)',[['href',jsVoid],['dir','ltr']]);
+	memP.addEventListener('click', function(x) { return function() { getInstantResource(x); }}(wantsResMem), 0);
+	beforeThis.appendChild(memP);
 	var memP = $a('(M)',[['href',jsVoid],['dir','ltr']]);
 	memP.addEventListener('click', function(x) { return function() { saveWantsMem(x); }}(wantsResMem), 0);
 	beforeThis.appendChild(memP);
@@ -3069,7 +3132,7 @@ function needed_show( base ) {
 	return beforeThis;
 }
 
-function neededResAdd () {	
+function neededResAdd () {
 	function addNPC( base ) {
 		var gold = $gc('gold',base);
 		if( gold.length > 0 ) {
@@ -3604,7 +3667,7 @@ function marketSend () {
 	//	for( i=1; i<5; i++ ) try{ rxI[i].value = crtPath.match(new RegExp('&r'+i+'=(\\d+)'))[1]; } catch(e){};
 
 	addButtonsEvent();
-	
+
 	var target = $gc('merchantsInformation')[0];
 	var MutationObserver = window.MutationObserver;
 	var observer = new MutationObserver(function(mutations) {
@@ -3742,7 +3805,7 @@ function marketTradeRoutes() {
 	var routesDiv = $g("tradeRoutes",cont);
 	if ( !routesDiv ) { return; }
 	var buttons = $gt('button', routesDiv);
-	for (var i = 0; i < buttons.length; i++ ) { 
+	for (var i = 0; i < buttons.length; i++ ) {
 		buttons[i].addEventListener('click', function(x) { setTimeout(tradeRoutes,500); }, 0);
 	}
 	function tradeRoutes () {
@@ -3776,9 +3839,9 @@ function marketTradeRoutes() {
 			}
 			merUpd();
 		}
-		for (var i = 1; i < 5; i++ ) { 
+		for (var i = 1; i < 5; i++ ) {
 			var inp = $gn("r"+i,routesForm)[0];
-			inp.addEventListener('input', merUpd, false); 
+			inp.addEventListener('input', merUpd, false);
 			var divC = $e('DIV',[['style','margin:2px auto;font-size:24px;pointer-events:auto;']]);
 			var refM = $a(' - ',[["id","rbmin"],['href',jsVoid]]);
 			refM.addEventListener('click', mofLinkU, false);
@@ -4505,7 +4568,9 @@ function vlist_addButtonsT4 () {
 			linkVSwitch[vn] = linkEl.getAttribute('href');
 			var coords = $gc("coordinatesGrid",villages[vn])[0];
 			var myVid = getVidFromCoords(coords.innerHTML);
+            var nd = parseInt(linkVSwitch[vn].match(/newdid=(\d+)/)[1]);
 			villages_id[vn] = myVid;
+            villageId = nd;
 
 			if( linkEl.hasAttribute('class') && linkEl.getAttribute('class').match(/active/i) ) {
 				village_aid = myVid; village_aNum = vn;
@@ -5042,7 +5107,7 @@ function parseDorf2 () {
 		for( var i = 0 ; i < dictsFL.length; i++ ) {
 			if( RB.dictFL[dictsFL[i][1]] == 0 ) {
 				var turF = $gc('building '+dictsFL[i][0],base);
-				if( turF.length > 0 ) {			
+				if( turF.length > 0 ) {
 					var turD = turF[0].parentNode.getAttribute('data-name');
 					RB.dictionary[dictsFL[i][1]] = turD;
 					saveCookie( 'Dict', 'dictionary' );
@@ -6455,7 +6520,7 @@ function bigQuickLinks () {
 		bigIconsHeader.insertBefore(CreateBigLinkButton('stable',5,imgs[2]), bigIconsHeader.firstChild);
 		bigIconsHeader.insertBefore(CreateBigLinkButton('barracks',4,imgs[1]), bigIconsHeader.firstChild);
 		bigIconsHeader.insertBefore(CreateBigLinkButton('market',2,imgs[0]), bigIconsHeader.firstChild);
-		if( RB.Setup[16] != 0 ) { bigIconsHeader.insertBefore(CreateBigLinkButton('overview',0,imgs[4]), bigIconsHeader.firstChild); }			
+		if( RB.Setup[16] != 0 ) { bigIconsHeader.insertBefore(CreateBigLinkButton('overview',0,imgs[4]), bigIconsHeader.firstChild); }
 	} else {
 		plusAccount = true;
 		if( RB.Setup[16] != 0 ) { bigIconsHeader.insertBefore(CreateBigLinkButton('overview',0,imgs[4]), bigIconsHeader.firstElementChild) }
@@ -6818,9 +6883,9 @@ function scanTroopsData () {
 				 //Gauls
 				 15,40,50,100,130,55,30,7*m,35,1, 65,35,20,140,150,185,60,6*m,45,1, 0,20,10,170,150,20,40,17*m,0,2, 100,25,40,350,450,230,60,19*m,75,2, 45,115,55,360,330,280,120,16*m,35,2, 140,60,165,500,620,675,170,13*m,65,3, 50,30,105,950,555,330,75,4*m,0,3, 70,45,10,960,1450,630,90,3*m,0,6, 40,50,50,30750,45400,31000,37500,5*m,0,4, 0,80,80,4400,5600,4200,3900,5*m,3000,1,
 				 //Nature
-				 10,25,20,0,0,0,0,20,0,1, 20,35,40,0,0,0,0,20,0,1, 60,40,60,0,0,0,0,20,0,1, 80,66,50,0,0,0,0,20,0,1, 50,70,33,0,0,0,0,20,0,2, 100,80,70,0,0,0,0,20,0,2, 250,140,200,0,0,0,0,20,0,3, 450,380,240,0,0,0,0,20,0,3, 200,170,250,0,0,0,0,20,0,3, 600,440,520,0,0,0,0,20,0,5, 
+				 10,25,20,0,0,0,0,20,0,1, 20,35,40,0,0,0,0,20,0,1, 60,40,60,0,0,0,0,20,0,1, 80,66,50,0,0,0,0,20,0,1, 50,70,33,0,0,0,0,20,0,2, 100,80,70,0,0,0,0,20,0,2, 250,140,200,0,0,0,0,20,0,3, 450,380,240,0,0,0,0,20,0,3, 200,170,250,0,0,0,0,20,0,3, 600,440,520,0,0,0,0,20,0,5,
 				 //Natars
-				 20,35,50,0,0,0,0,0,0,0, 65,30,10,0,0,0,0,0,0,0, 100,90,75,0,0,0,0,0,0,0, 0,10,0,0,0,0,0,0,0,0, 155,80,50,0,0,0,0,0,0,0, 170,140,80,0,0,0,0,0,0,0, 250,120,150,0,0,0,0,0,0,0, 60,45,10,0,0,0,0,0,0,0, 80,50,50,0,0,0,0,0,0,0, 30,40,40,0,0,0,0,0,0,0, 
+				 20,35,50,0,0,0,0,0,0,0, 65,30,10,0,0,0,0,0,0,0, 100,90,75,0,0,0,0,0,0,0, 0,10,0,0,0,0,0,0,0,0, 155,80,50,0,0,0,0,0,0,0, 170,140,80,0,0,0,0,0,0,0, 250,120,150,0,0,0,0,0,0,0, 60,45,10,0,0,0,0,0,0,0, 80,50,50,0,0,0,0,0,0,0, 30,40,40,0,0,0,0,0,0,0,
 				 //Egyptians
 				 10,30,20,45,60,30,15,7*m,15,1, 30,55,40,115,100,145,60,6*m,50,1, 65,50,20,170,180,220,80,7*m,45,1, 0,20,10,170,150,20,40,16*m,0,2, 50,110,50,360,330,280,120,15*m,50,2, 110,120,150,450,560,610,180,10*m,70,3, 55,30,95,995,575,340,80,4*m,0,3, 65,55,10,980,1510,660,100,3*m,0,6, 40,50,50,34000,50000,34000,42000,4*m,0,4, 0,80,80,5040,6510,4830,4620,5*m,3000,1,
 				 //Huns
@@ -7191,7 +7256,7 @@ var ajaxToken=false;
 function getAjaxToken () {
 	if( ajaxToken ) return ajaxToken;
 	var aText = $xf(".//script[contains(text(),'\".slice')]",'f',document.head);
-	if( aText ) { 
+	if( aText ) {
 		ajaxToken = aText.textContent.match(/\"(.+)\".slice/)[1];
 		return ajaxToken;
 	}
@@ -7269,7 +7334,7 @@ function cropFind () {
 					chkOasisFL[vid] = getTroopsInOasis(ad);
 					if( ! iaFL ) {
 						addToolTip(chkOasisFL[vid],x[3].rows[x[2]].cells[2]);
-					
+
 						var anim = $xf('.//tr[td/img[contains(@class, "unit u")]]','l',ad);
 						if( anim.snapshotLength > 0 ) {
 							var animL = [0,0,0,0,0,0,0,1,1,1];
@@ -7727,7 +7792,7 @@ function detectAttack () {
 			lastTimerB = timerNum+1;
 		}
 		if( RB.attackList.length < 2 ) {
-			aDv.innerHTML = 'No attack'; 
+			aDv.innerHTML = 'No attack';
 		} else {
 			aDv.innerHTML = '';
 		}
@@ -7813,9 +7878,9 @@ function detectAttack () {
 			var ad = ajaxNDIV(ajaxResp);
 			var move = $xf('.//div[contains(@class,"listEntry") and contains(@class,"attack")]','f',ad);
 			ad = null;
-			if (move) { 
+			if (move) {
 				triggerAlarm();
-				return true; 
+				return true;
 			} else { noAttack(); }
 		}, showError);
 	}
@@ -8308,7 +8373,7 @@ function saveHeroPower () {
 			saveCookie( 'DictFL', 'dictFL' );
 		}
 	}
-	
+
 }
 
 function saveHeroMount () {
@@ -8324,7 +8389,7 @@ function saveHeroMount () {
 			});
 		});
 		observer.observe(hr, { childList: true, subtree: true });
-	
+
 		function checkHeroMount () {
 			if( hr.hasChildNodes() ) {
 				RB.dictFL[18] = 1;
@@ -8368,7 +8433,7 @@ function goldClubInfo () {
 		for( var t=0; t < ac.snapshotLength; t++ ) {
 			var inp = $gt('INPUT',ac.snapshotItem(t))[0];
 			if (inp.checked != chkbox.checked ) inp.click();
-		}	
+		}
 	}
 	function checkGreen () {
 		checkClass('attack_won_withoutLosses_small',this);
@@ -8723,14 +8788,14 @@ function messagesTopButtons () {
 			var markasreadButt = buttons[i];
 		}
 		if (buttons[i].name == 'delete') {
-			var delButt = buttons[i];	
+			var delButt = buttons[i];
 		}
 		if (buttons[i].name == 'archive') {
 			var archiveButton = buttons[i];
 		}
 	}
 	if (buttons.length > 0) {
-		if ( archiveButton ) { 
+		if ( archiveButton ) {
 			var newArcAbove = archiveButton.cloneNode(true);
 			ltr ? newArcAbove.style.marginLeft = "4px" : newArcAbove.style.marginRight = "4px";
 			messagesForm.prepend(newArcAbove);
@@ -8739,7 +8804,7 @@ function messagesTopButtons () {
 			var newDelAbove = delButt.cloneNode(true);
 			ltr ? newDelAbove.style.marginLeft = "4px" : newDelAbove.style.marginRight = "4px";
 			messagesForm.prepend(newDelAbove);
-		}	
+		}
 		if ( markasreadButt ) {
 			var newMarkAbove = markasreadButt.cloneNode(true);
 			messagesForm.prepend(newMarkAbove);
@@ -8965,8 +9030,8 @@ function oasisKirilloid (vf) {
 }
 
 function displayWhatIsNew () {
-	if ($g('whatsnew')) { 
-		$g("whatsnew").style.visibility = "visible"; return; } 
+	if ($g('whatsnew')) {
+		$g("whatsnew").style.visibility = "visible"; return; }
 	else {
 		var box = $e('div',[['id','whatsnew'],['style','width:410px;position:fixed;top:50%;left:50%;transform: translate(-50%,-50%);color:black;background-color:#FFFFFF;padding:5px 5px;border-radius:1em;z-index:999;opacity:0.90;']]);
 		var header = $e('div',[['style','height:35px;font-size:130%;font-weight:bold;text-align:center;']]);
