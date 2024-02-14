@@ -16,11 +16,8 @@
 
 Chrome/Opera/Edge/Chromium browsers: Tampermonkey or Violentmonkey
 
-Firefox: Violentmonkey, Greasemonkey or Tampermonkey (Disable Firefox Accessibility Services to improve Firefox speed)
+Firefox: Violentmonkey, Greasemonkey or Tampermonkey
 
-Safari: Userscripts or Tampermonkey
+Safari: [Userscripts](https://apps.apple.com/app/userscripts/id1463298887) or [Tampermonkey](https://apps.apple.com/app/tampermonkey/id1482490089) 
 
 Android: Firefox, Yandex or Kiwi browser with Violentmonkey or Tampermonkey
-
-# Warning
-Do not install these scripts from untrusty websites like greasyfork.org, where the owner deletes legit scripts in favor of clones. If you had an account there, you can warn other users and redirect them here, where the official scripts are updated.
