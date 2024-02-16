@@ -1,4 +1,4 @@
-﻿// ==UserScript==
+// ==UserScript==
 // @name        Travian Task Queue for Travian 4
 // @namespace   https://github.com/adipiciu/Travian-scripts
 // @author      adipiciu (based on TTQ by Risi and further edited by Nevam and then Pimp Trizkit and Serj_LV)
@@ -12,14 +12,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version     2.0.12
+// @version     2.0.13
 // ==/UserScript==
 
 (function () {
 
 function allInOneTTQ () {
 notRunYet = false;
-var sCurrentVersion = "2.0.12";
+var sCurrentVersion = "2.0.13";
 
 //find out if Server errors
 var strTitle = document.title;
@@ -141,7 +141,7 @@ function post(url, data, callback, options) {
 	}
 	else if (url.includes("api/v1/")){
 		httpRequest.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
-		httpRequest.setRequestHeader('Authorization', 'Bearer ' + getAjaxToken());
+		httpRequest.setRequestHeader('X-Nonce', nonceValue);
 	} else {
 		data = encodeURI(data);
 		httpRequest.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -149,23 +149,24 @@ function post(url, data, callback, options) {
 	httpRequest.send(data);
 }
 
-var ajaxToken=false;
-function getAjaxToken () {
-	if( ajaxToken ) return ajaxToken;
-	var aText = xpath("//script[contains(text(),'\".slice')]", document.head, true);
-	if( aText ) {
-		ajaxToken = aText.textContent.match(/\"(.+)\".slice/)[1];
-		return ajaxToken;
+function put(url, data, callback, options) {
+	var httpRequest = new XMLHttpRequest();
+	httpRequest.open("PUT", url, true);
+	httpRequest.onreadystatechange = function() {
+		callback(httpRequest, options)
+	};
+	if (url.includes("api/v1/farm-list")){
+		httpRequest.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
 	}
-	var aText = xpath('//script[contains(text(),"atob(")]', document.head, true);
-	if( aText ) {
-		ajaxToken = aText.textContent.match(/atob\('(.+)'\)/)[1];
-		ajaxToken = atob(ajaxToken);
-		ajaxToken = ajaxToken.match(/'(.+)'/)[1];
-		return ajaxToken;
+	else if (url.includes("api/v1/")){
+		httpRequest.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+	} else {
+		data = encodeURI(data);
+		httpRequest.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	}
-	return ajaxToken;
+	httpRequest.send(data);
 }
+
 /**************************************************************************
  * Detects the server so we can figure out the language used
  * @returns the servers location
@@ -2796,19 +2797,12 @@ function handleRequestDemolish(httpRequest, aTask) {
 // *** Begin Send Merchants Functions ***
 function createMarketLinks() {
 	_log(2,"CreateMarketLinks> Begin.");
-	var tmp1 = $id("send_select");
-	var tOK = xpath("//form//*[@id='button']//button", $id("content"));
-	if( !tmp1 || tmp1.className != "send_res" || tOK.snapshotLength != 1 ) {
+	var tOK = xpath("//form//button[contains(@class,'send')]", $id("content"));
+	if( tOK.snapshotLength != 1 ) {
 		_log(1,"CreateMarketLinks> This is not the marketplace.");
 		return false;
 	}
 	tOK = tOK.snapshotItem(0);
-	var tR;
-	for ( var ii = 1 ; ii < 5 ; ++ii ) {
-		tR = $id("r"+ii);
-		tR.setAttribute("onKeyUp","var tmp1 = this.value; " +
-			(tR.getAttribute("onKeyUp") ? tR.getAttribute("onKeyUp") + ";" : "") + " this.value = tmp1;");
-	}
 	var oBtn = generateButton(aLangStrings[16], scheduleMerchant);
 	tOK.parentNode.appendChild(oBtn);
 	_log(2,"CreateMarketLinks> End.");
@@ -2816,16 +2810,18 @@ function createMarketLinks() {
 
 function scheduleMerchant(e) {
 	_log(1,"scheduleMarket> Begin.");
-	var tXX = parseInt(document.getElementsByName("x")[0].value);
-	var tYY = parseInt(document.getElementsByName("y")[0].value);
+	var basee = $id('marketplaceSendResources');
+	var tXX = parseInt($gt('input',$gc('coordinateX',basee)[0])[0].getAttribute("value"));
+	var tYY = parseInt($gt('input',$gc('coordinateY',basee)[0])[0].getAttribute("value"));
 	var tData = [tXX,tYY,0,0,0,0,iSiteId];
 
 	var tmp,tmp2,isEmpty = true;
-	for ( var i = 1 ; i < 5 ; ++i ) {
-		tmp = $id("r"+i);
+	var resnames = ["lumber","clay","iron","crop"];
+	for ( var i = 0 ; i < 4 ; ++i ) {
+		tmp = $gn(resnames[i],basee)[0];
 		tmp2 = parseInt(tmp.value);
 		if ( isNaN(tmp2) || tmp2 < 1 ) continue;
-		tData[i+1] = tmp2;
+		tData[i+2] = tmp2;
 		isEmpty = false;
 	}
 	if ( isNaN(tXX) || Math.abs(tXX) > mapRadius || isNaN(tYY) || Math.abs(tYY) > mapRadius || isEmpty ){
@@ -2859,17 +2855,19 @@ function handleMerchantRequest1(httpRequest, aTask) {
 		if ( isNaN(oldVID) ) oldVID = -2;
 		if (httpRequest.status == 200 && httpRequest.responseText ) { // ok
 			var sParams = {};
-			var parser = new DOMParser();
-			var holder = parser.parseFromString(httpRequest.responseText, "text/html");
-			var marketForm = holder.getElementById('marketSend');
-			var tInputs = marketForm.getElementsByTagName('input');
-			var reqVID = getActiveVillage(holder);
-
+			//var parser = new DOMParser();
+			//var holder = parser.parseFromString(httpRequest.responseText, "text/html");
+			//var marketForm = holder.getElementById('marketplaceSendResources');
+			//var tInputs = marketForm.getElementsByTagName('input');
+			//var reqVID = getActiveVillage(holder);
+			var opts = aTask[3].split("_");
+			sParams = '{"action":"marketPlace","resources":{"lumber":'+opts[2]+',"clay":'+opts[3]+',"iron":'+opts[4]+',"crop":'+opts[5]+'},"destination":{"x":'+opts[0]+',"y":'+opts[1]+'},"runs":1,"useTradeShips":false}';
+			/*
 			if ( tInputs.length > 3 && holder.getElementsByClassName("gid17").length == 1 && reqVID == oldVID ) {
 				var maxM = 20;
 				var maxC = 500;
 				var resNow = [Infinity,Infinity,Infinity,Infinity];
-				tX = [500,1000,750];
+				tX = [500,1000,750,0,0,500,750,500];
 				tY = getOption("RACE", -1, "integer");
 				if( tY > -1 ) maxC = tX[tY];
 				tX = $gc('merchantsAvailable',holder)[0];
@@ -2947,6 +2945,11 @@ function handleMerchantRequest1(httpRequest, aTask) {
 				post(fullName+'api/v1/marketplace/prepare', JSON.stringify(sParams), handleMerchantRequest2, aTask);
 				return;
 			}
+			*/
+			_log(3,"sParams:"+sParams);
+			put(fullName+'api/v1/marketplace/resources/send', sParams, handleMerchantRequest2, aTask);
+			return;
+
 			if ( reqVID != currentActiveVillage ) switchActiveVillage(currentActiveVillage);
 			printMsg(getVillageName(oldVID)+ "<br>" + aLangTasks[7] + " >> " + oldName + " " + oldCoords + "<br>" + getMerchantInfo(aTask[3]) + "<br>"+ aLangStrings[73] + " (" + aLangStrings[74]+" "+aLangStrings[11]+ " 1)",true); //Your merchants didnt send. (Server: Redirected)
 			_log(1,"Your merchants were not sent. I was redirected before I could send the first request to send the merchant. Server: Redirected 1. From: " + getVillageName(oldVID) + "   To: " +oldName + " " + oldCoords + " carrying " + getMerchantInfo(aTask[3]) );
@@ -2972,6 +2975,13 @@ function handleMerchantRequest2(httpRequest, aTask) {
 		var oldName = getVillageNameZ(parseInt(aTask[2]));
 
 		if (httpRequest.status == 200 && httpRequest.responseText) { // ok
+			nonceValue = httpRequest.getResponseHeader('X-Nonce');
+			var opts = aTask[3].split("_");
+			sParams = '{"action":"marketPlace","resources":{"lumber":'+opts[2]+',"clay":'+opts[3]+',"iron":'+opts[4]+',"crop":'+opts[5]+'},"destination":{"x":'+opts[0]+',"y":'+opts[1]+'},"runs":1,"useTradeShips":false}';
+			_log(3,"sParams:"+sParams);
+			
+			post(fullName+'api/v1/marketplace/resources/send', sParams, handleMerchantRequestConfirmation, aTask);
+			return;
 			var sParams = {};
 			var holder = document.createElement('div');
 			var marketData = JSON.parse(httpRequest.responseText);
@@ -3030,15 +3040,20 @@ function handleMerchantRequest2(httpRequest, aTask) {
 function handleMerchantRequestConfirmation(httpRequest, options) {
 	_log(2,"handleMerchantRequestConfirmation> Begin. options = " + options);
 	if (httpRequest.readyState == 4) {
-		var aTask = options[0];
+		var aTask = options;
 		var oldName = options[2];
 		var oldCoords = aTask[3].split("_");
 		oldCoords = "(" + oldCoords[0] + "|" + oldCoords[1] + ")";
 		var oldVID = parseInt(aTask[5]);
 		if ( isNaN(oldVID) ) oldVID = -2;
-		if (httpRequest.status == 200 && httpRequest.responseText ) { // ok
+		if ( httpRequest.status == 200 || httpRequest.status == 204 ) { // ok
+			printMsg(getVillageName(oldVID)+ "<br>" + aLangTasks[7] + " >> " + oldName + " " + oldCoords + "<br>" + getMerchantInfo(aTask[3]) ); //Your merchants were sent.
+			_log(1,"Your merchants were sent. From: " + getVillageName(oldVID) + "   To: " +oldName + " " + oldCoords + " carrying " + getMerchantInfo(aTask[3]) );
+			addToHistory(aTask, true);
+			return
 			var holder = document.createElement('div');
 			var marketData = JSON.parse(httpRequest.responseText);
+			
 			holder.innerHTML = marketData["formular"];
 			var reqVID = aTask[5];
 			if ( reqVID != currentActiveVillage ) switchActiveVillage(currentActiveVillage);
@@ -4010,7 +4025,7 @@ function onLoad() {
 							break;
 				case 15:	createDemolishBtn();
 							break;
-				case 17:	createMarketLinks();
+				case 17:	setTimeout(createMarketLinks,700);
 							break;
 				case 16:	if( $gc('a2b').length ) createAttackLinks();
 							if( $id('rallyPointFarmList') ) { 
