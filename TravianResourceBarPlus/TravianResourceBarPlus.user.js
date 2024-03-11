@@ -12,14 +12,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.24.4
+// @version        2.24.5
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.24.4';
+var version = '2.24.5';
 
 notRunYet = false;
 
@@ -3564,18 +3564,12 @@ function marketSend () {
 	//var ref = $a('(M)',[['href',jsVoid]]);
 	//ref.addEventListener('click', mhRowLinkMPlus, false);
 	//newTR.appendChild($c(ref));
-	//var ref = $a('-',[['href',jsVoid]]);
-	//ref.addEventListener('click', mhRowsLinkM, false);
-	//newTR.appendChild($c(ref,[['width','5%']]));
 	var memL = $a('M',[['href',jsVoid],['style','font-size:15px;']]);
 	memL.addEventListener('click', function() { mhRowLinkMem(1); }, false);
 	var memL2 = $a('M/2',[['href',jsVoid],['style','font-size:15px;']]);
 	memL2.addEventListener('click', function() { mhRowLinkMem(2); }, false);
 	var memL3 = $a('M/3',[['href',jsVoid],['style','font-size:15px;']]);
 	memL3.addEventListener('click', function() { mhRowLinkMem(3); }, false);
-	//var ref = $a('+',[['href',jsVoid]]);
-	//ref.addEventListener('click', mhRowsLinkP, false);
-	//newTR.appendChild($c(ref,[['width','5%']]));
 	var refEq = $a('=',[['href',jsVoid],['style','font-size:15px;']]);
 	refEq.addEventListener('click', mhRowsLinkEq, false);
 	var refP = $a('%',[['href',jsVoid],['style','font-size:15px;']]);
@@ -3824,6 +3818,7 @@ function marketSummReal () {
 		var aTo = $gc('delivery',ownMerchants);
 		var outgoingResArr = [];
 		for (i = 0; i < aTo.length; i++) {
+			if (aTo[i].classList.contains('history')) continue;
 			var outgoingRes = $gc('value',aTo[i]);
 			for( var j = 0; j < 4; j++ ) { outgoingResArr[j] = outgoingRes[j].textContent; }
 			showMer(aTo[i], outgoingResArr);
@@ -3857,6 +3852,7 @@ function marketSummReal () {
 		var extRT = new Array();
 		for (i = 0; i < aT.length; i++) {
 			// get count of retry
+			if (aT[i].classList.contains('history') || aT[i].classList.contains('return')) continue;
 			var multFL = $gc('repeat',aT[i]);
 			if( multFL.length > 0 ) {
 				// get time to go
@@ -3886,6 +3882,7 @@ function marketSummReal () {
 			extRT.sort(function(a,b){return a[0]-b[0];});
 			for (var i = 0; i < aT.length; i++) {
 				// get time to go
+				if (aT[i].classList.contains('history') || aT[i].classList.contains('return')) continue;
 				var timeToGo = toSeconds(aT[i].rows[1].cells[1].innerHTML);
 				if( timeToGo > extRT[0][0] ) {
 					aT[i].parentNode.insertBefore(extRT[0][1],aT[i]);
@@ -3905,6 +3902,7 @@ function marketSummReal () {
 	resourceCalculatorInit();
 	var incomingResArr = [];
 	for (i = 0; i < aT.length; i++) {
+		if (aT[i].classList.contains('history') || aT[i].classList.contains('return')) continue;
 		// get time to go
 		//var timeToGo = toSeconds(aT[i].rows[1].cells[1].innerHTML);
 		var timeToGo = parseInt($gc('timer',aT[i])[0].getAttribute("value"));
@@ -5901,9 +5899,9 @@ function detectNameAttaker() {
 	var newSP = $ee('DIV',nameLink,[['style',"position:absolute;margin:5px -30px;display:inline-block;"]]);
 	tmenu.insertBefore(newSP,tmenu.firstChild);
 
-	var attFI = $ee('BUTTON',trImg('iReport iReport1'),[['class',"iconFilter"],['onclick',jsNone]]);
-	attFI.addEventListener('click', filterIncomeTroops, false);
-	tmenu.insertBefore(attFI,tmenu.firstChild.nextSibling);
+	//var attFI = $ee('BUTTON',trImg('iReport iReport1'),[['class',"iconFilter"],['onclick',jsNone]]);
+	//attFI.addEventListener('click', filterIncomeTroops, false);
+	//tmenu.insertBefore(attFI,tmenu.firstChild.nextSibling);
 }
 
 var filterITObj = new Object;
@@ -6829,9 +6827,9 @@ function scanTroopsData () {
 		//Gauls
 		15,40,50,100,130,55,30,7*m,35,1, 65,35,20,140,150,185,60,6*m,45,1, 0,20,10,170,150,20,40,17*m,0,2, 100,25,40,350,450,230,60,19*m,75,2, 45,115,55,360,330,280,120,16*m,35,2, 140,60,165,500,620,675,170,13*m,65,3, 50,30,105,950,555,330,75,4*m,0,3, 70,45,10,960,1450,630,90,3*m,0,6, 40,50,50,30750,45400,31000,37500,5*m,0,4, 0,80,80,4400,5600,4200,3900,5*m,3000,1,
 		//Nature
-		10,25,20,0,0,0,0,20*m,0,1, 20,35,40,0,0,0,0,20*m,0,1, 60,40,60,0,0,0,0,20*m,0,1, 80,66,50,0,0,0,0,20*m,0,1, 50,70,33,0,0,0,0,20*m,0,2, 100,80,70,0,0,0,0,20*m,0,2, 250,140,200,0,0,0,0,20*m,0,3, 450,380,240,0,0,0,0,20*m,0,3, 200,170,250,0,0,0,0,20*m,0,3, 600,440,520,0,0,0,0,20*m,0,5, 
+		10,25,20,100,100,100,100,20*m,0,1, 20,35,40,100,100,100,100,20*m,0,1, 60,40,60,100,100,100,100,20*m,0,1, 80,66,50,100,100,100,100,20*m,0,1, 50,70,33,100,100,100,100,20*m,0,2, 100,80,70,100,100,100,100,20*m,0,2, 250,140,200,100,100,100,100,20*m,0,3, 450,380,240,100,100,100,100,20*m,0,3, 200,170,250,100,100,100,100,20*m,0,3, 600,440,520,100,100,100,100,20*m,0,5,
 		//Natars
-		20,35,50,100,100,100,50,6*m,10,1, 65,30,10,100,100,100,50,7*m,10,1, 100,90,75,150,150,150,150,6*m,10,1, 0,10,10,50,50,50,50,25*m,10,1, 155,80,50,300,150,150,100,14*m,10,2, 170,140,80,250,250,400,150,12*m,10,3, 250,120,150,400,300,300,400,5*m,10,4, 60,45,10,200,200,200,100,3*m,10,5, 80,50,50,1000,1000,1000,1000,5*m,10,1, 30,40,40,200,200,200,200,5*m,3000,1, 
+		20,35,50,100,100,100,50,6*m,10,1, 65,30,10,100,100,100,50,7*m,10,1, 100,90,75,150,150,150,150,6*m,10,1, 0,10,10,50,50,50,50,25*m,10,1, 155,80,50,300,150,150,100,14*m,10,2, 170,140,80,250,250,400,150,12*m,10,3, 250,120,150,400,300,300,400,5*m,10,4, 60,45,10,200,200,200,100,3*m,10,5, 80,50,50,1000,1000,1000,1000,5*m,10,1, 30,40,40,200,200,200,200,5*m,3000,1,
 		//Egyptians
 		10,30,20,45,60,30,15,7*m,15,1, 30,55,40,115,100,145,60,6*m,50,1, 65,50,20,170,180,220,80,7*m,45,1, 0,20,10,170,150,20,40,16*m,0,2, 50,110,50,360,330,280,120,15*m,50,2, 110,120,150,450,560,610,180,10*m,70,3, 55,30,95,995,575,340,80,4*m,0,3, 65,55,10,980,1510,660,100,3*m,0,6, 40,50,50,34000,50000,34000,42000,4*m,0,4, 0,80,80,5040,6510,4830,4620,5*m,3000,1,
 		//Huns
@@ -6847,9 +6845,9 @@ function scanTroopsData () {
 		//Gauls
 		15,40,50,100,130,55,30,7*m,35,1, 65,35,20,140,150,185,60,6*m,45,1, 0,20,10,170,150,20,40,17*m,0,2, 100,25,40,350,450,230,60,19*m,75,2, 45,115,55,360,330,280,120,16*m,35,2, 140,60,165,500,620,675,170,13*m,65,3, 50,30,105,950,555,330,75,4*m,0,3, 70,45,10,960,1450,630,90,3*m,0,6, 40,50,50,30750,45400,31000,37500,5*m,0,4, 0,80,80,4400,5600,4200,3900,5*m,3000,1,
 		//Nature
-		10,25,20,0,0,0,0,20*m,0,1, 20,35,40,0,0,0,0,20*m,0,1, 60,40,60,0,0,0,0,20*m,0,1, 80,66,50,0,0,0,0,20*m,0,1, 50,70,33,0,0,0,0,20*m,0,2, 100,80,70,0,0,0,0,20*m,0,2, 250,140,200,0,0,0,0,20*m,0,3, 450,380,240,0,0,0,0,20*m,0,3, 200,170,250,0,0,0,0,20*m,0,3, 600,440,520,0,0,0,0,20*m,0,5, 
+		10,25,20,100,100,100,100,20*m,0,1, 20,35,40,100,100,100,100,20*m,0,1, 60,40,60,100,100,100,100,20*m,0,1, 80,66,50,100,100,100,100,20*m,0,1, 50,70,33,100,100,100,100,20*m,0,2, 100,80,70,100,100,100,100,20*m,0,2, 250,140,200,100,100,100,100,20*m,0,3, 450,380,240,100,100,100,100,20*m,0,3, 200,170,250,100,100,100,100,20*m,0,3, 600,440,520,100,100,100,100,20*m,0,5,
 		//Natars
-		20,35,50,100,100,100,50,6*m,10,1, 65,30,10,100,100,100,50,7*m,10,1, 100,90,75,150,150,150,150,6*m,10,1, 0,10,10,50,50,50,50,25*m,10,1, 155,80,50,300,150,150,100,14*m,10,2, 170,140,80,250,250,400,150,12*m,10,3, 250,120,150,400,300,300,400,5*m,10,4, 60,45,10,200,200,200,100,3*m,10,5, 80,50,50,1000,1000,1000,1000,5*m,10,1, 30,40,40,200,200,200,200,5*m,3000,1, 
+		20,35,50,100,100,100,50,6*m,10,1, 65,30,10,100,100,100,50,7*m,10,1, 100,90,75,150,150,150,150,6*m,10,1, 0,10,10,50,50,50,50,25*m,10,1, 155,80,50,300,150,150,100,14*m,10,2, 170,140,80,250,250,400,150,12*m,10,3, 250,120,150,400,300,300,400,5*m,10,4, 60,45,10,200,200,200,100,3*m,10,5, 80,50,50,1000,1000,1000,1000,5*m,10,1, 30,40,40,200,200,200,200,5*m,3000,1,
 		//Egyptians
 		10,30,20,45,60,30,15,7*m,15,1, 30,55,40,115,100,145,60,6*m,50,1, 65,50,20,170,180,220,80,7*m,45,1, 0,20,10,170,150,20,40,16*m,0,2, 50,110,50,360,330,280,120,15*m,50,2, 110,120,150,450,560,610,180,10*m,70,3, 55,30,95,995,575,340,80,4*m,0,3, 65,55,10,980,1510,660,100,3*m,0,6, 40,50,50,34000,50000,34000,42000,4*m,0,4, 0,80,80,5040,6510,4830,4620,5*m,3000,1,
 		//Huns
@@ -6865,9 +6863,9 @@ function scanTroopsData () {
 		//Gauls
 		15,40,50,100,130,55,30,7*m,35,1, 70,35,20,140,150,185,60,7*m,45,1, 0,20,10,170,150,20,40,17*m,0,2, 110,25,40,320,415,210,55,19*m,75,2, 45,115,55,360,330,280,120,16*m,35,2, 150,65,165,485,600,650,165,13*m,65,3, 50,30,105,950,555,330,75,4*m,0,3, 70,45,10,960,1450,630,90,3*m,0,6, 40,50,50,30750,45400,31000,37500,5*m,0,4, 0,80,80,4400,5600,4200,3900,5*m,3000,1,
 		//Nature
-		10,25,20,0,0,0,0,20*m,0,1, 20,35,40,0,0,0,0,20*m,0,1, 60,40,60,0,0,0,0,20*m,0,1, 80,66,50,0,0,0,0,20*m,0,1, 50,70,33,0,0,0,0,20*m,0,2, 100,80,70,0,0,0,0,20*m,0,2, 250,140,200,0,0,0,0,20*m,0,3, 450,380,240,0,0,0,0,20*m,0,3, 200,170,250,0,0,0,0,20*m,0,3, 600,440,520,0,0,0,0,20*m,0,5, 
+		10,25,20,100,100,100,100,20*m,0,1, 20,35,40,100,100,100,100,20*m,0,1, 60,40,60,100,100,100,100,20*m,0,1, 80,66,50,100,100,100,100,20*m,0,1, 50,70,33,100,100,100,100,20*m,0,2, 100,80,70,100,100,100,100,20*m,0,2, 250,140,200,100,100,100,100,20*m,0,3, 450,380,240,100,100,100,100,20*m,0,3, 200,170,250,100,100,100,100,20*m,0,3, 600,440,520,100,100,100,100,20*m,0,5,
 		//Natars
-		20,35,50,100,100,100,50,6*m,10,1, 65,30,10,100,100,100,50,7*m,10,1, 100,90,75,150,150,150,150,6*m,10,1, 0,10,10,50,50,50,50,25*m,10,1, 155,80,50,300,150,150,100,14*m,10,2, 170,140,80,250,250,400,150,12*m,10,3, 250,120,150,400,300,300,400,5*m,10,4, 60,45,10,200,200,200,100,3*m,10,5, 80,50,50,1000,1000,1000,1000,5*m,10,1, 30,40,40,200,200,200,200,5*m,3000,1, 
+		20,35,50,100,100,100,50,6*m,10,1, 65,30,10,100,100,100,50,7*m,10,1, 100,90,75,150,150,150,150,6*m,10,1, 0,10,10,50,50,50,50,25*m,10,1, 155,80,50,300,150,150,100,14*m,10,2, 170,140,80,250,250,400,150,12*m,10,3, 250,120,150,400,300,300,400,5*m,10,4, 60,45,10,200,200,200,100,3*m,10,5, 80,50,50,1000,1000,1000,1000,5*m,10,1, 30,40,40,200,200,200,200,5*m,3000,1,
 		//Egyptians
 		10,30,20,45,60,30,15,7*m,15,1, 30,55,40,115,100,145,60,6*m,50,1, 65,50,20,170,180,220,80,7*m,45,1, 0,20,10,170,150,20,40,16*m,0,2, 50,110,50,360,330,280,120,15*m,50,2, 110,120,150,450,560,610,180,10*m,70,3, 55,30,95,995,575,340,80,4*m,0,3, 65,55,10,980,1510,660,100,3*m,0,6, 40,50,50,34000,50000,34000,42000,4*m,0,4, 0,80,80,5040,6510,4830,4620,5*m,3000,1,
 		//Huns
@@ -7648,7 +7646,7 @@ function analyzerBattle () {
 	var newTR = $em('TR',[$c($e('IMG',[['src',img_wounded]])),$c(humanRF(atS[2][6])),$c(humanRF(dfS[2][6])),$c(proc[0]+'%')]);
 	newTABLE.appendChild(newTR);
 	// resource
-	var newTR = $ee('TR',$em('TD',[$e('i',[['class','r1']]),'+',$e('i',[['class','r2']]),'+',$e('i',[['class','r3']]),'+',$e('i',[['class','r4']]),'=']));
+	var newTR = $ee('TR',$em('TD',[$e('i',[['class','r1']]),'+',$e('i',[['class','r2']]),'+',$e('i',[['class','r3']]),'+',$e('i',[['class','r4']]),'=',$e('i',[['class','resources_small']])]));
 	proc[0] = atS[1][2]+atS[1][3]+atS[1][4]+atS[1][5];
 	if( atS[0][1] == 0 ) ress = [0,0,0,0,0];
 	proc[5] = ress[1]+ress[2]+ress[3]+ress[4];
@@ -9025,7 +9023,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Travian Resource Bar+";
-		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Feb 14, 2024:</p> <ui><li>Fixed trade routes (+/-) buttons</li><li>Updated troops info for Community Week - Barbarians servers</li></ui> <p>Version 2.24.3 - Jan 27, 2024:</p> <ui><li>Fixed rare bug, resource bar not storing/showing data properly</li><li>Fixed resource percentage display, rounding down</li></ui> <p>Version 2.24.2 - Jan 22, 2024:</p> <ui><li>Updated Roman troops speed for Community Week - Restoring Rome servers</li></ui> <p>Version 2.24.1 - Jan 9, 2024:</p> <ui><li>Fixed showing message links in alliance page</li></ui>";
+		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Mar 11, 2024:</p> <ui><li>Added nature troops info</li><li>Fixed error when sending resources with 2x or 3x</li><li>Removed incoming troops filter in rally point because Travian already added built-in filters</li></ui> <p>Version 2.24.4 - Feb 14, 2024:</p> <ui><li>Fixed trade routes (+/-) buttons</li><li>Updated troops info for Community Week - Barbarians servers</li></ui> <p>Version 2.24.3 - Jan 27, 2024:</p> <ui><li>Fixed rare bug, resource bar not storing/showing data properly</li><li>Fixed resource percentage display, rounding down</li></ui>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
