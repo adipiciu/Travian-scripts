@@ -12,14 +12,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.24.5
+// @version        2.24.6
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.24.5';
+var version = '2.24.6';
 
 notRunYet = false;
 
@@ -2454,8 +2454,7 @@ function ajaxRequest(url, aMethod, param, onSuccess, onFailure) {
 	aR.open(aMethod, url, true);
 	if (aMethod == 'POST') {
 		if (url.includes("api/v1/")){
-			aR.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
-			//aR.setRequestHeader('Authorization', 'Bearer ' + getAjaxToken());
+			aR.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
 		} else {
 			aR.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 		}
@@ -6948,15 +6947,20 @@ function showTroopsITT () {
 }
 
 function getTroopsInOasis ( vf ) {
+	var oasisSearch = false;
 	var troopsTR = $xf('.//tr[td/img[contains(@class, "unit u")]]','l',vf );
-	if( troopsTR.snapshotLength < 1 ) return false;
+	if( troopsTR.snapshotLength < 1 ) {
+		troopsTR = $xf('.//div[i[contains(@class, "unit u")]]','l',vf );
+		if( troopsTR.snapshotLength < 1 ) return false;
+		oasisSearch = true;
+	}
 	var ITTb = $e('TBODY');
 	var newITT = $ee('TABLE',ITTb,[['class',allIDs[7]]]);
 	var ti = [0,0,0,0];
 	var ts = [0,0,0,0];
 	for( var i=0; i<troopsTR.snapshotLength; i++ ) {
-		tt = parseInt($gt('IMG',troopsTR.snapshotItem(i))[0].getAttribute('class').match(/\d+/)[0]);
-		tc = toNumber(troopsTR.snapshotItem(i).cells[1].innerHTML);
+		tt = oasisSearch ? parseInt($gt('i',troopsTR.snapshotItem(i))[0].getAttribute('class').match(/\d+/)[0]) : parseInt($gt('IMG',troopsTR.snapshotItem(i))[0].getAttribute('class').match(/\d+/)[0]);
+		tc = oasisSearch ? $gt('span',troopsTR.snapshotItem(i))[0].textContent : toNumber(troopsTR.snapshotItem(i).cells[1].innerHTML);
 		ti = [gti(tt,1,tc), gti(tt,2,tc), tc, gti(tt,9,tc)];
 		ts = [ts[0]+ti[0], ts[1]+ti[1], ts[2]+ti[2], ts[3]+ti[3]];
 		ITTb.appendChild($em('TR',[$c(trImg('unit u'+tt)),$c(humanRF(ti[0])),$c(humanRF(ti[1])),$c(humanRF(ti[2])),$c(humanRF(ti[3]))]));
@@ -7233,28 +7237,8 @@ function speedBids () {
 	}
 }
 
-var ajaxToken=false;
-function getAjaxToken () {
-	if( ajaxToken ) return ajaxToken;
-	var aText = $xf(".//script[contains(text(),'\".slice')]",'f',document.head);
-	if( aText ) { 
-		ajaxToken = aText.textContent.match(/\"(.+)\".slice/)[1];
-		return ajaxToken;
-	}
-	var aText = $xf('//script[contains(text(),"atob(")]');
-	if( aText ) {
-		ajaxToken = aText.textContent.match(/atob\('(.+)'\)/)[1];
-		ajaxToken = atob(ajaxToken);
-		ajaxToken = ajaxToken.match(/'(.+)'/)[1];
-		return ajaxToken;
-	}
-	return ajaxToken;
-}
-
 function cropFind () {
 	if( RB.Setup[26] == 0 ) return;
-	getAjaxToken();
-
 	function cropFindReq2 () {
 		if( iaFL ) return;
 		neFL = true;
@@ -7296,40 +7280,10 @@ function cropFind () {
 			if (newY < -mapRadius) { newY = newY + 2 * mapRadius };
 		}
 	}
-	function printResult ( ft, mX, mY , descr ) {
+	function printResult ( ft, mX, mY , descr, text ) {
 		var des = typeof descr == 'undefined' ? '': descr;
 		$g(allIDs[18]).appendChild($em('DIV',[ft,' ',$a(mX+'|'+mY,[['href','karte.php?'+'x='+mX+'&y='+mY]])]));
-		aCC[aCC.length] = [ft,mX,mY,des];
-	}
-	function findAnim (x) {
-		var vid = xy2id(x[0],x[1]);
-		if( typeof chkOasisFL[vid] != "undefined" ) {
-			addToolTip(chkOasisFL[vid],x[3].rows[x[2]].cells[2]);
-		} else {
-			param = '{"x":'+x[0]+',"y":'+x[1]+'}';
-			ajaxRequest(fullName+'api/v1/map/tile-details', 'POST', param, function(ajaxResp) {
-				var mapData = JSON.parse(ajaxResp.responseText);
-				var adv = $ee('DIV',mapData.html,[['style','display:none;']]);
-				ad = $xf('.//table[@id="troop_info"]','f',adv);
-				if( ad ) {
-					chkOasisFL[vid] = getTroopsInOasis(ad);
-					if( ! iaFL ) {
-						addToolTip(chkOasisFL[vid],x[3].rows[x[2]].cells[2]);
-					
-						var anim = $xf('.//tr[td/img[contains(@class, "unit u")]]','l',ad);
-						if( anim.snapshotLength > 0 ) {
-							var animL = [0,0,0,0,0,0,0,1,1,1];
-							for( var i=0; i<anim.snapshotLength; i++ ) {
-								tt = parseInt($gt('IMG',anim.snapshotItem(i))[0].getAttribute('class').match(/\d+/)[0]);
-								tc = toNumber(anim.snapshotItem(i).cells[1].innerHTML);
-								if ( animL[tt-31] >0 )
-									x[3].rows[x[2]].cells[2].appendChild($em('SPAN',[tc+"x",trImg('unit u'+tt)]));
-							}
-						}
-					}
-				}
-			}, dummy);
-		}
+		aCC[aCC.length] = [ft,mX,mY,des,text];
 	}
 	function printFinal () {
 		if( $g(allIDs[18]) ) cont.removeChild($g(allIDs[18]));
@@ -7343,16 +7297,8 @@ function cropFind () {
 			});
 		var newT = $e('TABLE',[['class',allIDs[7]]]);
 		oasis.sort(function(a,b){return parseInt(b[2])-parseInt(a[2]);});
-		var curTO = 50;
 		for( var i=0; i<aCCs.length; i++ ) {
 			if( neFL ) {
-				if( aCCs[i][3].e.indexOf('oasis') != -1 && typeof aCCs[i][3].uid == "undefined" && anim.checked ) {
-					if( typeof chkOasisFL[xy2id(aCCs[i][1],aCCs[i][2])] == "undefined" )
-						curTO += getRandom(250,1000);
-					else
-						curTO += 10;
-					setTimeout(function(x) { return function() { findAnim(x) }}([aCCs[i][1],aCCs[i][2],i,newT]), curTO);
-				}
 				newT.appendChild($em('TR',[
 					$c((typeof aCCs[i][3].uid != "undefined" ? $em('A',[aCCs[i][0],(aCCs[i][3].v<8?$e('i',[['class','tribe'+aCCs[i][3].v+'_small']]):"")],[['href','/profile/'+aCCs[i][3].uid[0]]]):"")),
 					$c((typeof aCCs[i][3].aid != "undefined" ? ($a(aCCs[i][3].aid[1],[['href','/alliance/'+aCCs[i][3].aid[0]]])):"")),
@@ -7360,6 +7306,24 @@ function cropFind () {
 					$c($a(aCCs[i][1]+'|'+aCCs[i][2],[['href',('position_details.php?x='+aCCs[i][1]+'&y='+aCCs[i][2])]])),
 					$c('<->'),$c(calcDistance(xy2id(aCCs[i][1],aCCs[i][2]), cell_id).toFixed(1))
 				]));
+				if( aCCs[i][3].e.indexOf('oasis') != -1 && typeof aCCs[i][3].uid == "undefined" ) {
+					var newDiv = document.createElement("div");
+					newDiv.innerHTML = aCCs[i][4];
+					var vid = xy2id(aCCs[i][1],aCCs[i][2]);
+					chkOasisFL[vid] = getTroopsInOasis(newDiv);
+					addToolTip(chkOasisFL[vid],newT.rows[i].cells[2]);
+					var animX = $xf('.//div[i[contains(@class, "unit u")]]','l',newDiv);
+					if( animX.snapshotLength < 1 ) continue;
+					if( animX.snapshotLength > 0 ) {
+						var animL = [0,0,0,0,0,0,0,1,1,1];
+						for( var z=0; z<animX.snapshotLength; z++ ) {
+							tt = parseInt($gt('i',animX.snapshotItem(z))[0].getAttribute('class').match(/\d+/)[0]);
+							tc = $gt('span',animX.snapshotItem(z))[0].textContent;
+							if ( animL[tt-31] >0 )
+								newT.rows[i].cells[2].appendChild($em('SPAN',[tc+"x",trImg('unit u'+tt)]));
+						}
+					}
+				}
 			} else {
 				var oasisCC = 0;
 				var oasisCount = 0;
@@ -7374,7 +7338,7 @@ function cropFind () {
 					$c(aCCs[i][3]),$c('<->'),$c(calcDistance(xy2id(aCCs[i][1],aCCs[i][2]), cell_id).toFixed(1))]));
 			}
 		}
-		cont.appendChild($ee('P',newT,[['id',allIDs[18]],['style','margin:10px 15px 0px;']]));
+		cont.appendChild($ee('P',newT,[['id',allIDs[18]],['style','margin:10px 15px 0px;padding-bottom:15px;']]));
 		addSpeedAndRTSend($g(allIDs[18]));
 		addRefIGM(allIDs[18]);
 		neFL = false;
@@ -7403,7 +7367,7 @@ function cropFind () {
 				if (typeof mapData.tiles[i].title != 'undefined') {
 					if( neFL ) {
 						if( /{k.fo}/.test(mapData.tiles[i].title)) {
-							printResult( "", mapData.tiles[i].position.x, mapData.tiles[i].position.y, {e:"oasis"} );
+							printResult( "", mapData.tiles[i].position.x, mapData.tiles[i].position.y, {e:"oasis"}, mapData.tiles[i].text );
 						} else if( /k.dt}|{k.bt}/.test(mapData.tiles[i].title)) {
 							if( mapData.tiles[i].uid == userID ) continue;
 							if( typeof mapData.tiles[i].aid != 'undefined' && mapData.tiles[i].aid == RB.dictionary[13] ) continue;
@@ -7460,8 +7424,7 @@ function cropFind () {
 	var c15 = inpsC('RBc15',true);
 	var c9 = inpsC('RBc9',true);
 	var c7 = inpsC('RBc7',false);
-	var anim = inpsC('RBanim',false);
-	var anDiv = $em('SPAN',[' ',trImg('unit u40'),':',anim]);
+	var anDiv = $em('SPAN',[' ',trImg('unit u40')]);
 	cont.appendChild($em('DIV',[label(xCoordText,oX),label(yCoordText,oY),label('zoom:',oZ),label('15:',c15),label('9:',c9),label('7:',c7),cfText,' | ',cfText2,anDiv],[['class','contents'],['style','white-space:nowrap;margin-top:5px;']]));
 }
 
@@ -8451,7 +8414,6 @@ function goldClubInfo () {
 	function findAnimA (x) {
 		var vid = getVidFromCoords(x[0].innerHTML);
 		var xy = id2xy(vid);
-		getAjaxToken();
 		param = '{"x":'+xy[0]+',"y":'+xy[1]+'}';
 		ajaxRequest(fullName+'api/v1/map/tile-details', 'POST', param, function(ajaxResp) {
 			var mapData = JSON.parse(ajaxResp.responseText);
@@ -9023,7 +8985,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Travian Resource Bar+";
-		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Mar 11, 2024:</p> <ui><li>Added nature troops info</li><li>Fixed error when sending resources with 2x or 3x</li><li>Removed incoming troops filter in rally point because Travian already added built-in filters</li></ui> <p>Version 2.24.4 - Feb 14, 2024:</p> <ui><li>Fixed trade routes (+/-) buttons</li><li>Updated troops info for Community Week - Barbarians servers</li></ui> <p>Version 2.24.3 - Jan 27, 2024:</p> <ui><li>Fixed rare bug, resource bar not storing/showing data properly</li><li>Fixed resource percentage display, rounding down</li></ui>";
+		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Mar 17, 2024:</p> <ui><li>Improved the oasis scan on the map. No more individual oasis scans. Very fast and very small chances to be detected.</li></ui> <p>Version 2.24.5 - Mar 11, 2024:</p> <ui><li>Added nature troops info</li><li>Fixed error when sending resources with 2x or 3x</li><li>Removed incoming troops filter in rally point because Travian already added built-in filters</li></ui> <p>Version 2.24.4 - Feb 14, 2024:</p> <ui><li>Fixed trade routes (+/-) buttons</li><li>Updated troops info for Community Week - Barbarians servers</li></ui> <p>Version 2.24.3 - Jan 27, 2024:</p> <ui><li>Fixed rare bug, resource bar not storing/showing data properly</li><li>Fixed resource percentage display, rounding down</li></ui>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
