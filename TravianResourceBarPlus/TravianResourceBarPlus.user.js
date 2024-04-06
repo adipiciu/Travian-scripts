@@ -12,14 +12,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.24.6
+// @version        2.24.7
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.24.6';
+var version = '2.24.7';
 
 notRunYet = false;
 
@@ -3153,15 +3153,16 @@ function convertCoordsInMessagesToLinks() {
 /************************* Marketplace ****************************/
 
 function marketBuy() {
-	var market = $g("range");
-	if( !(market) ) return;
+	var market = $gc("offers");
+	if( market.length == 0 ) return;
+	market = market[0];
 	if( RB.village_Var[0] > 0 ) {
 		market = market.tBodies[0].rows;
 		for ( var mr = 0; mr < market.length; mr++ ) {
-			if( market[mr].cells.length < 5 ) break;
-			var btn = market[mr].cells[5].getElementsByTagName('BUTTON');
+			if( market[mr].cells.length < 9 ) break;
+			var btn = market[mr].cells[8].getElementsByTagName('BUTTON');
 			if( btn.length == 0 ) continue;
-			var wanted = parseInt(market[mr].cells[2].innerHTML.match(/>\s*?(\d+)/)[1]);
+			var wanted = parseInt(market[mr].cells[2].textContent.onlyText().replace(/\s/g, '').replace(/\./g, '').replace(/,/g, ''));
 			var totMerchants = Math.ceil(wanted / RB.village_Var[0]);
 			var crtExceed = wanted - totMerchants * RB.village_Var[0];
 			var newTip = RB.dictionary[2]+': '+totMerchants;
@@ -3170,7 +3171,7 @@ function marketBuy() {
 		}
 	}
 	if( RB.dictFL[4] == 0 ) {
-		var TM = $g("range").tHead.rows[0].cells[4].innerHTML.onlyText();
+		var TM = $gc("offers")[0].tHead.rows[0].cells[4].innerHTML.onlyText();
 		if( RB.dictionary[4] != TM ) {
 			RB.dictionary[4] = TM;
 			saveCookie( 'Dict', 'dictionary' );
@@ -4829,11 +4830,11 @@ function saveSpaceLeftToMem () {
 
 function distanceToMyVillages() {
 	function updateDistTable () {
-		pp.removeChild(attbl);
+		pp1.removeChild(attbl);
 		lastTimerP[0] = lastTimerP[2];
 		attbl = showAllTTime(1, curD, sel.value, sel3.value, shoesT[sel2.value], leftH[sel4.value]);
 		lastTimerP[0] = lastTimerP[1];
-		pp.appendChild(attbl);
+		pp1.appendChild(attbl);
 	}
 
 	var curD = getVid(crtPath);
@@ -4853,22 +4854,25 @@ function distanceToMyVillages() {
 	var sO2 = ['-','+25%','+50%','+75%'];
 	for( var j = 0; j < sO2.length; j++ ) newOption(sel2, sO2[j], j);
 	sel2.selected = 0; sel2.value = 0;
-	var t4P = $em('SPAN',[' , ',trImg('itemCategory itemCategory_shoes'),' ',sel2]);
+	var t4P = $em('SPAN',[trImg('itemCategory itemCategory_shoes'),' ',sel2],[['id','content'],['class','reports reportsOverview']]);
 
 	var sel4 = $e('SELECT');
 	var sO4 = ['-','+15%','+20%','+25%','--------','+30%','+40%','+50%'];
 	for( var j = 0; j < sO4.length; j++ ) newOption(sel4, sO4[j], j);
 	sel4.selected = 0; sel4.value = 0;
-	var t4L = $em('SPAN',[' , ',trImg('itemCategory itemCategory_leftHand'),' ',sel4]);
+	var t4L = $em('SPAN',[trImg('itemCategory itemCategory_leftHand'),' ',sel4],[['id','content'],['class','reports reportsOverview']]);
 
 	var sel3 = $e('SELECT');
 	var sO3 = [gtext('none'),'x0.33','x0.5','x0.67','x1.5','x2','x3'];
 	for( var j = 0; j < sO3.length; j++ ) newOption(sel3, sO3[j], j);
 	sel3.selected = RB.Setup[3]; sel3.value = RB.Setup[3];
-	var artSp = $ee('div',$em('div',[' , ',trImg('artefactIcon type4',gtext("speedart")),' ',sel3],[['class','artefacts'],['style','width:100%;padding:0px;']]),[['id','build'],['class','gid27'],['style','display:inline-block;']]);
+	var artSp = $ee('div',$em('div',[trImg('artefactIcon type4',gtext("speedart")),' ',sel3],[['class','artefacts'],['style','width:100%;padding:0px;']]),[['id','build'],['class','gid27'],['style','display:inline-block;']]);
 
-	var pp = $em('P',[arena + ': ',sel,t4P,t4L,artSp,' ',kirURL, attbl],[['style','margin:20px 20px 0px;']]);
+	var arenaSp = $em('SPAN',[arena + ': ',trImg('gebIcon g14Icon'),sel],[['id','content'],['class','reports reportsOverview']]);
+	var pp = $em('P',[arenaSp,t4P,t4L,artSp,' ',kirURL],[['style','margin:10px 20px 0px;']]);
+	var pp1 = $em('P',[attbl],[['style','margin:10px 20px;']]);
 	cont.appendChild(pp);
+	cont.appendChild(pp1);
 	document.addEventListener("change", updateDistTable, false);
 
 	var villages = $g('vlist');
@@ -7082,7 +7086,7 @@ function buildDispatcher () {
 	var gid = build.getAttribute('class');
 	gid = gid.split(/\s/)[0];
 	if( gid == 'gid17' ) {
-		setTimeout(marketSend,700); setTimeout(marketSumm,700); marketOffer(); marketBuy(); setTimeout(marketTradeRoutes,700); stopRP();
+		setTimeout(marketSend,700); setTimeout(marketSumm,700); marketOffer(); setTimeout(marketBuy,700); setTimeout(marketTradeRoutes,700); stopRP();
 		var gold = $xf('//div[@class="npcMerchant"]//button[contains(@class, "gold")]','l',cont);
 		for( var i = 0; i < gold.snapshotLength; i++ ) {
 			gold.snapshotItem(i).addEventListener('click', function(x) { setTimeout(npcForTroops,500); }, 0);
@@ -7425,7 +7429,7 @@ function cropFind () {
 	var c9 = inpsC('RBc9',true);
 	var c7 = inpsC('RBc7',false);
 	var anDiv = $em('SPAN',[' ',trImg('unit u40')]);
-	cont.appendChild($em('DIV',[label(xCoordText,oX),label(yCoordText,oY),label('zoom:',oZ),label('15:',c15),label('9:',c9),label('7:',c7),cfText,' | ',cfText2,anDiv],[['class','contents'],['style','white-space:nowrap;margin-top:5px;']]));
+	cont.appendChild($em('DIV',[label(xCoordText,oX),label(yCoordText,oY),label('zoom:',oZ),label('15:',c15),label('9:',c9),label('7:',c7),cfText,' | ',cfText2,anDiv],[['class','contents'],['style','white-space:nowrap;margin:10px 20px;']]));
 }
 
 function npcForTroops () {
@@ -8985,7 +8989,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Travian Resource Bar+";
-		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Mar 17, 2024:</p> <ui><li>Improved the oasis scan on the map. No more individual oasis scans. Very fast and very small chances to be detected.</li></ui> <p>Version 2.24.5 - Mar 11, 2024:</p> <ui><li>Added nature troops info</li><li>Fixed error when sending resources with 2x or 3x</li><li>Removed incoming troops filter in rally point because Travian already added built-in filters</li></ui> <p>Version 2.24.4 - Feb 14, 2024:</p> <ui><li>Fixed trade routes (+/-) buttons</li><li>Updated troops info for Community Week - Barbarians servers</li></ui> <p>Version 2.24.3 - Jan 27, 2024:</p> <ui><li>Fixed rare bug, resource bar not storing/showing data properly</li><li>Fixed resource percentage display, rounding down</li></ui>";
+		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Apr 6, 2024:</p> <ui><li>Fixed market buy function</li><li>Fixed images shown on map distance</li></ui> <p>Version 2.24.6 - Mar 17, 2024:</p> <ui><li>Improved the oasis scan on the map. No more individual oasis scans. Very fast and very small chances to be detected.</li></ui> <p>Version 2.24.5 - Mar 11, 2024:</p> <ui><li>Added nature troops info</li><li>Fixed error when sending resources with 2x or 3x</li><li>Removed incoming troops filter in rally point because Travian already added built-in filters</li></ui> <p>Version 2.24.4 - Feb 14, 2024:</p> <ui><li>Fixed trade routes (+/-) buttons</li><li>Updated troops info for Community Week - Barbarians servers</li></ui> <p>Version 2.24.3 - Jan 27, 2024:</p> <ui><li>Fixed rare bug, resource bar not storing/showing data properly</li><li>Fixed resource percentage display, rounding down</li></ui>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
