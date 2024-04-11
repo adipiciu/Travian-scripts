@@ -12,14 +12,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.24.7
+// @version        2.24.8
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.24.7';
+var version = '2.24.8';
 
 notRunYet = false;
 
@@ -6964,7 +6964,7 @@ function getTroopsInOasis ( vf ) {
 	var ts = [0,0,0,0];
 	for( var i=0; i<troopsTR.snapshotLength; i++ ) {
 		tt = oasisSearch ? parseInt($gt('i',troopsTR.snapshotItem(i))[0].getAttribute('class').match(/\d+/)[0]) : parseInt($gt('IMG',troopsTR.snapshotItem(i))[0].getAttribute('class').match(/\d+/)[0]);
-		tc = oasisSearch ? $gt('span',troopsTR.snapshotItem(i))[0].textContent : toNumber(troopsTR.snapshotItem(i).cells[1].innerHTML);
+		tc = oasisSearch ? parseInt($gt('span',troopsTR.snapshotItem(i))[0].textContent) : toNumber(troopsTR.snapshotItem(i).cells[1].innerHTML);
 		ti = [gti(tt,1,tc), gti(tt,2,tc), tc, gti(tt,9,tc)];
 		ts = [ts[0]+ti[0], ts[1]+ti[1], ts[2]+ti[2], ts[3]+ti[3]];
 		ITTb.appendChild($em('TR',[$c(trImg('unit u'+tt)),$c(humanRF(ti[0])),$c(humanRF(ti[1])),$c(humanRF(ti[2])),$c(humanRF(ti[3]))]));
@@ -7308,7 +7308,8 @@ function cropFind () {
 					$c((typeof aCCs[i][3].aid != "undefined" ? ($a(aCCs[i][3].aid[1],[['href','/alliance/'+aCCs[i][3].aid[0]]])):"")),
 					$c(aCCs[i][3].e),
 					$c($a(aCCs[i][1]+'|'+aCCs[i][2],[['href',('position_details.php?x='+aCCs[i][1]+'&y='+aCCs[i][2])]])),
-					$c('<->'),$c(calcDistance(xy2id(aCCs[i][1],aCCs[i][2]), cell_id).toFixed(1))
+					$c($a('&#10140;',[['onclick',("Travian.WindowManager.closeAllWindows(); window.Travian.React.FarmList.openSlotDialog(window.Travian.React.FarmList.SLOT_DIALOG_TYPE_CREATE, { coordinates: {x: "+aCCs[i][1]+", y: "+aCCs[i][2]+"},});")]])),
+					$c(calcDistance(xy2id(aCCs[i][1],aCCs[i][2]), cell_id).toFixed(1))
 				]));
 				if( aCCs[i][3].e.indexOf('oasis') != -1 && typeof aCCs[i][3].uid == "undefined" ) {
 					var newDiv = document.createElement("div");
@@ -7354,12 +7355,18 @@ function cropFind () {
 			var ally = o.text.match(/{k.allianz}(.+?)</)[1];
 			ar.aid = [o.aid, ally];
 		}
-		var pl = o.text.match(/{k.spieler}(.+?)</)[1];
-		ar.uid = [o.uid, pl];
+		var pl;
+		if( /{k.spieler}/.test(o.text) ) {
+			pl = o.text.match(/{k.spieler}(.+?)</)[1];
+			ar.uid = [o.uid, pl];
+		}
 		var ei = o.text.match(/{k.einwohner}(.+?)</);
-		ar.e = ei ? ei[1]: 'oasis';
-		if( /{a.r4}/.test(o.text) ) ar.e += ' +'+o.text.match(/{a.r4}\s+(\d+%)/)[1];
-		ar.v = o.text.match(/{a.v(\d)}/)[1];
+		ar.e = ei ? ei[1]: 'oasis ';
+		if( /{a.r1}/.test(o.text) ) ar.e += '<i class="r1"></i>' + '+'+o.text.match(/{a.r1}\s+(\d+%)/)[1];
+		if( /{a.r2}/.test(o.text) ) ar.e += '<i class="r2"></i>' + '+'+o.text.match(/{a.r2}\s+(\d+%)/)[1];
+		if( /{a.r3}/.test(o.text) ) ar.e += '<i class="r3"></i>' + '+'+o.text.match(/{a.r3}\s+(\d+%)/)[1];
+		if( /{a.r4}/.test(o.text) ) ar.e += '<i class="r4"></i>' + '+'+o.text.match(/{a.r4}\s+(\d+%)/)[1];
+		if( /{a.v(\d)}/.test(o.text) ) ar.v = o.text.match(/{a.v(\d)}/)[1];
 		return [pl,ar];
 	}
 	function cropFindGetMap ( a ) {
@@ -7371,7 +7378,8 @@ function cropFind () {
 				if (typeof mapData.tiles[i].title != 'undefined') {
 					if( neFL ) {
 						if( /{k.fo}/.test(mapData.tiles[i].title)) {
-							printResult( "", mapData.tiles[i].position.x, mapData.tiles[i].position.y, {e:"oasis"}, mapData.tiles[i].text );
+							var md = parseV4map( mapData.tiles[i] );
+							printResult( "", mapData.tiles[i].position.x, mapData.tiles[i].position.y, md[1], mapData.tiles[i].text );
 						} else if( /k.dt}|{k.bt}/.test(mapData.tiles[i].title)) {
 							if( mapData.tiles[i].uid == userID ) continue;
 							if( typeof mapData.tiles[i].aid != 'undefined' && mapData.tiles[i].aid == RB.dictionary[13] ) continue;
@@ -8989,7 +8997,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Travian Resource Bar+";
-		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Apr 6, 2024:</p> <ui><li>Fixed market buy function</li><li>Fixed images shown on map distance</li></ui> <p>Version 2.24.6 - Mar 17, 2024:</p> <ui><li>Improved the oasis scan on the map. No more individual oasis scans. Very fast and very small chances to be detected.</li></ui> <p>Version 2.24.5 - Mar 11, 2024:</p> <ui><li>Added nature troops info</li><li>Fixed error when sending resources with 2x or 3x</li><li>Removed incoming troops filter in rally point because Travian already added built-in filters</li></ui> <p>Version 2.24.4 - Feb 14, 2024:</p> <ui><li>Fixed trade routes (+/-) buttons</li><li>Updated troops info for Community Week - Barbarians servers</li></ui> <p>Version 2.24.3 - Jan 27, 2024:</p> <ui><li>Fixed rare bug, resource bar not storing/showing data properly</li><li>Fixed resource percentage display, rounding down</li></ui>";
+		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Apr 11, 2024:</p> <ul><li>Oases scan:</li><ul><li>Added oasys type icons</li><li>Added arrow button to quickly add to farmlists</li><li>Fixed the sum of total cages</li></ul></ul> <p>Version 2.24.7 - Apr 6, 2024:</p> <ul><li>Fixed market buy function</li><li>Fixed images shown on map distance</li></ul> <p>Version 2.24.6 - Mar 17, 2024:</p> <ul><li>Improved the oasis scan on the map. No more individual oasis scans. Very fast and very small chances to be detected.</li></ul>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
