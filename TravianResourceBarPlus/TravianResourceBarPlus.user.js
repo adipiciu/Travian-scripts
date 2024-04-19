@@ -12,14 +12,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.24.8
+// @version        2.24.9
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.24.8';
+var version = '2.24.9';
 
 notRunYet = false;
 
@@ -7685,12 +7685,6 @@ function addReport () {
 	windowID[8] = makeFloat(newRF, xy[0]-100, xy[1]-250, 21);
 }
 
-function returnQuickHelp () {
-	var i = "return Travian.Game.Manual.open(0,0);";
-	var svg = $gc('answers',$g('outOfGame'))[0].cloneNode(true);
-	$ib($ee('li',$ee('A',svg,[['href','#'],['onclick',i]]),[['class',"help"],['style',"position:absolute;"+docDir[1]+":176px;"]]),$g('outOfGame').firstChild);
-}
-
 function rpDefaultAction () {
 	var nc = $xf('.//input[@name="eventType"]','l',cont);
 	if( nc.snapshotLength < 3 ) return;
@@ -8997,7 +8991,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Travian Resource Bar+";
-		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Apr 11, 2024:</p> <ul><li>Oases scan:</li><ul><li>Added oasys type icons</li><li>Added arrow button to quickly add to farmlists</li><li>Fixed the sum of total cages</li></ul></ul> <p>Version 2.24.7 - Apr 6, 2024:</p> <ul><li>Fixed market buy function</li><li>Fixed images shown on map distance</li></ul> <p>Version 2.24.6 - Mar 17, 2024:</p> <ul><li>Improved the oasis scan on the map. No more individual oasis scans. Very fast and very small chances to be detected.</li></ul>";
+		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Apr 24, 2024:</p> <ul><li>Removed the QuickHelp button</li></ul> <p>Version 2.24.8 - Apr 11, 2024:</p> <ul><li>Oases scan:</li><ul><li>Added oasys type icons</li><li>Added arrow button to quickly add to farmlists</li><li>Fixed the sum of total cages</li></ul></ul> <p>Version 2.24.7 - Apr 6, 2024:</p> <ul><li>Fixed market buy function</li><li>Fixed images shown on map distance</li></ul> <p>Version 2.24.6 - Mar 17, 2024:</p> <ul><li>Improved the oasis scan on the map. No more individual oasis scans. Very fast and very small chances to be detected.</li></ul>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
@@ -9136,7 +9130,6 @@ function displayWhatIsNew () {
 	addSpeedRTSendMessageInLLinks();
 	//if( RB.dictFL[13] < 3 || RB.Setup[20] == 2) scanTroopsData();
 	scanTroopsData();
-	returnQuickHelp();
 	if( RB.Setup[32] == 1 ) centerNumber();
 	if( RB.Setup[34] == 1 ) overviewAll();
 	if( nextFL ) if( RB_getValue(GMcookieID + 'next', -1) > 0 ) RB_setValue(GMcookieID + 'next', -1);
