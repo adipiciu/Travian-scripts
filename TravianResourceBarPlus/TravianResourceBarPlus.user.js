@@ -12,14 +12,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.24.9
+// @version        2.25.0
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.24.9';
+var version = '2.25.0';
 
 notRunYet = false;
 
@@ -7328,6 +7328,9 @@ function cropFind () {
 								newT.rows[i].cells[2].appendChild($em('SPAN',[tc+"x",trImg('unit u'+tt)]));
 						}
 					}
+                    if (chkOasisFL[vid] && newT.rows[i].cells[2]) {
+                        newT.rows[i].cells[2].appendChild($em('SPAN',[chkOasisFL[vid].rows[0].cells[4].innerText],[['style','color: magenta; font-weight: bold;']]));
+                    }
 				}
 			} else {
 				var oasisCC = 0;
