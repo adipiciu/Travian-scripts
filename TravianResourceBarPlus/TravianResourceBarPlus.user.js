@@ -12,14 +12,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.24.9
+// @version        2.24.10
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.24.9';
+var version = '2.24.10';
 
 notRunYet = false;
 
@@ -6480,7 +6480,7 @@ function bigQuickLinks () {
 		}
 	}
 
-	var extraBtns = $e('div', [['class','buttonsWrapper'],['style','display: flex; flex-direction: row; justify-content: flex-end; margin: 0 25px -30px;']]);
+	var extraBtns = $e('div', [['class','buttonsWrapper'],['style','display: flex; flex-direction: row; justify-content: flex-end; margin: 0 25px -40px;']]);
 	bigIconsFooter.appendChild(extraBtns);
 	extraBtns.appendChild(CreateBigLinkButton('barracks',8,imgs[1]));
 	extraBtns.appendChild(CreateBigLinkButton('stable',9,imgs[2]));
@@ -6659,7 +6659,7 @@ function villageHintEdit () {
 	vNF.style.overflow = 'initial';
 	var vName = RB.vHint[village_aid] || '';
 	var vNFC = $ee('SPAN',vName,[['style','color:'+vHColor+';font-size:10px;']]);
-	var vNFA = $ee('SPAN',vNFC,[['style','white-space:normal']]);
+	var vNFA = $ee('SPAN',vNFC,[['style','white-space:normal;grid-column:3;']]);
 	var vNFe = trImg(allIDs[38],gtext('name2'));
 	vNFe.addEventListener('click', editVHint, false);
 	vNFA.appendChild(vNFe);
@@ -7299,14 +7299,18 @@ function cropFind () {
 				if( dA > dB ) return 1;
 				return 0;
 			});
-		var newT = $e('TABLE',[['class',allIDs[7]]]);
+		var newT = $e('TABLE',[['id','reportWrapper'],['class',allIDs[7]],['style','width:100%;']]);
+		var tHead = $ee('THEAD',$em('TR',[$c(''),$c(''),$c(''),$c(trImg('iExperience'),[['class','body']]),$c($em('div',[$e('i',[['class','resources_small']]),"/",trImg('def1')]),[['style','width:52px']]),$c(''),$c(''),$c('<->')]));
+		var tBody = $ee('THEAD');
+		newT.appendChild(tHead);
+		newT.appendChild(tBody);
 		oasis.sort(function(a,b){return parseInt(b[2])-parseInt(a[2]);});
 		for( var i=0; i<aCCs.length; i++ ) {
 			if( neFL ) {
-				newT.appendChild($em('TR',[
+				tBody.appendChild($em('TR',[
 					$c((typeof aCCs[i][3].uid != "undefined" ? $em('A',[aCCs[i][0],(aCCs[i][3].v<8?$e('i',[['class','tribe'+aCCs[i][3].v+'_small']]):"")],[['href','/profile/'+aCCs[i][3].uid[0]]]):"")),
 					$c((typeof aCCs[i][3].aid != "undefined" ? ($a(aCCs[i][3].aid[1],[['href','/alliance/'+aCCs[i][3].aid[0]]])):"")),
-					$c(aCCs[i][3].e),
+					$c(aCCs[i][3].e),$c(''),$c(''),
 					$c($a(aCCs[i][1]+'|'+aCCs[i][2],[['href',('position_details.php?x='+aCCs[i][1]+'&y='+aCCs[i][2])]])),
 					$c($a('&#10140;',[['onclick',("Travian.WindowManager.closeAllWindows(); window.Travian.React.FarmList.openSlotDialog(window.Travian.React.FarmList.SLOT_DIALOG_TYPE_CREATE, { coordinates: {x: "+aCCs[i][1]+", y: "+aCCs[i][2]+"},});")]])),
 					$c(calcDistance(xy2id(aCCs[i][1],aCCs[i][2]), cell_id).toFixed(1))
@@ -7316,16 +7320,22 @@ function cropFind () {
 					newDiv.innerHTML = aCCs[i][4];
 					var vid = xy2id(aCCs[i][1],aCCs[i][2]);
 					chkOasisFL[vid] = getTroopsInOasis(newDiv);
-					addToolTip(chkOasisFL[vid],newT.rows[i].cells[2]);
+					addToolTip(chkOasisFL[vid],tBody.rows[i].cells[2]);
 					var animX = $xf('.//div[i[contains(@class, "unit u")]]','l',newDiv);
-					if( animX.snapshotLength < 1 ) continue;
 					if( animX.snapshotLength > 0 ) {
+						var td = parseInt(chkOasisFL[vid].rows[0].cells[1].innerText.replace(",","")) + parseInt(chkOasisFL[vid].rows[0].cells[2].innerText.replace(",",""));
+						var heroxp = parseInt(chkOasisFL[vid].rows[0].cells[4].innerText.replace(",",""));
+						var res = heroxp*160; //160 resources per 1 animal crop consumption, or per 1 hero xp point
+						var ratio = ((res/td)).toFixed(2);
+						//newT.rows[i].cells[2].appendChild($em('div',[$em('div',[trImg('iExperience'),heroxp," ",$e('i',[['class','resources_small']]),"/",trImg('def1'),ratio],[['class','body']])],[['id','reportWrapper'],['style','font-weight:bold;']]));
+						tBody.rows[i].cells[3].appendChild($em('div',[$em('div',[heroxp],[['class','body']])],[['id','reportWrapper'],['style','font-weight:bold;']]));
+						tBody.rows[i].cells[4].appendChild($em('div',[$em('div',[ratio],[['class','body']])],[['id','reportWrapper'],['style','font-weight:bold;']]));
 						var animL = [0,0,0,0,0,0,0,1,1,1];
 						for( var z=0; z<animX.snapshotLength; z++ ) {
 							tt = parseInt($gt('i',animX.snapshotItem(z))[0].getAttribute('class').match(/\d+/)[0]);
 							tc = $gt('span',animX.snapshotItem(z))[0].textContent;
 							if ( animL[tt-31] >0 )
-								newT.rows[i].cells[2].appendChild($em('SPAN',[tc+"x",trImg('unit u'+tt)]));
+								tBody.rows[i].cells[2].appendChild($em('div',[tc+'x',trImg('unit u'+tt)]));
 						}
 					}
 				}
@@ -7338,7 +7348,7 @@ function cropFind () {
 						if( ++oasisCount > 2 ) break;
 					}
 				}
-				newT.appendChild($em('TR',[$c(aCCs[i][0]),$c(oasisCC>0?'+'+oasisCC+'%':''),
+				tBody.appendChild($em('TR',[$c(aCCs[i][0]),$c(oasisCC>0?'+'+oasisCC+'%':''),
 					$c($a(aCCs[i][1]+'|'+aCCs[i][2],[['href','karte.php?'+'x='+aCCs[i][1]+'&y='+aCCs[i][2]]])),
 					$c(aCCs[i][3]),$c('<->'),$c(calcDistance(xy2id(aCCs[i][1],aCCs[i][2]), cell_id).toFixed(1))]));
 			}
@@ -7436,7 +7446,7 @@ function cropFind () {
 	var c15 = inpsC('RBc15',true);
 	var c9 = inpsC('RBc9',true);
 	var c7 = inpsC('RBc7',false);
-	var anDiv = $em('SPAN',[' ',trImg('unit u40')]);
+	var anDiv = $em('SPAN',[' ',trImg('unit u31')]);
 	cont.appendChild($em('DIV',[label(xCoordText,oX),label(yCoordText,oY),label('zoom:',oZ),label('15:',c15),label('9:',c9),label('7:',c7),cfText,' | ',cfText2,anDiv],[['class','contents'],['style','white-space:nowrap;margin:10px 20px;']]));
 }
 
@@ -8991,7 +9001,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Travian Resource Bar+";
-		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Apr 24, 2024:</p> <ul><li>Removed the QuickHelp button</li></ul> <p>Version 2.24.8 - Apr 11, 2024:</p> <ul><li>Oases scan:</li><ul><li>Added oasys type icons</li><li>Added arrow button to quickly add to farmlists</li><li>Fixed the sum of total cages</li></ul></ul> <p>Version 2.24.7 - Apr 6, 2024:</p> <ul><li>Fixed market buy function</li><li>Fixed images shown on map distance</li></ul> <p>Version 2.24.6 - Mar 17, 2024:</p> <ul><li>Improved the oasis scan on the map. No more individual oasis scans. Very fast and very small chances to be detected.</li></ul>";
+		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - May 18, 2024:</p> <ul><li>Oases scan:</li><ul><li>Added hero experience for each oasis</li><li>Added hero resources/oasis defense ratio</li></ul></ul> <p>Version 2.24.9 - Apr 24, 2024:</p> <ul><li>Removed the QuickHelp button</li></ul> <p>Version 2.24.8 - Apr 11, 2024:</p> <ul><li>Oases scan:</li><ul><li>Added oasys type icons</li><li>Added arrow button to quickly add to farmlists</li><li>Fixed the sum of total cages</li></ul></ul> <p>Version 2.24.7 - Apr 6, 2024:</p> <ul><li>Fixed market buy function</li><li>Fixed images shown on map distance</li></ul> <p>Version 2.24.6 - Mar 17, 2024:</p> <ul><li>Improved the oasis scan on the map. No more individual oasis scans. Very fast and very small chances to be detected.</li></ul>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
