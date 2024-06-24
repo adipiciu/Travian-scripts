@@ -12,14 +12,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.24.10
+// @version        2.24.11
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.24.10';
+var version = '2.24.11';
 
 notRunYet = false;
 
@@ -7300,7 +7300,11 @@ function cropFind () {
 				return 0;
 			});
 		var newT = $e('TABLE',[['id','reportWrapper'],['class',allIDs[7]],['style','width:100%;']]);
-		var tHead = $ee('THEAD',$em('TR',[$c(''),$c(''),$c(''),$c(trImg('iExperience'),[['class','body']]),$c($em('div',[$e('i',[['class','resources_small']]),"/",trImg('def1')]),[['style','width:52px']]),$c(''),$c(''),$c('<->')]));
+		if (neFL) {
+			var tHead = $ee('THEAD',$em('TR',[$c(''),$c(''),$c(''),$c(trImg('iExperience'),[['class','body']]),$c($em('div',[$e('i',[['class','resources_small']]),"/",trImg('def1')]),[['style','width:52px']]),$c(''),$c(''),$c('<->')]));
+		} else {
+			var tHead = $ee('THEAD',$em('TR',[$c(''),$c(''),$c(''),$c('<->')]));
+		}
 		var tBody = $ee('THEAD');
 		newT.appendChild(tHead);
 		newT.appendChild(tBody);
@@ -7327,15 +7331,15 @@ function cropFind () {
 						var heroxp = parseInt(chkOasisFL[vid].rows[0].cells[4].innerText.replace(",",""));
 						var res = heroxp*160; //160 resources per 1 animal crop consumption, or per 1 hero xp point
 						var ratio = ((res/td)).toFixed(2);
-						//newT.rows[i].cells[2].appendChild($em('div',[$em('div',[trImg('iExperience'),heroxp," ",$e('i',[['class','resources_small']]),"/",trImg('def1'),ratio],[['class','body']])],[['id','reportWrapper'],['style','font-weight:bold;']]));
 						tBody.rows[i].cells[3].appendChild($em('div',[$em('div',[heroxp],[['class','body']])],[['id','reportWrapper'],['style','font-weight:bold;']]));
 						tBody.rows[i].cells[4].appendChild($em('div',[$em('div',[ratio],[['class','body']])],[['id','reportWrapper'],['style','font-weight:bold;']]));
+						tBody.rows[i].cells[2].appendChild($em('div'));
 						var animL = [0,0,0,0,0,0,0,1,1,1];
 						for( var z=0; z<animX.snapshotLength; z++ ) {
 							tt = parseInt($gt('i',animX.snapshotItem(z))[0].getAttribute('class').match(/\d+/)[0]);
 							tc = $gt('span',animX.snapshotItem(z))[0].textContent;
 							if ( animL[tt-31] >0 )
-								tBody.rows[i].cells[2].appendChild($em('div',[tc+'x',trImg('unit u'+tt)]));
+								tBody.rows[i].cells[2].appendChild($em('span',[tc+'x',trImg('unit u'+tt)]));
 						}
 					}
 				}
@@ -7348,9 +7352,9 @@ function cropFind () {
 						if( ++oasisCount > 2 ) break;
 					}
 				}
-				tBody.appendChild($em('TR',[$c(aCCs[i][0]),$c(oasisCC>0?'+'+oasisCC+'%':''),
+				tBody.appendChild($em('TR',[$c(aCCs[i][0]),$c(oasisCC>0?$em('div',[$e('i',[['class','r4']]),'+'+oasisCC+'%']):''),
 					$c($a(aCCs[i][1]+'|'+aCCs[i][2],[['href','karte.php?'+'x='+aCCs[i][1]+'&y='+aCCs[i][2]]])),
-					$c(aCCs[i][3]),$c('<->'),$c(calcDistance(xy2id(aCCs[i][1],aCCs[i][2]), cell_id).toFixed(1))]));
+					$c(calcDistance(xy2id(aCCs[i][1],aCCs[i][2]), cell_id).toFixed(1))]));
 			}
 		}
 		cont.appendChild($ee('P',newT,[['id',allIDs[18]],['style','margin:10px 15px 0px;padding-bottom:15px;']]));
@@ -9001,7 +9005,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Travian Resource Bar+";
-		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - May 18, 2024:</p> <ul><li>Oases scan:</li><ul><li>Added hero experience for each oasis</li><li>Added hero resources/oasis defense ratio</li></ul></ul> <p>Version 2.24.9 - Apr 24, 2024:</p> <ul><li>Removed the QuickHelp button</li></ul> <p>Version 2.24.8 - Apr 11, 2024:</p> <ul><li>Oases scan:</li><ul><li>Added oasys type icons</li><li>Added arrow button to quickly add to farmlists</li><li>Fixed the sum of total cages</li></ul></ul> <p>Version 2.24.7 - Apr 6, 2024:</p> <ul><li>Fixed market buy function</li><li>Fixed images shown on map distance</li></ul> <p>Version 2.24.6 - Mar 17, 2024:</p> <ul><li>Improved the oasis scan on the map. No more individual oasis scans. Very fast and very small chances to be detected.</li></ul>";
+		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - June 24, 2024:</p> <ul><li>Minor fixes</li></ul> <p>Version 2.24.10 - May 18, 2024:</p> <ul><li>Oases scan:</li><ul><li>Added hero experience for each oasis</li><li>Added hero resources/oasis defense ratio</li></ul></ul> <p>Version 2.24.9 - Apr 24, 2024:</p> <ul><li>Removed the QuickHelp button</li></ul> <p>Version 2.24.8 - Apr 11, 2024:</p> <ul><li>Oases scan:</li><ul><li>Added oasys type icons</li><li>Added arrow button to quickly add to farmlists</li><li>Fixed the sum of total cages</li></ul></ul> <p>Version 2.24.7 - Apr 6, 2024:</p> <ul><li>Fixed market buy function</li><li>Fixed images shown on map distance</li></ul> <p>Version 2.24.6 - Mar 17, 2024:</p> <ul><li>Improved the oasis scan on the map. No more individual oasis scans. Very fast and very small chances to be detected.</li></ul>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
