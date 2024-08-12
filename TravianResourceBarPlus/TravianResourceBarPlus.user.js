@@ -12,14 +12,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.24.11
+// @version        2.24.12
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.24.11';
+var version = '2.24.12';
 
 notRunYet = false;
 
@@ -9005,7 +9005,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Travian Resource Bar+";
-		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - June 24, 2024:</p> <ul><li>Minor fixes</li></ul> <p>Version 2.24.10 - May 18, 2024:</p> <ul><li>Oases scan:</li><ul><li>Added hero experience for each oasis</li><li>Added hero resources/oasis defense ratio</li></ul></ul> <p>Version 2.24.9 - Apr 24, 2024:</p> <ul><li>Removed the QuickHelp button</li></ul> <p>Version 2.24.8 - Apr 11, 2024:</p> <ul><li>Oases scan:</li><ul><li>Added oasys type icons</li><li>Added arrow button to quickly add to farmlists</li><li>Fixed the sum of total cages</li></ul></ul> <p>Version 2.24.7 - Apr 6, 2024:</p> <ul><li>Fixed market buy function</li><li>Fixed images shown on map distance</li></ul> <p>Version 2.24.6 - Mar 17, 2024:</p> <ul><li>Improved the oasis scan on the map. No more individual oasis scans. Very fast and very small chances to be detected.</li></ul>";
+		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Aug 12, 2024:</p> <ul><li>Fix for latest Travian update</li></ul> <p>Version 2.24.11 - June 24, 2024:</p> <ul><li>Minor fixes</li></ul> <p>Version 2.24.10 - May 18, 2024:</p> <ul><li>Oases scan:</li><ul><li>Added hero experience for each oasis</li><li>Added hero resources/oasis defense ratio</li></ul></ul> <p>Version 2.24.9 - Apr 24, 2024:</p> <ul><li>Removed the QuickHelp button</li></ul> <p>Version 2.24.8 - Apr 11, 2024:</p> <ul><li>Oases scan:</li><ul><li>Added oasys type icons</li><li>Added arrow button to quickly add to farmlists</li><li>Fixed the sum of total cages</li></ul></ul> <p>Version 2.24.7 - Apr 6, 2024:</p> <ul><li>Fixed market buy function</li><li>Fixed images shown on map distance</li></ul> <p>Version 2.24.6 - Mar 17, 2024:</p> <ul><li>Improved the oasis scan on the map. No more individual oasis scans. Very fast and very small chances to be detected.</li></ul>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
@@ -9051,8 +9051,15 @@ function displayWhatIsNew () {
 				if (RB.Setup[45] == 0) { RB.Setup[45] = T4_Variables.Speed; }
 				if (RB.Setup[46] == 0) { RB.Setup[46] = T4_Variables.feature_flags.territory ? 1 : 2; }
 				if (RB.Setup[47] == 0) {
-					if (T4_Variables.tribeIds[2]) RB.Setup[47] = 2; //Romans, Gauls, Teutons
-					if (T4_Variables.tribeIds[4]) RB.Setup[47] = 1; //Huns & Egyptians
+					if (T4_Variables.tribeIds) {
+						if (T4_Variables.tribeIds[2]) RB.Setup[47] = 2; //Romans, Gauls, Teutons
+						if (T4_Variables.tribeIds[4]) RB.Setup[47] = 1; //Huns & Egyptians
+					}
+					if (T4_Variables.playableTribeIds) {
+						if (T4_Variables.playableTribeIds[2]) RB.Setup[47] = 2; //Romans, Gauls, Teutons
+						if (T4_Variables.playableTribeIds[4]) RB.Setup[47] = 1; //Huns & Egyptians
+					}
+					
 				}
 				if (RB.Setup[48] == 0) { RB.Setup[48] = T4_Variables.Map.Size.width; }
 				if (RB.Setup[50] == 0) { RB.Setup[50] = T4_Variables.feature_flags.travelOverTheWorldEdge ? 1 : 2; }
