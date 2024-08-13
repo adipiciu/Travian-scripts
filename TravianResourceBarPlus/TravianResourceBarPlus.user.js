@@ -12,14 +12,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.24.12
+// @version        2.24.13
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.24.12';
+var version = '2.24.13';
 
 notRunYet = false;
 
@@ -58,7 +58,7 @@ var progressbar_time = 0;
 var lastAlert = RunTime[0];
 var aClockTimer = 0;
 var loadServerTime = 0;
-var langs = ['auto','English (en)','عربي (ar)','Български (bg)','Bosanski (bs)','Deutsch (de)','Ελληνικά (el)','Español (es)','فارسی (fa)','Français (fr)','Hrvatski (hr)','Magyar (hu)','Indonesian (id)','Italiano (it)','Nederlands (nl)','Polski (pl)','Português (pt)','Română (ro)','Русский (ru)','Српски (sr)','Svenska (sv)','Türkçe (tr)','Українська (ua)','Tiếng Việt (vi)','中文 (zh)'];
+var langs = ['auto','English (en)','عربي (ar)','Български (bg)','Bosanski (bs)','Deutsch (de)','Ελληνικά (el)','Español (es)','فارسی (fa)','Français (fr)','Hrvatski (hr)','Magyar (hu)','Indonesian (id)','Italiano (it)','Nederlands (nl)','Polski (pl)','Português (pt)','Română (ro)','Русский (ru)','Српски (sr)','Slovensko (sk)','Svenska (sv)','Türkçe (tr)','Українська (ua)','Tiếng Việt (vi)','中文 (zh)'];
 var allCookies = ['vPPH','mf','next','Dorf1','Dorf2','Dorf11','Dorf12','Dorf13','Dorf14','RBSetup','xy','VV','OV','Mem','Dict','DictFL','DictTR','DictRp','DictRpFL','ln','ln2','ln3','src','vHint','tropsI','tropsDic','vList','Att','trFL','AC','AS','bodyH','vBMn'];
 var crtPath = window.location.href;
 var lMap = '';
@@ -1460,6 +1460,131 @@ DICT = {
 		method : "metoda",
 		audiourl : "Adres URL pliku audio",
 		audiotest : "test audio"
+	},
+	sk: {
+		// ingame messages
+		ok : "Ok",
+		cancel : "Zrušiť",
+		close : "Zatvoriť",
+		save : "Uložiť",
+		reset : "Reset",
+		overview : "Prehľad dedín",
+		svers : "Verzia scriptu",
+		settings : "Nastavenie",
+		notes : "Zošit",
+		res90 : "Zdroje naplnené na %",
+		refresh : "Obnoviť",
+		warehouse : "Sklad",
+		resources : "Zdroje",
+		troops : "Vojsko",
+		links : "Odkaz",
+		linkname : "Názov odkazu",
+		linkdel : "Vymazať odkaz",
+		name2 : "Druhý názov",
+		archive : "Archív",
+		arena : "Turnajové ihrisko",
+		addcur : "Pridať prúd",
+		del : "Vymazať",
+		edit : "Upraviť",
+		unpin : "Uvolniť",
+		pin : "Pripnúť",
+		total : "Celkom",
+		noplace : "Nie je miesto!",
+		hunger : "Hladovanie",
+		duration : "Trvanie",
+		deficit : "Nedostatok",
+		aclock : "Čas budíka\nhh:mm:ss , hh:mm , mm (odteraz)",
+		consnegat : "Spotreba obilia v tejto obci je negatívna. Koľko minút treba rezervovať?",
+		bmove : "Presun budovy",
+		neighbors : "Susedia",
+		// settings
+		auctions: "Aukcie",
+		none : "Nič",
+		auto : "Auto",
+		info : "Informácia",
+		yourrace : "Váš národ",
+		sspeed : "Rýchlosť servera",
+		sspeedh : "0 - auto, 1 (1x), 2 (2x), 3 (3x rýchlosť), ... atď.",
+		smapsize : "Veľkosť mapy",
+		smapsizeh : "Veľkosť mapy: 0 autodetekcia, 401 00x200 map, 801 400x400 mapa",
+		EgyptiansAndHuns : "Server s Egypťanmi,Húnmi alebo Sparťanmi",
+		EgyptiansAndHunso : ['aktualizovať','Áno','Nie'],
+		EgyptiansAndHunsh : "Server s Egypťanmi, Hunmi alebo Sparťanmi",
+		servertype : "Typ Travian serveru",
+		servertypeh : "Server typu: Travian Legends, Travian Shores of War",
+		servertypeo : ['aktualizovať','Shores of War','Legends'],
+		traveloveredge : "Cestujte cez okraj mapy",
+		traveloveredgeo : ['aktualizovať','Áno','Nie'],
+		speedart : "Artefakt rýchlosti",
+		racelist : ['Rimania','Germáni','Gálovia','Príroda','Natary','Egypťania','Húni','Sparťania','Vikingovia '],
+		cranny : "Žltá úroveň pri zaplnení na(percent)",
+		crannyh : 'normal 80, 70 pre klasickú alebo artefaktovú lúpež',
+		builtin : "Vstavané nástroje",
+		builtinh : 'červená - najpotrebnejšie zdroje, zelená - menej potrebné zdroje',
+		normalize : 'Normálna produkcia',
+		normal : "Normálny",
+		banalyze : "Vstavaný bitevný analýzator ",
+		cropfind : "Vstavaný vyhľadávač multicroop",
+		adetect : "Detektor útoku",
+		adetecto : ['vyp.','w/o zmraziť','zap.'],
+		adetecth : "Robí skryté požiadavky na server, čím porušuje pravidlá. Môže mať za následok trest.",
+		adetectt : "Časový interval detekcie útoku",
+		adetectth : "Prvá kontrola je vždy po 5 minútach. Ďalšie kontroly budú po nakonfigurovanom časovom období.",
+		buildhint : "Stavebný tip",
+		onallp : "Všetky strany",
+		buildand : "Zobraziť odpočítavanie budov a útok",
+		buildandh : 'V zozname dedín',
+		buildands : ['vyp.','zap.','šir.'],
+		sendres : "Zobraziť &laquo;poslať suroviny/vojsko&raquo; ikony",
+		sendmess : "Zobraziť &laquo;poslať správu&raquo; ikony",
+		dorf12links : "Zobraziť &laquo;dedinu vo vnútri a vonku&raquo; ikony",
+		vtcoords : "Zobraziť súradnice dediny v tabuľke dedín",
+		analyzer : "Svetový analyzátor",
+		bigicon : "Zobraziť ikonu zhromaždiska",
+		addvtable : "Zobraziť tabuľu dedín",
+		addvtableo : ['vyp.','zap.','pripnúť'],
+		opennote : "Automaticky otvoriť okno Poznámky",
+		notesize : "Veľkosť okna Poznámok",
+		openoview : "Automaticky otvárať prehľad dediny",
+		resbar : "Panel zdrojov",
+		showres : "Zobraziť panel zdrojov v okne",
+		redbl : "červená (v hodinách)",
+		yellowbl: "žltá (v hodinách)",
+		marketpl : "Tržnica",
+		npcsum : "Zhrnutie pre NPC",
+		npcsumh : 'na trhu a v budovách',
+		bidinc : "V aukcii navýšiť ponuku",
+		bidinch : 'Pre deaktiváciu tejto funkcie, zadajte hodnotu 0',
+		show3x : "Predikujte tok zdrojov pri odosielaní pomocou 2x a 3x",
+		show3xh : 'môže zobrazovať nesprávne údaje',
+		rpandmp : "Zhromaždisko a Tržnica",
+		incomres : "Informácie o prichádzajúcich zdrojoch",
+		incomreso : ['vyp.','zap.','zhrnutie','režim WW'],
+		troopsI : "Informácie o jednotkách",
+		troopsIo : ['vyp.','zap.','aktualizuj'],
+		defRP : "Predvolená akcia pre zhromaždisko",
+		showls : "Zobraziť odkaz",
+		showAsSN : "Použivaj odkaz na druhý názov",
+		showlso : ['vyp.','zap.','v okne'],
+		savedls : "Uložiť odkaz",
+		savedd : "Uložiť dáta",
+		saveddh : 'vrátane odkazov a druhého názvu. Ak bol účet odstránený, alebo nie je váš počítač.',
+		savedelall : "Vymazať všetky uložené dáta",
+		savedelallh : 'Naozaj chcete odstrániť všetky údaje vrátane odkazov a druhého názvu?',
+		scrlang : "Jazyk scriptu",
+		youlang : "Jazyk prehliadača",
+		notifi : "Oznámenie",
+		notification : "Oznámenie po dokončení stavby",
+		method : "Plán",
+		audiourl : "URL a zvukový subor",
+		audiotest : "Test zvuku",
+		colorCustomize : "Nastavenie farieb",
+		colorHint : "ponechajte prázdne pre predvolené farby",
+		color0 : "Je možné budovať",
+		color1 : "Je možné budovať pri zámene surovín v NPC",
+		color2 : "Budovanie nie je možné <br/> (nedostatok zdrojov)",
+		color3 : "Budovanie nie je možné <br/> (nedostatočná kapacita sýpiek / skladov)",
+		color4 : "Maximálna úroveň"
 	},
 	sv:{ // Swedish translation, thx Dragon from the future
 		// Meddelande,
@@ -9005,7 +9130,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Travian Resource Bar+";
-		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Aug 12, 2024:</p> <ul><li>Fix for latest Travian update</li></ul> <p>Version 2.24.11 - June 24, 2024:</p> <ul><li>Minor fixes</li></ul> <p>Version 2.24.10 - May 18, 2024:</p> <ul><li>Oases scan:</li><ul><li>Added hero experience for each oasis</li><li>Added hero resources/oasis defense ratio</li></ul></ul> <p>Version 2.24.9 - Apr 24, 2024:</p> <ul><li>Removed the QuickHelp button</li></ul> <p>Version 2.24.8 - Apr 11, 2024:</p> <ul><li>Oases scan:</li><ul><li>Added oasys type icons</li><li>Added arrow button to quickly add to farmlists</li><li>Fixed the sum of total cages</li></ul></ul> <p>Version 2.24.7 - Apr 6, 2024:</p> <ul><li>Fixed market buy function</li><li>Fixed images shown on map distance</li></ul> <p>Version 2.24.6 - Mar 17, 2024:</p> <ul><li>Improved the oasis scan on the map. No more individual oasis scans. Very fast and very small chances to be detected.</li></ul>";
+		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Aug 13, 2024:</p> <ul><li>Added Slovak translation</li></ul> <p>Version 2.24.12 - Aug 12, 2024:</p> <ul><li>Fix for latest Travian update</li></ul> <p>Version 2.24.11 - June 24, 2024:</p> <ul><li>Minor fixes</li></ul> <p>Version 2.24.10 - May 18, 2024:</p> <ul><li>Oases scan:</li><ul><li>Added hero experience for each oasis</li><li>Added hero resources/oasis defense ratio</li></ul></ul> <p>Version 2.24.9 - Apr 24, 2024:</p> <ul><li>Removed the QuickHelp button</li></ul> <p>Version 2.24.8 - Apr 11, 2024:</p> <ul><li>Oases scan:</li><ul><li>Added oasys type icons</li><li>Added arrow button to quickly add to farmlists</li><li>Fixed the sum of total cages</li></ul></ul> <p>Version 2.24.7 - Apr 6, 2024:</p> <ul><li>Fixed market buy function</li><li>Fixed images shown on map distance</li></ul> <p>Version 2.24.6 - Mar 17, 2024:</p> <ul><li>Improved the oasis scan on the map. No more individual oasis scans. Very fast and very small chances to be detected.</li></ul>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
