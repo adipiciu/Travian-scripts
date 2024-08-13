@@ -12,14 +12,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.24.13
+// @version        2.24.14
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.24.13';
+var version = '2.24.14';
 
 notRunYet = false;
 
@@ -109,15 +109,16 @@ var RB = new Object();
 		'Pikeman','Thorned Warrior','Guardsman','Birds Of Prey','Axerider','Natarian Knight','War Elephant','Ballista','Natarian Emperor','Settler',
 		'Slave Militia','Ash Warden','Khopesh Warrior','Sopdu Explorer','Anhur Guard','Resheph Chariot','Ram','Stone Catapult','Nomarch','Settler',
 		'Mercenary','Bowman','Spotter','Steppe Rider','Marksman','Marauder','Ram','Catapult','Logades','Settler',
-		'Hoplite','Sentinel','Shieldsman','Twinsteel','Elpida Rider','Corinthian','Ram','Ballista','Ephor','Settler'];
+		'Hoplite','Sentinel','Shieldsman','Twinsteel','Elpida Rider','Corinthian','Ram','Ballista','Ephor','Settler',
+		'Thrall','Shield Maiden','Berserker','Heimdall\'s Eye','Huskarl Rider','Valkyrie\'s Blessing','Ram','Catapult','Jarl','Settler'];
 	RB.dictRp = ["Won as attacker without losses.","Won as attacker with losses.","Lost as attacker.",
 		"Won as defender without losses.","Won as defender with losses.","Lost as defender with losses.","Lost as defender without losses.",
 		"Spying was successful and not detected.","Spying was successful, but detected.","Spying failed.","Spying was stopped successfully.","Spying could not be stopped."];
 	var iReports = [1,2,3,4,5,6,7,15,16,17,18,19];
 	RB.dictRpFL = Array(12);
 	RB.market_fi = [0,0,0,0,0,0,0,0,0,0,0,0];
-	RB.tropsI = new Array(800);
-	RB.trFL = new Array(71);
+	RB.tropsI = new Array(900);
+	RB.trFL = new Array(91);
 	RB.XY = [
 		200, 10, // 0-Setup
 		700, 430, // 1-Resource bar
@@ -195,7 +196,7 @@ DICT = {
 		traveloveredge : "Travel over the map's edge",
 		traveloveredgeo : ['update','Yes','No'],
 		speedart : "Speed artefact",
-		racelist : ['Romans','Teutons','Gauls','Nature','Natars','Egyptians','Huns','Spartans'],
+		racelist : ['Romans','Teutons','Gauls','Nature','Natars','Egyptians','Huns','Spartans','Vikings'],
 		cranny : "Yellow level of cranny (percent)",
 		crannyh : 'normal 80, 70 for classic or artefact plunder',
 		builtin : "Built-in tools",
@@ -306,7 +307,7 @@ DICT = {
  		sspeed : "Скорость сервера",
 		sspeedh : "0 - авто, 1 (1x), 2 (2x), 3 (3x или скоростной), ...",
 		speedart : "Артефакт скорости",
-		racelist : ['Римляне','Германцы','Галлы','Nature','Натары','Египтяне','Гунны','Spartans'],
+		racelist : ['Римляне','Германцы','Галлы','Nature','Натары','Египтяне','Гунны','Spartans','Vikings'],
 		cranny : "желтый уровень занятости тайника (проценты)",
 		crannyh : 'норма - 80, 70 для классического сервера или для артефакта грабителя',
 		builtin : "Встроенные инструменты",
@@ -412,7 +413,7 @@ DICT = {
  		sspeed : "Швидкість сервера",
 		sspeedh : "0 - авто, 1 (1x), 2 (2x), 3 (3x або швидкісний), ...",
 		speedart : "Артефакт швидкості",
-		racelist : ['Римляни','Тевтонці','Галли','Nature','Natars','Egyptians','Huns','Spartans'],
+		racelist : ['Римляни','Тевтонці','Галли','Nature','Natars','Egyptians','Huns','Spartans','Vikings'],
 		cranny : "Жовтий рівень зайнятості схованки (проценти)",
 		crannyh : 'норма - 80, 70 для класичного сервера або для артефакту злодія',
 		builtin : "Вбудовані інструменти",
@@ -505,7 +506,7 @@ DICT = {
 		info : "Információk",
 		yourrace : "Nép",
 		speedart : "Sebesség ereklye",
-		racelist : ['Római','Germán','Gall','Nature','Natars','Egyptians','Huns','Spartans'],
+		racelist : ['Római','Germán','Gall','Nature','Natars','Egyptians','Huns','Spartans','Vikings'],
 		onallp : "Minden oldal",
 		buildand : "Visszaszámlálók megjelenítése",
 		buildandh : 'A faluk listájában (építkezések, csapatmozgások)',
@@ -550,7 +551,7 @@ DICT = {
 		info : "اطلاعات",
 		yourrace : "دسته ی شما",
 		speedart : "سرعت مصنوعی",
-		racelist : ['رومی ها','توتن ها','گل ها','Nature','Natars','Egyptians','Huns','Spartans'],
+		racelist : ['رومی ها','توتن ها','گل ها','Nature','Natars','Egyptians','Huns','Spartans','Vikings'],
 		onallp : "همه ی صفحات",
 		buildand : "نمایش شمارش معکوس ساختمان و حمله",
 		buildandh : 'در لیست روستا ها',
@@ -611,7 +612,7 @@ DICT = {
 		info : "المعلومات",
 		yourrace : "قبيلتك",
 		speedart : "السرعة",
-		racelist : ['الرومان','الجرمان','الأغريق','Nature','الناتار','الفراعنة','المغول','Spartans'],
+		racelist : ['الرومان','الجرمان','الأغريق','Nature','الناتار','الفراعنة','المغول','Spartans','Vikings'],
 		cranny : "النسبة للون الأصفر للمخبأ (النسبة)",
 		crannyh : 'الأفتراضي 80, 70 للكلاسيك',
 		builtin : "الأدوات-المبنية",
@@ -707,7 +708,7 @@ DICT = {
 		info : "Information",
 		yourrace : "Votre peuple",
 		speedart : "Artefact de vitesse",
-		racelist : ['Romains','Germains','Gaulois','Nature','Natars','Égyptiens','Huns','Spartans'],
+		racelist : ['Romains','Germains','Gaulois','Nature','Natars','Égyptiens','Huns','Spartans','Vikings'],
 		onallp : "Toutes les pages",
 		buildand : "Montrer le compte à rebours pour les constructions et les attaques",
 		buildandh : 'Dans la liste des villages',
@@ -797,7 +798,7 @@ DICT = {
 		info : "Informacije",
 		yourrace : "Tvoja jedinica",
 		speedart : "Artefakt za brzinu",
-		racelist : ['Rimljani','Teutonci','Gali','Nature','Natars','Egipćani','Huni','Spartans'],
+		racelist : ['Rimljani','Teutonci','Gali','Nature','Natars','Egipćani','Huni','Spartans','Vikings'],
 		cranny : "Žuta razina žitnice (postotak)",
 		crannyh : 'Normalno 80, 70 za klasične pljačke ili artefakt',
 		builtin : "Ugrađeni alati",
@@ -900,7 +901,7 @@ DICT = {
 		info : "Information",
 		yourrace : "Deine Rasse",
 		speedart : "Geschwindigkeitsartefakt",
-		racelist : ['Römer','Germanen','Gallier','Natur','Nataren','Ägypter','Hunnen','Spartans'],
+		racelist : ['Römer','Germanen','Gallier','Natur','Nataren','Ägypter','Hunnen','Spartans','Vikings'],
 		onallp : "Alle Seiten",
 		buildand : "Zeige den Countdown fuer Gebaeude und Einheiten",
 		buildandh : 'In der Liste der Doerfer',
@@ -999,7 +1000,7 @@ DICT = {
 		sspeed : "Servidor speed",
 		sspeedh : "0 - automático, 1 (1x), 2 (2x), 3 (3x), ... etc.",
 		speedart : "Velocidade do artefato",
-		racelist : ['Romanos','Teutões','Gauleses','Natureza','Natares','Egípcios','Hunos','Spartans'],
+		racelist : ['Romanos','Teutões','Gauleses','Natureza','Natares','Egípcios','Hunos','Spartans','Vikings'],
 		cranny : "Nível do cereal por celeiro (Porcentagem)",
 		crannyh : 'Pré-definido com 80%, 70% para pilhagem normal ou artefato',
 		builtin : "Ferramentas Internas",
@@ -1107,7 +1108,7 @@ DICT = {
 		info : "Информация",
 		yourrace : "Вашето племе",
 		speedart : "Скоростен артефакт",
-		racelist : ['Рим','Тевтонци','Гали','Nature','Natars','Egyptians','Huns','Spartans'],
+		racelist : ['Рим','Тевтонци','Гали','Nature','Natars','Egyptians','Huns','Spartans','Vikings'],
 		cranny : "предупредително(жълто) ниво на запълване на скривалището (в проценти)",
 		crannyh : 'нормално- 80, 70- за класически светове или с грабителски артефакт',
 		builtin : "Вградени инструменти",
@@ -1219,7 +1220,7 @@ DICT = {
 		servertypeh : "Tipuri de servere: Travian Legends, Travian Shores of War",
 		servertypeo : ['update','Shores of War','Legends'],
 		speedart : "Artefact de viteză",
-		racelist : ['Romani','Barbari','Daci','Natura','Natari','Egipteni','Huni','Spartans'],
+		racelist : ['Romani','Barbari','Daci','Natura','Natari','Egipteni','Huni','Spartans','Vikingi'],
 		cranny : "Culoarea galbenă la beci (în procente)",
 		crannyh : 'normal 80%, 70% pentru server clasic',
 		builtin : "Unelte incluse",
@@ -1321,7 +1322,7 @@ DICT = {
 		info : "Инфо",
 		yourrace : "Твоја раса",
 		speedart : "Артефакт брзих",
-		racelist : ['Римљани','Тевтонци','Гали','Nature','Natars','Egyptians','Huns','Spartans'],
+		racelist : ['Римљани','Тевтонци','Гали','Nature','Natars','Egyptians','Huns','Spartans','Vikings'],
 		cranny : "Жути ниво силоса (проценат)",
 		crannyh : 'нормално 80, 70 ѕа класично и артефакт',
 		builtin : "Уграђени алати",
@@ -1413,7 +1414,7 @@ DICT = {
 		info : "Informacja",
 		yourrace : "Twoja rasa",
 		speedart : "Prędkość artefaktu",
-		racelist : ['Rzymianie','Germanie','Galowie','Dzikie zwierzęta','Natarzy','Egipcjanie','Hunowie','Spartans'],
+		racelist : ['Rzymianie','Germanie','Galowie','Dzikie zwierzęta','Natarzy','Egipcjanie','Hunowie','Spartans','Vikings'],
 		cranny : "żółty poziom kryjówki (procent)",
 		crannyh : 'normalny 80, 70 do grabieży na klasycznym lub artefakcie',
 		builtin : "Wbudowane narzędzia",
@@ -1516,7 +1517,7 @@ DICT = {
 		traveloveredge : "Cestujte cez okraj mapy",
 		traveloveredgeo : ['aktualizovať','Áno','Nie'],
 		speedart : "Artefakt rýchlosti",
-		racelist : ['Rimania','Germáni','Gálovia','Príroda','Natary','Egypťania','Húni','Sparťania','Vikingovia '],
+		racelist : ['Rimania','Germáni','Gálovia','Príroda','Natary','Egypťania','Húni','Sparťania','Vikingovia'],
 		cranny : "Žltá úroveň pri zaplnení na(percent)",
 		crannyh : 'normal 80, 70 pre klasickú alebo artefaktovú lúpež',
 		builtin : "Vstavané nástroje",
@@ -1621,7 +1622,7 @@ DICT = {
 		info : "Information",
 		yourrace : "Din stam",
 		speedart : "Titanskor",
-		racelist : ['Romare','Germaner','Galler','Natur','Natarer','Egyptierna','Hunnerna','Spartans'],
+		racelist : ['Romare','Germaner','Galler','Natur','Natarer','Egyptierna','Hunnerna','Spartans','Vikings'],
 		cranny : "Gul nivå på grotta (procent)",
 		crannyh : "Normal 80, 70 för klssisk eller artefakt-plundrare",
 		builtin : "Inbyggda hjälpmedel",
@@ -1701,7 +1702,7 @@ DICT = {
 		info : "Informazioni",
 		yourrace : "La tua Tribù:",
 		speedart : "Artefatto velocità",
-		racelist : ['Romani','Teutoni','Galli','Belve','Nataren','Egiziani','Unni','Spartans'],
+		racelist : ['Romani','Teutoni','Galli','Belve','Nataren','Egiziani','Unni','Spartans','Vikings'],
 		cranny : "Livello giallo della capacità del deposito segreto (%)",
 		crannyh : 'Normalmente 80; Per il server classico o per artefatto del Ladro 70;',
 		builtin : "Strumenti Integrati",
@@ -1794,7 +1795,7 @@ DICT = {
 		info : "Información",
 		yourrace : "Raza",
 		speedart : "Artefacto de velocidad",
-		racelist : ['Romanos','Germanos','Galos','Nature','Natars','Egyptians','Huns','Spartans'],
+		racelist : ['Romanos','Germanos','Galos','Nature','Natars','Egyptians','Huns','Spartans','Vikings'],
 		cranny : "Nivel amarillo para el granero ( porcentaje )",
 		crannyh : 'normal 80, 70 para clásico o artefacto de saqueo',
 		builtin : "Herramientas adjuntas",
@@ -1901,7 +1902,7 @@ DICT = {
 		info : "訊息",
 		yourrace : "你的種族",
 		speedart : "伺服器倍速",
-		racelist : ['羅馬','條頓','高盧','Nature','Natars','埃及人','匈奴','Spartans'],
+		racelist : ['羅馬','條頓','高盧','Nature','Natars','埃及人','匈奴','Spartans','Vikings'],
 		cranny : "黃色警戒線 (百分比)",
 		crannyh : '一般 80, 70 經典或藝術品加成',
 		builtin : "置入工具",
@@ -2000,7 +2001,7 @@ DICT = {
 		info : "Bilgi",
 		yourrace : "Irkın",
 		speedart : "Hız eseri",
-		racelist : ['Romanlılar','Cermenler','Galyalılar','Nature','Natarlar','Mısırlılar','Hunlar','Spartans'],
+		racelist : ['Romanlılar','Cermenler','Galyalılar','Nature','Natarlar','Mısırlılar','Hunlar','Spartans','Vikings'],
 		cranny : "sığınak sarı seviyesi (yüzde)",
 		crannyh : 'normal 80, klasik veya eser yağması için 70 ',
 		builtin : "Entegre araçlar",
@@ -2099,7 +2100,7 @@ DICT = {
 		info : "Thông tin",
 		yourrace : "Chủng tộc của bạn",
 		speedart : "Cỗ xe của Helios",
-		racelist : ['Romans','Teutons','Gauls','Nature','Natars','Egyptians','Huns','Spartans'],
+		racelist : ['Romans','Teutons','Gauls','Nature','Natars','Egyptians','Huns','Spartans','Vikings'],
 		cranny : "Báo màu vàng khi ống tài nguyên đạt (%)",
 		crannyh : 'thông thường là 80, 70 cho làng bình thường hoặc làng có Bình rượu của Dionysus',
 		builtin : "Công cụ công trình",
@@ -2207,7 +2208,7 @@ DICT = {
 		info : "πληροφορίες",
 		yourrace : "η φυλή σου",
 		speedart : "ταχύτητα αντικειμένου",
-		racelist : ['Ρωμαίοι','Τεύτονες','Γαλάτες','Nature','Natars','Egyptians','Huns','Spartans'],
+		racelist : ['Ρωμαίοι','Τεύτονες','Γαλάτες','Nature','Natars','Egyptians','Huns','Spartans','Vikings'],
 		cranny : "κίτρινο επίπεδο κρυψώνας (ποσοστό)",
 		crannyh : 'κανονικό 80, 70 για κλασικό ή αντικείμενο λεηλασίας',
 		builtin : "Ενσωματωμένα εργαλεία",
@@ -2314,7 +2315,7 @@ DICT = {
 		info : "Informatie",
 		yourrace : "Jouw ras",
 		speedart : "Snelheids artefact",
-		racelist : ['Romeinen','Germanen','Galliërs','Nature','Natars','Egyptians','Huns','Spartans'],
+		racelist : ['Romeinen','Germanen','Galliërs','Nature','Natars','Egyptians','Huns','Spartans','Vikings'],
 		cranny : "geel niveau van schuilplaats (procent)",
 		crannyh : 'normaal 80, 70 voor klassieke servers of artefact plunderen',
 		builtin : "Ingebouwde hulpmiddelen",
@@ -2428,7 +2429,7 @@ DICT = {
 		servertypeh : "Tipe Server: Travian Legends, Travian Shores of War",
 		servertypeo : ['pembaruan','Shores of War','Legends'],
 		speedart : "Speed artefak",
-		racelist : ['Romawi','Teuton','Galia','Alam','Natar','Mesir','Mongol','Spartans'],
+		racelist : ['Romawi','Teuton','Galia','Alam','Natar','Mesir','Mongol','Spartans','Vikings'],
 		cranny : "Level kuning dari (persen)",
 		crannyh : 'normal 80, 70 utk klasik atau penjarahan artefak',
 		builtin : "Perkakas bawaan",
@@ -4366,14 +4367,15 @@ function showAllTTime ( vType, tVil, arena, art, shoes, leftHand ) {
 		[15, [55,65]], // Anhur Guard, Marksman
 		[14, [5,66]], // Equites Imperatoris, Marauder
 		[13, [26]], // Haeduan
+		[12, [85]], // Huskarl Rider
 		[10, [6,15,56]], // Equites Caesaris, Paladin, Resheph Chariot
-		[9, [14,16,72,76]], // Scout, Teutonic Knight, Sentinel, Corinthian
+		[9, [14,16,72,76,84,86]], // Scout, Teutonic Knight, Sentinel, Corinthian, Heimdall's Eye, Valkyrie's Blessing
 		[8, [73]], // Shieldsman
-		[7, [3,11,12,21,51,53]], // Imperian, Clubswinger, Spearman, Phalanx, Slave Militia, Khopesh Warrior
+		[7, [3,11,12,21,51,53,81,82]], // Imperian, Clubswinger, Spearman, Phalanx, Slave Militia, Khopesh Warrior, Thrall, Shield Maiden
 		[6, [1,13,22,52,61,62,71,74]], // Legionnaire, Axeman, Swordsman, Ash Warden, Mercenary, Bowman, Hoplite, Twinsteel
-		[5, [2,10,20,29,30,60,69,70,80]], // Praetorian, Settler, Chieftain, Logades
-		[4, [7,9,17,19,27,57,59,67,77,79]], // Battering Ram, Senator, Ram, Chief, Ram, Ram (Egyptians), Nomarch, Ram (Huns), Ram (Spartans), Ephor
-		[3, [8,18,28,58,68,78]] // Fire Catapult, Catapult, Trebuchet, Stone Catapult, Ballista
+		[5, [2,10,20,29,30,60,69,70,80,83,89,90]], // Praetorian, Settler, Chieftain, Logades, Berserker, Jarl, Settler (Vikings)
+		[4, [7,9,17,19,27,57,59,67,77,79,87]], // Battering Ram, Senator, Ram, Chief, Ram, Ram (Egyptians), Nomarch, Ram (Huns), Ram (Spartans), Ephor, Ram (Vikings)
+		[3, [8,18,28,58,68,78,88]] // Fire Catapult, Catapult, Trebuchet, Stone Catapult, Ballista, Catapult (Vikings)
 		];
 	} else {
 		TTime = [
@@ -4462,7 +4464,7 @@ function showAllTTime ( vType, tVil, arena, art, shoes, leftHand ) {
 		var distance = calcDistance(tVil[0], tVil[1]);
 		var newTR = $ee('TR',$c('----'));
 	}
-	newTR.appendChild($c(' &lt;-&gt; ' + parseFloat(distance.toFixed(2)),[['colspan',(tR > 0 ? 2: ((RB.Setup[47]==1) ? 7 : 4))]]));
+	newTR.appendChild($c(' &lt;-&gt; ' + parseFloat(distance.toFixed(2)),[['colspan',(tR > 0 ? 2: ((RB.Setup[47]==1) ? 8 : 4))]]));
 	newTABLE.appendChild(newTR);
 
 	if( distance > 0 ) {
@@ -4472,14 +4474,14 @@ function showAllTTime ( vType, tVil, arena, art, shoes, leftHand ) {
 		if( vType < 2 ) {
 			var newTR = $e('TR');
 			var ht = appendTTime( getTTime( distance, MTime[parseInt(RB.Setup[2])]*sM, 0, 0) );
-			var attr = vType < 1 ? undefined : [['colspan',(RB.Setup[47]==1) ? 6 : 3]];
+			var attr = vType < 1 ? undefined : [['colspan',(RB.Setup[47]==1) ? 7 : 3]];
 			newTR.appendChild($c(trImg(allIDs[33],RB.dictionary[2]),attr));
 			appendTime();
 		}
 		if( vType > -1 ) {
 			var newTR = $e('TR');
 			var ht = appendTTime( getTTime( distance, RB.dictFL[19], arena, parseInt(artefact), shK, lhK) );
-			var attr = vType < 1 ? undefined : [['colspan',(RB.Setup[47]==1) ? 6 : 3]];
+			var attr = vType < 1 ? undefined : [['colspan',(RB.Setup[47]==1) ? 7 : 3]];
 			newTR.appendChild($c(trImg('unit uhero'),attr));
 			appendTime();
 			for( var i = 0; i < TTime.length; i++ ) {
@@ -4487,7 +4489,7 @@ function showAllTTime ( vType, tVil, arena, art, shoes, leftHand ) {
 				var ht = appendTTime( getTTime( distance, TTime[i][0]*sK, arena, parseInt(artefact), shK, lhK) );
 				var j = 0;
 				var fl = tR ? false: true;
-				for( var k = 0; k < (RB.Setup[47]==1 ? 8 : 3); k++ ) {
+				for( var k = 0; k < (RB.Setup[47]==1 ? 9 : 3); k++ ) {
 					if (k==3 || k==4) continue;
 					var fl2 = tR ? false: true;
 					var newTD = $e('TD');
@@ -6963,7 +6965,9 @@ function scanTroopsData () {
 		//Huns
 		35,40,30,130,80,40,40,6*m,50,1, 50,30,10,140,110,60,60,6*m,30,1, 0,20,10,170,150,20,40,19*m,0,2, 120,30,15,290,370,190,45,16*m,75,2, 110,80,70,320,350,330,50,15*m,105,2, 180,60,40,450,560,610,140,14*m,80,3, 65,30,90,1060,330,360,70,4*m,0,3, 45,55,10,950,1280,620,60,3*m,0,6, 50,40,30,37200,27600,25200,27600,5*m,0,4, 10,80,80,6100,4600,4800,5400,5*m,3000,1,
 		//Spartans
-		50,35,30,110,185,110,35,6*m,60,1, 0,40,22,185,150,35,75,9*m,0,1, 40,85,45,145,95,245,45,8*m,40,1, 90,55,40,130,200,400,65,6*m,50,1, 55,120,90,555,445,330,110,16*m,110,2, 195,80,75,660,495,995,165,9*m,80,3, 65,30,80,525,260,790,130,4*m,0,3, 50,60,10,550,1240,825,135,3*m,0,6, 40,60,40,33450,30665,36240,13935,4*m,0,4, 10,80,80,5115,5580,6045,3255,5*m,3000,1
+		50,35,30,110,185,110,35,6*m,60,1, 0,40,22,185,150,35,75,9*m,0,1, 40,85,45,145,95,245,45,8*m,40,1, 90,55,40,130,200,400,65,6*m,50,1, 55,120,90,555,445,330,110,16*m,110,2, 195,80,75,660,495,995,165,9*m,80,3, 65,30,80,525,260,790,130,4*m,0,3, 50,60,10,550,1240,825,135,3*m,0,6, 40,60,40,33450,30665,36240,13935,4*m,0,4, 10,80,80,5115,5580,6045,3255,5*m,3000,1,
+		//Vikings
+		45,22,5,95,80,50,40,7*m,55,1, 20,50,30,125,70,85,40,7*m,40,1, 70,30,25,235,220,200,70,5*m,75,2, 0,10,5,155,95,50,50,9*m,0,1, 45,95,100,385,295,290,85,12*m,110,2, 160,50,75,475,535,515,100,9*m,80,2, 65,30,80,950,325,375,70,4*m,0,3, 50,60,10,850,1225,625,60,3*m,0,6, 40,40,60,35500,26600,25000,27200,5*m,0,4, 10,80,80,5800,4600,4800,4800,5*m,3000,1
 	];
 	if (crtName.startsWith('cw.x1')) RB.tropsI = [
 		//Romans
@@ -7315,7 +7319,16 @@ function normalProductionCalc ( ires ) {
 	[555,445,330,110],// Elpida Rider
 	[660,495,995,165],// Corinthian Crusher
 	[525,260,790,130],// Ram
-	[550,1240,825,135]];// Catapult
+	[550,1240,825,135],// Catapult
+// Vikings //
+	[95,80,50,40],// Thrall
+	[125,70,85,40],// Shield Maiden
+	[235,220,200,70],// Berserker
+	[155,95,50,50],// Heimdall's Eye
+	[385,295,290,85],// Huskarl Rider
+	[475,535,515,100],// Valkyrie's Blessing
+	[950,325,375,70],// Ram
+	[850,1225,625,60]];// Catapult
 
 	var vPN = [];
 	for( var i = 0; i < 4; i++ ) {
@@ -8088,7 +8101,8 @@ var bCost = [[0],//dummy
 [320,280,420,360,4,4,1.28], //Hospital Cost gid = 46
 [160,100,80,60,1,0,1.28], //Defensive Wall Cost gid = 47
 [320,280,420,360,5,4,1.28], //Asclepeion Cost gid = 48
-[1440,1370,1290,495,5,3,1.30] //Harbor Cost gid = 49
+[1440,1370,1290,495,5,3,1.30], //Harbor Cost gid = 49
+[110,170,70,50,1,0,1.28] //Barricade Cost gid = 50
 ];
 
 fieldsOfVillage = {
@@ -8327,7 +8341,7 @@ function allyQStats (members) {
 		if( blue.snapshotLength > 0 )
 			semafor1.appendChild($em('SPAN',[blue.snapshotItem(0).cloneNode(true),' = ',blue.snapshotLength,'; ']));
 	}
-	for( var t=1; t<((RB.Setup[47]==1)?9:4); t++ ) {
+	for( var t=1; t<((RB.Setup[47]==1)?10:4); t++ ) {
 		if (t==4 || t==5) continue;
 		var tribe = $xf('.//i[contains(@class,"tribe'+t+'_medium")]','l',members);
 		if( tribe.snapshotLength > 0 ) {
@@ -9130,7 +9144,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Travian Resource Bar+";
-		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Aug 13, 2024:</p> <ul><li>Added Slovak translation</li></ul> <p>Version 2.24.12 - Aug 12, 2024:</p> <ul><li>Fix for latest Travian update</li></ul> <p>Version 2.24.11 - June 24, 2024:</p> <ul><li>Minor fixes</li></ul> <p>Version 2.24.10 - May 18, 2024:</p> <ul><li>Oases scan:</li><ul><li>Added hero experience for each oasis</li><li>Added hero resources/oasis defense ratio</li></ul></ul> <p>Version 2.24.9 - Apr 24, 2024:</p> <ul><li>Removed the QuickHelp button</li></ul> <p>Version 2.24.8 - Apr 11, 2024:</p> <ul><li>Oases scan:</li><ul><li>Added oasys type icons</li><li>Added arrow button to quickly add to farmlists</li><li>Fixed the sum of total cages</li></ul></ul> <p>Version 2.24.7 - Apr 6, 2024:</p> <ul><li>Fixed market buy function</li><li>Fixed images shown on map distance</li></ul> <p>Version 2.24.6 - Mar 17, 2024:</p> <ul><li>Improved the oasis scan on the map. No more individual oasis scans. Very fast and very small chances to be detected.</li></ul>";
+		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Aug 14, 2024:</p> <ul><li>Added support for the new Viking tribe</li></ul> <p>Version 2.24.13 - Aug 13, 2024:</p> <ul><li>Added Slovak translation</li></ul>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
@@ -9178,11 +9192,11 @@ function displayWhatIsNew () {
 				if (RB.Setup[47] == 0) {
 					if (T4_Variables.tribeIds) {
 						if (T4_Variables.tribeIds[2]) RB.Setup[47] = 2; //Romans, Gauls, Teutons
-						if (T4_Variables.tribeIds[4]) RB.Setup[47] = 1; //Huns & Egyptians
+						if (T4_Variables.tribeIds[4]) RB.Setup[47] = 1; //Huns, Egyptians, Spartans, Vikings
 					}
 					if (T4_Variables.playableTribeIds) {
 						if (T4_Variables.playableTribeIds[2]) RB.Setup[47] = 2; //Romans, Gauls, Teutons
-						if (T4_Variables.playableTribeIds[4]) RB.Setup[47] = 1; //Huns & Egyptians
+						if (T4_Variables.playableTribeIds[4]) RB.Setup[47] = 1; //Huns, Egyptians, Spartans, Vikings
 					}
 					
 				}
