@@ -3715,7 +3715,7 @@ function getTroopNames() {
 }
 
 function detectTribe() {
-	iMyRace = parseInt(tOpts["RACE"]);  // 0-Romans, 1-Teutons, 2-Gauls, 5-Egyptians, 6-Huns, 7-Spartans, 9-Vikings. Set via dialogue. (or -1 for autodetect)
+	iMyRace = parseInt(tOpts["RACE"]);  // 0-Romans, 1-Teutons, 2-Gauls, 5-Egyptians, 6-Huns, 7-Spartans, 8-Vikings. Set via dialogue. (or -1 for autodetect)
 	if ( isNaN(iMyRace) || iMyRace < 0 ) {
 		setVariable("TROOP_NAMES", "");
 		var httpRequest = new XMLHttpRequest();
