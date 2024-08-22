@@ -12,14 +12,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.24.14
+// @version        2.24.15
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.24.14';
+var version = '2.24.15';
 
 notRunYet = false;
 
@@ -4355,7 +4355,7 @@ function loadAllCookie () {
 
 /************************* distance calculation ***************************/
 
-var MTime = [16, 12, 24, 0, 0, 16, 20, 14];
+var MTime = [16, 12, 24, 0, 0, 16, 20, 14, 18];
 
 function showAllTTime ( vType, tVil, arena, art, shoes, leftHand ) {
 	var TTime = [];
@@ -5601,7 +5601,7 @@ function overviewTroops () {
 			var nR1 = $e('TR');
 			var nR2 = $e('TR');
 			for( t; t < RB.village_dorf12.length; t+2 ) {
-				for( var i = 1; i < 81; i++ ) {
+				for( var i = 1; i < 91; i++ ) {
 					nR1.appendChild($c(trImg('unit u'+i)));
 					if( i == RB.village_dorf12[t] ) {
 						nR2.appendChild($c(RB.village_dorf12[t+1]));
@@ -9144,7 +9144,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Travian Resource Bar+";
-		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Aug 14, 2024:</p> <ul><li>Added support for the new Viking tribe</li></ul> <p>Version 2.24.13 - Aug 13, 2024:</p> <ul><li>Added Slovak translation</li></ul>";
+		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Aug 22, 2024:</p> <ul><li>Minor fix for Viking tribe</li></ul> <p>Version 2.24.14 - Aug 14, 2024:</p> <ul><li>Added support for the new Viking tribe</li> <li>Added Slovak translation</li></ul>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
@@ -9179,7 +9179,7 @@ function displayWhatIsNew () {
 	loadCookie ( 'bodyH', 'bodyH' );
 	loadCookie ( 'DictFL', 'dictFL' );
 
-	if( RB.Setup[2] == 3 || RB.Setup[2] == 4 || RB.Setup[2] > 7 ) { RB.Setup[2] = 0; saveCookie( 'RBSetup', 'Setup' ); }
+	if( RB.Setup[2] == 3 || RB.Setup[2] == 4 || RB.Setup[2] > 8 ) { RB.Setup[2] = 0; saveCookie( 'RBSetup', 'Setup' ); }
 	var aText = $xf('//script[contains(@src, "/Variables.js")]');
 	if (aText) {
 		if (RB.Setup[45] == 0 || RB.Setup[46] == 0 || RB.Setup[47] == 0 || RB.Setup[48] == 0 || RB.Setup[50] == 0) {
