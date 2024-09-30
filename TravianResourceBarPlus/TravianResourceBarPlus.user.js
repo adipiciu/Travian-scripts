@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           Travian Resource bar plus
 // @namespace      https://github.com/adipiciu/Travian-scripts
-// @description    Shows travian resources (for Travian Legends and Travian Shores of War)
+// @description    Shows travian resources (for Travian Legends and Travian Northern Legends)
 // @author         adipiciu (based on Travian Resource bar plus version 2.8.14 by Serj_LV)
 // @license        GPL version 3 or any later version; http://www.gnu.org/copyleft/gpl.html
 // @contributionURL https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR
@@ -12,19 +12,18 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.24.15
+// @version        2.24.16
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.24.15';
+var version = '2.24.16';
 
 notRunYet = false;
 
 var homepageurl = 'https://github.com/adipiciu/Travian-scripts';
-var audiofile = 'https://soundsplanet.com/authors/1001/tracks/touch_tone1.mp3';
 var bgcolor = ['#66ff66','yellow','red']; //resource bar colors
 var vHColor = '#777777'; //hints (second name) color
 var cnColors = ['#F8FFD8','#FFE85B','#FF8888','#F0B8FF','#A0F0A0']; //Center Number colors
@@ -191,8 +190,8 @@ DICT = {
 		EgyptiansAndHunso : ['update','true','false'],
 		EgyptiansAndHunsh : "Server with Egyptians, Huns or Spartans tribes",
 		servertype : "Travian Server Type",
-		servertypeh : "Server types: Travian Legends, Travian Shores of War",
-		servertypeo : ['update','Shores of War','Legends'],
+		servertypeh : "Server types: Travian Legends, Travian Northern Legends",
+		servertypeo : ['update','Northern Legends','Legends'],
 		traveloveredge : "Travel over the map's edge",
 		traveloveredgeo : ['update','Yes','No'],
 		speedart : "Speed artefact",
@@ -307,7 +306,7 @@ DICT = {
  		sspeed : "Скорость сервера",
 		sspeedh : "0 - авто, 1 (1x), 2 (2x), 3 (3x или скоростной), ...",
 		speedart : "Артефакт скорости",
-		racelist : ['Римляне','Германцы','Галлы','Nature','Натары','Египтяне','Гунны','Spartans','Vikings'],
+		racelist : ['Римляне','Германцы','Галлы','Природа','Натары','Египтяне','Гунны','Спартанцы','Викинги'],
 		cranny : "желтый уровень занятости тайника (проценты)",
 		crannyh : 'норма - 80, 70 для классического сервера или для артефакта грабителя',
 		builtin : "Встроенные инструменты",
@@ -413,7 +412,7 @@ DICT = {
  		sspeed : "Швидкість сервера",
 		sspeedh : "0 - авто, 1 (1x), 2 (2x), 3 (3x або швидкісний), ...",
 		speedart : "Артефакт швидкості",
-		racelist : ['Римляни','Тевтонці','Галли','Nature','Natars','Egyptians','Huns','Spartans','Vikings'],
+		racelist : ['Римляни','Тевтонці','Галли','Природа','Натари','Єгиптяни','Гунни','Спартанці','Вікінги'],
 		cranny : "Жовтий рівень зайнятості схованки (проценти)",
 		crannyh : 'норма - 80, 70 для класичного сервера або для артефакту злодія',
 		builtin : "Вбудовані інструменти",
@@ -506,7 +505,7 @@ DICT = {
 		info : "Információk",
 		yourrace : "Nép",
 		speedart : "Sebesség ereklye",
-		racelist : ['Római','Germán','Gall','Nature','Natars','Egyptians','Huns','Spartans','Vikings'],
+		racelist : ['Római','Germán','Gall','Természet','Natarok','Egyiptomiak','Hunok','Spártaiak','Vikingek'],
 		onallp : "Minden oldal",
 		buildand : "Visszaszámlálók megjelenítése",
 		buildandh : 'A faluk listájában (építkezések, csapatmozgások)',
@@ -612,7 +611,7 @@ DICT = {
 		info : "المعلومات",
 		yourrace : "قبيلتك",
 		speedart : "السرعة",
-		racelist : ['الرومان','الجرمان','الأغريق','Nature','الناتار','الفراعنة','المغول','Spartans','Vikings'],
+		racelist : ['الرومان','الجرمان','الأغريق','وحوش','الناتار','الفراعنة','المغول','الإسبرطيون','الفايكنج'],
 		cranny : "النسبة للون الأصفر للمخبأ (النسبة)",
 		crannyh : 'الأفتراضي 80, 70 للكلاسيك',
 		builtin : "الأدوات-المبنية",
@@ -708,7 +707,7 @@ DICT = {
 		info : "Information",
 		yourrace : "Votre peuple",
 		speedart : "Artefact de vitesse",
-		racelist : ['Romains','Germains','Gaulois','Nature','Natars','Égyptiens','Huns','Spartans','Vikings'],
+		racelist : ['Romains','Germains','Gaulois','Nature','Natars','Égyptiens','Huns','Spartiates','Vikings'],
 		onallp : "Toutes les pages",
 		buildand : "Montrer le compte à rebours pour les constructions et les attaques",
 		buildandh : 'Dans la liste des villages',
@@ -798,7 +797,7 @@ DICT = {
 		info : "Informacije",
 		yourrace : "Tvoja jedinica",
 		speedart : "Artefakt za brzinu",
-		racelist : ['Rimljani','Teutonci','Gali','Nature','Natars','Egipćani','Huni','Spartans','Vikings'],
+		racelist : ['Rimljani','Teutonci','Gali','Priroda','Natari','Egipćani','Huni','Spartanci','Vikinzi'],
 		cranny : "Žuta razina žitnice (postotak)",
 		crannyh : 'Normalno 80, 70 za klasične pljačke ili artefakt',
 		builtin : "Ugrađeni alati",
@@ -865,13 +864,6 @@ DICT = {
 		color3 : "Nadogradnja nije dostupna <br/>(Nedovoljna razina Skladišta/Žitnica)",
 		color4 : "Nadograđeno do kraja"
 	},
-	bs: { fb : "hr", // Bosnian
-		arena : "Mejdan",
-		marketpl : "Pijaca",
-		npcsumh : 'Prikaz na pijaci i zgradama',
-		rpandmp : "Mjesto okupljanja i Pijaca",
-		color3 : "Nadogradnja nije dostupna (Nedovoljna razina Skladišta/Silosa)"
-	},
 	de: { // German language, thx proll007
 		// ingame messages
 		ok : "Ok",
@@ -901,7 +893,7 @@ DICT = {
 		info : "Information",
 		yourrace : "Deine Rasse",
 		speedart : "Geschwindigkeitsartefakt",
-		racelist : ['Römer','Germanen','Gallier','Natur','Nataren','Ägypter','Hunnen','Spartans','Vikings'],
+		racelist : ['Römer','Germanen','Gallier','Natur','Nataren','Ägypter','Hunnen','Spartaner','Wikinger'],
 		onallp : "Alle Seiten",
 		buildand : "Zeige den Countdown fuer Gebaeude und Einheiten",
 		buildandh : 'In der Liste der Doerfer',
@@ -1000,7 +992,7 @@ DICT = {
 		sspeed : "Servidor speed",
 		sspeedh : "0 - automático, 1 (1x), 2 (2x), 3 (3x), ... etc.",
 		speedart : "Velocidade do artefato",
-		racelist : ['Romanos','Teutões','Gauleses','Natureza','Natares','Egípcios','Hunos','Spartans','Vikings'],
+		racelist : ['Romanos','Teutões','Gauleses','Natureza','Natarianos','Egípcios','Hunos','Espartanos','Vikings'],
 		cranny : "Nível do cereal por celeiro (Porcentagem)",
 		crannyh : 'Pré-definido com 80%, 70% para pilhagem normal ou artefato',
 		builtin : "Ferramentas Internas",
@@ -1108,7 +1100,7 @@ DICT = {
 		info : "Информация",
 		yourrace : "Вашето племе",
 		speedart : "Скоростен артефакт",
-		racelist : ['Рим','Тевтонци','Гали','Nature','Natars','Egyptians','Huns','Spartans','Vikings'],
+		racelist : ['Рим','Тевтонци','Гали','Природа','Натари','Египтяни','Хуни','Спартанци','Викинги'],
 		cranny : "предупредително(жълто) ниво на запълване на скривалището (в проценти)",
 		crannyh : 'нормално- 80, 70- за класически светове или с грабителски артефакт',
 		builtin : "Вградени инструменти",
@@ -1217,10 +1209,10 @@ DICT = {
 		sspeed : "Viteza server-ului",
 		sspeedh : "0 - auto, 1 (1x), 2 (2x), 3 (3x aka speed), ... etc.",
 		servertype : "Tipul serverului de Travian",
-		servertypeh : "Tipuri de servere: Travian Legends, Travian Shores of War",
-		servertypeo : ['update','Shores of War','Legends'],
+		servertypeh : "Tipuri de servere: Travian Legends, Travian Northern Legends",
+		servertypeo : ['update','Northern Legends','Legends'],
 		speedart : "Artefact de viteză",
-		racelist : ['Romani','Barbari','Daci','Natura','Natari','Egipteni','Huni','Spartans','Vikingi'],
+		racelist : ['Romani','Barbari','Daci','Natura','Natari','Egipteni','Huni','Spartani','Vikingi'],
 		cranny : "Culoarea galbenă la beci (în procente)",
 		crannyh : 'normal 80%, 70% pentru server clasic',
 		builtin : "Unelte incluse",
@@ -1322,7 +1314,7 @@ DICT = {
 		info : "Инфо",
 		yourrace : "Твоја раса",
 		speedart : "Артефакт брзих",
-		racelist : ['Римљани','Тевтонци','Гали','Nature','Natars','Egyptians','Huns','Spartans','Vikings'],
+		racelist : ['Римљани','Тевтонци','Гали','Природа','Натари','Египћани','Хуни','Спартанци','Викинзи'],
 		cranny : "Жути ниво силоса (проценат)",
 		crannyh : 'нормално 80, 70 ѕа класично и артефакт',
 		builtin : "Уграђени алати",
@@ -1414,7 +1406,7 @@ DICT = {
 		info : "Informacja",
 		yourrace : "Twoja rasa",
 		speedart : "Prędkość artefaktu",
-		racelist : ['Rzymianie','Germanie','Galowie','Dzikie zwierzęta','Natarzy','Egipcjanie','Hunowie','Spartans','Vikings'],
+		racelist : ['Rzymianie','Germanie','Galowie','Dzikie zwierzęta','Natarzy','Egipcjanie','Hunowie','Spartanie','Wikingowie'],
 		cranny : "żółty poziom kryjówki (procent)",
 		crannyh : 'normalny 80, 70 do grabieży na klasycznym lub artefakcie',
 		builtin : "Wbudowane narzędzia",
@@ -1512,8 +1504,8 @@ DICT = {
 		EgyptiansAndHunso : ['aktualizovať','Áno','Nie'],
 		EgyptiansAndHunsh : "Server s Egypťanmi, Hunmi alebo Sparťanmi",
 		servertype : "Typ Travian serveru",
-		servertypeh : "Server typu: Travian Legends, Travian Shores of War",
-		servertypeo : ['aktualizovať','Shores of War','Legends'],
+		servertypeh : "Server typu: Travian Legends, Travian Northern Legends",
+		servertypeo : ['aktualizovať','Northern Legends','Legends'],
 		traveloveredge : "Cestujte cez okraj mapy",
 		traveloveredgeo : ['aktualizovať','Áno','Nie'],
 		speedart : "Artefakt rýchlosti",
@@ -1622,7 +1614,7 @@ DICT = {
 		info : "Information",
 		yourrace : "Din stam",
 		speedart : "Titanskor",
-		racelist : ['Romare','Germaner','Galler','Natur','Natarer','Egyptierna','Hunnerna','Spartans','Vikings'],
+		racelist : ['Romare','Germaner','Galler','Natur','Nataren','Egyptier','Hunner','Spartaner','Vikingar'],
 		cranny : "Gul nivå på grotta (procent)",
 		crannyh : "Normal 80, 70 för klssisk eller artefakt-plundrare",
 		builtin : "Inbyggda hjälpmedel",
@@ -1702,7 +1694,7 @@ DICT = {
 		info : "Informazioni",
 		yourrace : "La tua Tribù:",
 		speedart : "Artefatto velocità",
-		racelist : ['Romani','Teutoni','Galli','Belve','Nataren','Egiziani','Unni','Spartans','Vikings'],
+		racelist : ['Romani','Teutoni','Galli','Belve','Natar','Egiziani','Unni','Spartani','Vichinghi'],
 		cranny : "Livello giallo della capacità del deposito segreto (%)",
 		crannyh : 'Normalmente 80; Per il server classico o per artefatto del Ladro 70;',
 		builtin : "Strumenti Integrati",
@@ -1795,7 +1787,7 @@ DICT = {
 		info : "Información",
 		yourrace : "Raza",
 		speedart : "Artefacto de velocidad",
-		racelist : ['Romanos','Germanos','Galos','Nature','Natars','Egyptians','Huns','Spartans','Vikings'],
+		racelist : ['Romanos','Germanos','Galos','Naturaleza','Natares','Egipcios','Hunos','Espartanos','Vikingos'],
 		cranny : "Nivel amarillo para el granero ( porcentaje )",
 		crannyh : 'normal 80, 70 para clásico o artefacto de saqueo',
 		builtin : "Herramientas adjuntas",
@@ -1902,7 +1894,7 @@ DICT = {
 		info : "訊息",
 		yourrace : "你的種族",
 		speedart : "伺服器倍速",
-		racelist : ['羅馬','條頓','高盧','Nature','Natars','埃及人','匈奴','Spartans','Vikings'],
+		racelist : ['羅馬','條頓','高盧','自然界','賴達族','埃及人','匈奴','斯巴達人','維京人'],
 		cranny : "黃色警戒線 (百分比)",
 		crannyh : '一般 80, 70 經典或藝術品加成',
 		builtin : "置入工具",
@@ -2001,7 +1993,7 @@ DICT = {
 		info : "Bilgi",
 		yourrace : "Irkın",
 		speedart : "Hız eseri",
-		racelist : ['Romanlılar','Cermenler','Galyalılar','Nature','Natarlar','Mısırlılar','Hunlar','Spartans','Vikings'],
+		racelist : ['Romanlılar','Cermenler','Galyalılar','Doğa','Natarlar','Mısırlılar','Hunlar','Spartalılar','Vikingler'],
 		cranny : "sığınak sarı seviyesi (yüzde)",
 		crannyh : 'normal 80, klasik veya eser yağması için 70 ',
 		builtin : "Entegre araçlar",
@@ -2100,7 +2092,7 @@ DICT = {
 		info : "Thông tin",
 		yourrace : "Chủng tộc của bạn",
 		speedart : "Cỗ xe của Helios",
-		racelist : ['Romans','Teutons','Gauls','Nature','Natars','Egyptians','Huns','Spartans','Vikings'],
+		racelist : ['Romans','Teutons','Gauls','Thiên nhiên','Tộc Natars','Người Ai Cập','Người Hung','Spartan','Người Viking'],
 		cranny : "Báo màu vàng khi ống tài nguyên đạt (%)",
 		crannyh : 'thông thường là 80, 70 cho làng bình thường hoặc làng có Bình rượu của Dionysus',
 		builtin : "Công cụ công trình",
@@ -2208,7 +2200,7 @@ DICT = {
 		info : "πληροφορίες",
 		yourrace : "η φυλή σου",
 		speedart : "ταχύτητα αντικειμένου",
-		racelist : ['Ρωμαίοι','Τεύτονες','Γαλάτες','Nature','Natars','Egyptians','Huns','Spartans','Vikings'],
+		racelist : ['Ρωμαίοι','Τεύτονες','Γαλάτες','Φύση','Νατάριοι','Αιγύπτιοι','Ούννοι','Σπαρτιάτες','Βίκινγκς'],
 		cranny : "κίτρινο επίπεδο κρυψώνας (ποσοστό)",
 		crannyh : 'κανονικό 80, 70 για κλασικό ή αντικείμενο λεηλασίας',
 		builtin : "Ενσωματωμένα εργαλεία",
@@ -2315,7 +2307,7 @@ DICT = {
 		info : "Informatie",
 		yourrace : "Jouw ras",
 		speedart : "Snelheids artefact",
-		racelist : ['Romeinen','Germanen','Galliërs','Nature','Natars','Egyptians','Huns','Spartans','Vikings'],
+		racelist : ['Romeinen','Germanen','Galliërs','Natuur','Natars','Egyptenaren','Hunnen','Spartanen','Vikingen'],
 		cranny : "geel niveau van schuilplaats (procent)",
 		crannyh : 'normaal 80, 70 voor klassieke servers of artefact plunderen',
 		builtin : "Ingebouwde hulpmiddelen",
@@ -2426,10 +2418,10 @@ DICT = {
 		sspeed : "Kecepatan Server",
 		sspeedh : "0 - otomatis, 1 (1x), 2 (2x), 3 (3x als speed), ... dll.",
 		servertype : "Tipe Travian Server",
-		servertypeh : "Tipe Server: Travian Legends, Travian Shores of War",
-		servertypeo : ['pembaruan','Shores of War','Legends'],
+		servertypeh : "Tipe Server: Travian Legends, Travian Northern Legends",
+		servertypeo : ['pembaruan','Northern Legends','Legends'],
 		speedart : "Speed artefak",
-		racelist : ['Romawi','Teuton','Galia','Alam','Natar','Mesir','Mongol','Spartans','Vikings'],
+		racelist : ['Romawi','Teuton','Galia','Alam','Natar','Suku Mesir','Suku Hun','Warga Sparta','Suku Viking'],
 		cranny : "Level kuning dari (persen)",
 		crannyh : 'normal 80, 70 utk klasik atau penjarahan artefak',
 		builtin : "Perkakas bawaan",
@@ -2526,6 +2518,7 @@ var img_wounded = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAQCAMAAAD
 var img_out = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAADvSURBVDhPzdK/i4FxAMfxByXK5A+4bFfqysLCX6AbzAZluMGsmJUSg0wWWU1kVjYrxQ23XlnUSZ0yiXh/nnvi6MEzeter5/l+6/nx/T6P8ZS58YYKRtjgGy28w4NTFwOrGNqIoo8mZkggB10zxg62BZGBzxyd04VJ/KChCbtS1vFeefwiZI6swuhBr/yoF3yiqIELEXTwijmmuE5zpb9Twws9aI20dnwLpZs5bW8dT2kJAzhdwgTmEq5zsokFLHGxif/TZ8zC7jOmsUJVE7eKQ3+elKG3+sAQenINAdxMu6w9qeMLByzQhW7mx9NkGEcQqinD/jxx2gAAAABJRU5ErkJggg=="
 var img_in = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAD8SURBVDhPzdIxa8JAGMbx2IJ06CD9AOpcKLjUyU1wEAdnB7cOHToVdHQpiIs4uYjfQHBVcHNV0A5Cp46FiqDgqNT/czlsAglx9IFfLu+Fy+Xu4lxlbvCEJqbY4xs9lHCLc3yFTRZ9PGOILpbI4RUaM8MBgXlAFXem+o8GFvGLjjouSdm23rxji7SpIqIljJAylZskPlFXEdOFNJBxb31RnwZ8oYIF4tCLd+rTjisqgpKwrU7Cm6NtI6OZxng0lRt90RxmCVEp2NabGtYI3UTN8IagY9Q+bNBSR1jy0J8nH9BRvmACzaw/9B6h0S5rzW2s8IcfDKCX6fnVxHFOUcIpzaJ0h3UAAAAASUVORK5CYII="
 
+var mp3_alert = "data:audio/mpeg;base64,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"
 
 /*********************** common library ****************************/
 
@@ -5228,7 +5221,7 @@ function gtext ( txt ) {
 RB.dSetup = [//	0	1	2	3	4	5	6	7	8	9
 	/* 0 */	version,0,	7,	0,	1,	7,	1,	1,	3,	0,
 	/* 1 */		2,	1,	2,	0,	1,	1,	2,	0,	1,	3,
-	/* 2 */		1,	1,	1,	10,	80,	1,	1,	0,	0,	audiofile,
+	/* 2 */		1,	1,	1,	10,	80,	1,	1,	0,	0,	0,
 	/* 3 */		0,	15,	1,	1,	0,	0,	1,	1,	1,	0,
 	/* 4 */		'',	'',	'',	'',	'',	0,	0,  0,  0,  1,
 	/* 5 */		0,	0,	0,	0,	0,	0,	0,  0,  0,  0
@@ -5298,7 +5291,6 @@ function rbSetup () {
 			['T', 'ln3', gtext("savedls")+' (3)'],
 		['I', 0, gtext("notifi"), gtext("notification")],
 			['SEL',28, gtext("method"), [gtext('none'),'Alert pop-up','HTML5 Audio']],
-			['T', 29, gtext("audiourl"), 'https://... .mp3 .ogg .wav'],
 			['B', 0, gtext("audiotest"), ['test',testAudio]],
 		['I', 0, gtext("colorCustomize"), gtext("colorHint")],
 			['T', 40, gtext("color0")],
@@ -5325,7 +5317,6 @@ function rbSetup () {
 			else
 				RB.Setup[parseInt(aS[i].name)] = crtValue;
 		}
-		if(RB.Setup[29].length < 2) RB.Setup[29] = audiofile;
 		saveCookie( 'RBSetup', 'Setup' );
 		destroySetup();
 		location.reload();
@@ -7158,7 +7149,7 @@ function show_alert () {
 			alert('ding ding');
 			break;
 		case 2: // HTML5 audio
-			document.body.appendChild($e('AUDIO',[['id',allIDs[22]],['src',RB.Setup[29]],['autoplay','true']]));
+			document.body.appendChild($e('AUDIO',[['id',allIDs[22]],['src',mp3_alert],['autoplay','true']]));
 			break;
 	}
 	lastAlert = nt;
@@ -7169,7 +7160,6 @@ function testAudio () {
 	if( ! sW ) return;
 	lastAlert = 0;
 	RB.Setup[28] = $gn(28)[0].value;
-	RB.Setup[29] = $gn(29)[0].value;
 	show_alert();
 }
 
@@ -7912,7 +7902,7 @@ function detectAttack () {
 	function triggerAlarm () {
 		var audioT = $g(allIDs[22]);
 		if( audioT ) audioT.parentNode.removeChild(audioT);
-		document.body.appendChild($e('AUDIO',[['id',allIDs[22]],['src',RB.Setup[29]],['autoplay','true'],['loop','true']]));
+		document.body.appendChild($e('AUDIO',[['id',allIDs[22]],['src',mp3_alert],['autoplay','true'],['loop','true']]));
 	}
 	function noAttack () {
 		RB.attackList[0] = Date.now();
@@ -8647,7 +8637,7 @@ function goldClubInfo () {
 				if( typeof(chkOasisFL[fListID]) == 'undefined'  )
 					chkOasisFL[fListID] = new Object;
 				chkOasisFL[fListID].fl = true;
-				var anim = $em('BUTTON',[trImg('unit u31'),' ??? '],[['type','button'],['onclick','return false;']]);
+				var anim = $em('BUTTON',[trImg('unit u31'),' ??? '],[['type','button'],['style','color:black;'],['onclick','return false;']]);
 				anim.addEventListener('click',function(x) { return function() { findAnim(x[0],x[1],x[2]) }}([fTable,fListID,anim]),false);
 				$am(sp.firstElementChild,[' | ',anim]);
 			}
@@ -9144,7 +9134,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Travian Resource Bar+";
-		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Aug 22, 2024:</p> <ul><li>Minor fix for Viking tribe</li></ul> <p>Version 2.24.14 - Aug 14, 2024:</p> <ul><li>Added support for the new Viking tribe</li> <li>Added Slovak translation</li></ul>";
+		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Sep 30, 2024:</p> <ul><li>Fixed farmlist oasis scan color</li><li>Added tribes names translations</li><li>Changed alert sound from external url to embedded audio</li></ul> <p>Version 2.24.14 - Aug 14, 2024:</p> <ul><li>Added support for the new Viking tribe</li> <li>Added Slovak translation</li></ul>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
