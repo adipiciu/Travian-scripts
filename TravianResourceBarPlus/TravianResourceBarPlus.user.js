@@ -12,14 +12,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.24.16
+// @version        2.24.17
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.24.16';
+var version = '2.24.17';
 
 notRunYet = false;
 
@@ -4627,6 +4627,7 @@ function sendResTropAdd ( aLink, aType ) {
 
 function vlist_addButtonsT4 () {
 	var vlist = $g("sidebarBoxVillagelist");
+	if( ! vlist ) { vlist = $g("sidebarBoxVillageList") }
 	var villages = $gc("listEntry",vlist);
 	if (villages.length > 0 ) {
 		for ( var vn = 0; vn < villages.length; vn++ ) {
@@ -4664,7 +4665,7 @@ function vlist_addButtonsT4 () {
 		if( RB.bodyH[1] == 1 ) $at(vilB,[['style','display:none']]);
 		var hideP = imgHide(1);
 		hideP.addEventListener('click', function (x) { return function() { bodyHide(x); }}([vilB,1,hideP]), false);
-		vilT.appendChild($ee('THEAD',$em('TR',[$c(hideP),$c($gc('boxTitle',$g('sidebarBoxVillagelist'))[0].innerHTML.onlyText(),[['colspan',3],['style','font-weight:bold;']])])));
+		vilT.appendChild($ee('THEAD',$em('TR',[$c(hideP),$c($gc('boxTitle',vlist)[0].innerHTML.onlyText(),[['colspan',3],['style','font-weight:bold;']])])));
 		for( var i=0; i<villages.length; i++) {
 			vLink[i] = $a($gc("name",villages[i])[0].innerHTML,[['href',linkVSwitch[i]]]);
 			var cl = villages_id[i]==village_aid?"dot hl":"dot";
@@ -4673,7 +4674,7 @@ function vlist_addButtonsT4 () {
 		vilT.appendChild(vilB);
 		if( RB.Setup[21] == 1 ) makeFloatD(vilT,7);
 		if( RB.Setup[21] == 2 ) {
-			var xy = offsetPosition( $g("sidebarBoxVillagelist") );
+			var xy = offsetPosition( vlist );
 			makeFloat(vilT,xy[0]+25,xy[1]+90);
 		}
 	}
@@ -5416,7 +5417,7 @@ function parseSpieler () {
 	}
 }
 
-var vLinksPat = '//div[@id="sidebarBoxVillagelist"]//li/a/div[@class="name"] | //div[@id="sidebarBoxVillagelist"]//a/span/span[@class="name"]';
+var vLinksPat = '//div[@id="sidebarBoxVillagelist"]//li/a/div[@class="name"] | //div[@id="sidebarBoxVillagelist"]//a/span/span[@class="name"] | //div[@id="sidebarBoxVillageList"]//a/span/span[@class="name"]';
 
 function overviewWarehouse () {
 	function refreshOview () {
@@ -6572,7 +6573,9 @@ function bigQuickLinks () {
 	for( var j = 0; j < childrenB.length; j++ ) {
 		imgs[j] = $gt('svg',childrenB[j])[0];
 	}
-	imgs[4] = $gt('svg',$g('sidebarBoxVillagelist'))[0];
+	var vlist = $g("sidebarBoxVillagelist");
+	if( ! vlist ) { vlist = $g("sidebarBoxVillageList") }
+	imgs[4] = $gt('svg',vlist)[0];
 	imgs[4].style.width = '24px';
 
 	imgs[5] = $e('i', [['class','healTime_medium'],['style','filter: grayscale(100%);']]);
@@ -9134,7 +9137,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Travian Resource Bar+";
-		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Sep 30, 2024:</p> <ul><li>Fixed farmlist oasis scan color</li><li>Added tribes names translations</li><li>Changed alert sound from external url to embedded audio</li></ul> <p>Version 2.24.14 - Aug 14, 2024:</p> <ul><li>Added support for the new Viking tribe</li> <li>Added Slovak translation</li></ul>";
+		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Nov 7, 2024:</p> <ul><li>Fixes for the latest travian update</li></ul> <p>Version 2.14.15 - Sep 30, 2024:</p> <ul><li>Fixed farmlist oasis scan color</li><li>Added tribes names translations</li><li>Changed alert sound from external url to embedded audio</li></ul> <p>Version 2.24.14 - Aug 14, 2024:</p> <ul><li>Added support for the new Viking tribe</li> <li>Added Slovak translation</li></ul>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
