@@ -12,14 +12,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.24.17
+// @version        2.25.1
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.24.17';
+var version = '2.25.1';
 
 notRunYet = false;
 
@@ -3351,13 +3351,11 @@ function marketSend () {
 		setMerchantsCell(tMText, tRText, mhColor);
 	}
 	function getMaxRTr () {
-		//var maxRRTr = parseInt(maxRC.value);
-		var maxRRTr = parseInt(maxTr);
-		//var maxRTr = isNaN(maxRRTr)? maxTr: maxRRTr;
+		var maxRRTr = parseInt(maxRC.value);
+		//var maxRRTr = parseInt(maxTr);
 		var maxRTr = isNaN(maxRRTr)? maxTr: maxRRTr;
-		//var maxRMM = parseInt(maxRM.value);
-		var maxRMM = parseInt(maxM);
-		//var maxRTTr = isNaN(maxRMM)? maxTr: maxRMM * maxC;
+		var maxRMM = parseInt(maxRM.value);
+		//var maxRMM = parseInt(maxM);
 		var maxRTTr = isNaN(maxRMM)? maxTr: maxRMM * maxC;
 		return Math.min(maxRTr, maxRTTr);
 	}
@@ -3656,9 +3654,9 @@ function marketSend () {
 		imgs[i].appendChild(checkRes[i]);
 	};
 
-	//var maxRM = $e('INPUT',[['type', 'TEXT'],['size',2],['value',maxM],['style','font-size:80%;']]);
-	//var maxRC = $e('INPUT',[['type', 'TEXT'],['size',5],['value',maxTr],['style','font-size:80%;']]);
-	//moC.appendChild($em('SPAN',[maxRM,' Σ=',maxRC],[['style','margin:0px 5px;font-size:12px;']]));
+	var maxRM = $e('INPUT',[['type', 'TEXT'],['size',2],['value',maxM],['style','font-size:80%;']]);
+	var maxRC = $e('INPUT',[['type', 'TEXT'],['size',5],['value',maxTr],['style','font-size:80%;']]);
+	moC.appendChild($em('SPAN',[maxRM,' Σ=',maxRC],[['style','margin:0px 5px;font-size:12px;']]));
 
 
 	var summary = $gc("summary",basee)[0];
@@ -4626,8 +4624,7 @@ function sendResTropAdd ( aLink, aType ) {
 // begin Quick actions to my other villages
 
 function vlist_addButtonsT4 () {
-	var vlist = $g("sidebarBoxVillagelist");
-	if( ! vlist ) { vlist = $g("sidebarBoxVillageList") }
+	var vlist = $g("sidebarBoxVillageList");
 	var villages = $gc("listEntry",vlist);
 	if (villages.length > 0 ) {
 		for ( var vn = 0; vn < villages.length; vn++ ) {
@@ -4741,14 +4738,12 @@ function progressbar_updValues() {
 //Start kram89 code heavily modified Serj_LV :)
 if( RB.bodyH[0] == 1 ) {
 	if( timerN.length < 4 ){
-		var resource = Math.floor(incomepersecond[j]*3600);
 		timerN[j] = new Object();
-		var resoColor = resource < 0 ? 'red':'black';
 		timerN[j].resotime = timerRB[j].val.cloneNode(true);
 		timerN[j].perreso = $e('span');
 		timerN[j].divme1 = $ee('div',$em('span',[timerN[j].resotime,' ',timerN[j].perreso],[['style',"white-space:nowrap;"]]),
-			[['style','position:absolute;top:33px;left:'+rect[j]+'px;text-align:center;width:86px;background-color:#fef0ce;border-radius:5px;']]);
-		$g('stockBar').appendChild(timerN[j].divme1);
+			[['style','position:absolute;top:27px;text-align:center;width:86px;background-color:#fef0ce;border-radius:5px;']]);
+		$g('l'+(j+1)).parentNode.appendChild(timerN[j].divme1);
 	}
 
 	timerN[j].resotime.textContent = formatTime(timerRB[j].time,0);
@@ -4778,7 +4773,7 @@ if( RB.bodyH[0] == 1 ) {
 	}
 
 } else if( timerN.length != 0 ) {
-	$g('stockBar').removeChild(timerN[j].divme1);
+	$g('l'+(j+1)).parentNode.removeChild(timerN[j].divme1);
 	if( j == 3 ) timerN.length = 0;
 }
 //end code
@@ -5417,7 +5412,7 @@ function parseSpieler () {
 	}
 }
 
-var vLinksPat = '//div[@id="sidebarBoxVillagelist"]//li/a/div[@class="name"] | //div[@id="sidebarBoxVillagelist"]//a/span/span[@class="name"] | //div[@id="sidebarBoxVillageList"]//a/span/span[@class="name"]';
+var vLinksPat = '//div[@id="sidebarBoxVillageList"]//a/span/span[@class="name"]';
 
 function overviewWarehouse () {
 	function refreshOview () {
@@ -6573,8 +6568,7 @@ function bigQuickLinks () {
 	for( var j = 0; j < childrenB.length; j++ ) {
 		imgs[j] = $gt('svg',childrenB[j])[0];
 	}
-	var vlist = $g("sidebarBoxVillagelist");
-	if( ! vlist ) { vlist = $g("sidebarBoxVillageList") }
+	var vlist = $g("sidebarBoxVillageList");
 	imgs[4] = $gt('svg',vlist)[0];
 	imgs[4].style.width = '24px';
 
@@ -9137,7 +9131,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Travian Resource Bar+";
-		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Nov 7, 2024:</p> <ul><li>Fixes for the latest travian update</li></ul> <p>Version 2.14.15 - Sep 30, 2024:</p> <ul><li>Fixed farmlist oasis scan color</li><li>Added tribes names translations</li><li>Changed alert sound from external url to embedded audio</li></ul> <p>Version 2.24.14 - Aug 14, 2024:</p> <ul><li>Added support for the new Viking tribe</li> <li>Added Slovak translation</li></ul>";
+		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Jan 10, 2025:</p> <ul><li>Fixed resource bar timer display when minimized on the travian mobile version</li><li>Added back in the market page the possibility to specify a number of merchants when splitting resources by % or =</li></ul> <p>Version 2.14.17 - Nov 7, 2024:</p> <ul><li>Fixes for the latest travian update</li></ul> <p>Version 2.14.15 - Sep 30, 2024:</p> <ul><li>Fixed farmlist oasis scan color</li><li>Added tribes names translations</li><li>Changed alert sound from external url to embedded audio</li></ul> <p>Version 2.24.14 - Aug 14, 2024:</p> <ul><li>Added support for the new Viking tribe</li> <li>Added Slovak translation</li></ul>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
