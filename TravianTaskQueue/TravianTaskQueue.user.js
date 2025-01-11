@@ -12,14 +12,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version     2.0.16
+// @version     2.0.17
 // ==/UserScript==
 
 (function () {
 
 function allInOneTTQ () {
 notRunYet = false;
-var sCurrentVersion = "2.0.16";
+var sCurrentVersion = "2.0.17";
 
 //find out if Server errors
 var strTitle = document.title;
@@ -687,7 +687,7 @@ if (init) {
 function vlist_addButtonsT4 () {
 	var vlist = $id("sidebarBoxVillagelist");
 	if( ! vlist ) { vlist = $id("sidebarBoxVillageList") }
-	var villages = $gc("listEntry",vlist);
+	var villages = $gc("listEntry village",vlist);
 	for ( var vn = 0; vn < villages.length; vn++ ) {
 		var linkEl = $gt("a",villages[vn])[0];
 		linkVSwitch[vn] = linkEl.getAttribute('href');
@@ -751,7 +751,7 @@ function TTQ_showMenuCommand() {
 	if( ! vlist ) { vlist = $id("sidebarBoxVillageList") }
 	var iMyRace = $gt('li',vlist); //Recycled variable
 	if ( iMyRace.length ==0 ) {
-		iMyRace = $gc('listEntry',vlist);
+		iMyRace = $gc('listEntry village',vlist);
 	}
 	var l8, m8, n8, nFL=true;  //Sorry for the names, i was just being funny.
 	for ( n8 = 0, m8 = 0, l8 = iMyRace.length ; m8 < l8 ; ++m8 ) {
