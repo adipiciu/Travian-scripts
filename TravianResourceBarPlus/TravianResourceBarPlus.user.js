@@ -12,14 +12,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.25.1
+// @version        2.25.2
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.25.1';
+var version = '2.25.2';
 
 notRunYet = false;
 
@@ -4625,7 +4625,7 @@ function sendResTropAdd ( aLink, aType ) {
 
 function vlist_addButtonsT4 () {
 	var vlist = $g("sidebarBoxVillageList");
-	var villages = $gc("listEntry",vlist);
+	var villages = $gc("listEntry village",vlist);
 	if (villages.length > 0 ) {
 		for ( var vn = 0; vn < villages.length; vn++ ) {
 			var linkEl = $gt("a",villages[vn])[0];
@@ -5412,7 +5412,7 @@ function parseSpieler () {
 	}
 }
 
-var vLinksPat = '//div[@id="sidebarBoxVillageList"]//a/span/span[@class="name"]';
+var vLinksPat = '//div[@id="sidebarBoxVillageList"]//a//span[@class="name"]';
 
 function overviewWarehouse () {
 	function refreshOview () {
@@ -6562,6 +6562,7 @@ function bigQuickLinks () {
 	var sidebarBoxActiveVillage = $g('sidebarBoxActiveVillage');
 	var bigIconsHeader = $gc('buttonsWrapper', sidebarBoxActiveVillage)[0];
 	var bigIconsFooter = $gc('content', sidebarBoxActiveVillage)[0];
+	var villageBoxes = $g('villageBoxes');
 	var childrenB = $gt('a',bigIconsHeader);
 	var imgs = [];
 
@@ -6574,32 +6575,35 @@ function bigQuickLinks () {
 
 	imgs[5] = $e('i', [['class','healTime_medium'],['style','filter: grayscale(100%);']]);
 
-	if (childrenB[0].className.search('green') == -1 ) { //Plus account active
-		for( var j = 0; j < childrenB.length; j++ ) {
-			childrenB[j].style.display = "none";
-		}
-		bigIconsHeader.insertBefore(CreateBigLinkButton('workshop',1,imgs[3]), bigIconsHeader.firstChild);
-		bigIconsHeader.insertBefore(CreateBigLinkButton('stable',5,imgs[2]), bigIconsHeader.firstChild);
-		bigIconsHeader.insertBefore(CreateBigLinkButton('barracks',4,imgs[1]), bigIconsHeader.firstChild);
-		bigIconsHeader.insertBefore(CreateBigLinkButton('market',2,imgs[0]), bigIconsHeader.firstChild);
-		if( RB.Setup[16] != 0 ) { bigIconsHeader.insertBefore(CreateBigLinkButton('overview',0,imgs[4]), bigIconsHeader.firstChild); }			
+	if (villageBoxes) {
 	} else {
-		plusAccount = true;
-		if( RB.Setup[16] != 0 ) { bigIconsHeader.insertBefore(CreateBigLinkButton('overview',0,imgs[4]), bigIconsHeader.firstElementChild) }
-		for( var j = 0; j < childrenB.length; j++ ) {
-			// fix links for Plus accounts
-			childrenB[j].href = childrenB[j].href.replace('?gid=17', "?id=" + RB.village_Dorf2[bigIcon[2][1]]+bigIcon[2][2]);
-			childrenB[j].href = childrenB[j].href.replace('?gid=19', "?id=" + RB.village_Dorf2[bigIcon[4][1]]+bigIcon[4][2]);
-			childrenB[j].href = childrenB[j].href.replace('?gid=20', "?id=" + RB.village_Dorf2[bigIcon[5][1]]+bigIcon[5][2]);
-			childrenB[j].href = childrenB[j].href.replace('?gid=21', "?id=" + RB.village_Dorf2[bigIcon[1][1]]+bigIcon[1][2]);
+		if (childrenB[0].className.search('green') == -1 ) { //Plus account active
+			for( var j = 0; j < childrenB.length; j++ ) {
+				childrenB[j].style.display = "none";
+			}
+			bigIconsHeader.insertBefore(CreateBigLinkButton('workshop',1,imgs[3]), bigIconsHeader.firstChild);
+			bigIconsHeader.insertBefore(CreateBigLinkButton('stable',5,imgs[2]), bigIconsHeader.firstChild);
+			bigIconsHeader.insertBefore(CreateBigLinkButton('barracks',4,imgs[1]), bigIconsHeader.firstChild);
+			bigIconsHeader.insertBefore(CreateBigLinkButton('market',2,imgs[0]), bigIconsHeader.firstChild);
+			if( RB.Setup[16] != 0 ) { bigIconsHeader.insertBefore(CreateBigLinkButton('overview',0,imgs[4]), bigIconsHeader.firstChild); }			
+		} else {
+			plusAccount = true;
+			if( RB.Setup[16] != 0 ) { bigIconsHeader.insertBefore(CreateBigLinkButton('overview',0,imgs[4]), bigIconsHeader.firstElementChild) }
+			for( var j = 0; j < childrenB.length; j++ ) {
+				// fix links for Plus accounts
+				childrenB[j].href = childrenB[j].href.replace('?gid=17', "?id=" + RB.village_Dorf2[bigIcon[2][1]]+bigIcon[2][2]);
+				childrenB[j].href = childrenB[j].href.replace('?gid=19', "?id=" + RB.village_Dorf2[bigIcon[4][1]]+bigIcon[4][2]);
+				childrenB[j].href = childrenB[j].href.replace('?gid=20', "?id=" + RB.village_Dorf2[bigIcon[5][1]]+bigIcon[5][2]);
+				childrenB[j].href = childrenB[j].href.replace('?gid=21', "?id=" + RB.village_Dorf2[bigIcon[1][1]]+bigIcon[1][2]);
+			}
 		}
+	
+		var extraBtns = $e('div', [['class','buttonsWrapper'],['style','display: flex; flex-direction: row; justify-content: flex-end; margin: 0 25px -40px;']]);
+		bigIconsFooter.appendChild(extraBtns);
+		extraBtns.appendChild(CreateBigLinkButton('barracks',8,imgs[1]));
+		extraBtns.appendChild(CreateBigLinkButton('stable',9,imgs[2]));
+		extraBtns.appendChild(CreateBigLinkButton('hospital',10,imgs[5]));
 	}
-
-	var extraBtns = $e('div', [['class','buttonsWrapper'],['style','display: flex; flex-direction: row; justify-content: flex-end; margin: 0 25px -40px;']]);
-	bigIconsFooter.appendChild(extraBtns);
-	extraBtns.appendChild(CreateBigLinkButton('barracks',8,imgs[1]));
-	extraBtns.appendChild(CreateBigLinkButton('stable',9,imgs[2]));
-	extraBtns.appendChild(CreateBigLinkButton('hospital',10,imgs[5]));
 }
 
 function karteDistance () {
@@ -7965,7 +7969,7 @@ function detectAttack () {
 		var aLink = fullName +'dorf1.php';
 		ajaxRequest(aLink, 'GET', null, function(ajaxResp) {
 			var ad = ajaxNDIV(ajaxResp);
-			var move = $xf('.//div[contains(@class,"listEntry") and contains(@class,"attack")]','f',ad);
+			var move = $xf('.//div[contains(@class,"listEntry village") and contains(@class,"attack")]','f',ad);
 			ad = null;
 			if (move) { 
 				triggerAlarm();
@@ -9131,7 +9135,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Travian Resource Bar+";
-		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Jan 10, 2025:</p> <ul><li>Fixed resource bar timer display when minimized on the travian mobile version</li><li>Added back in the market page the possibility to specify a number of merchants when splitting resources by % or =</li></ul> <p>Version 2.14.17 - Nov 7, 2024:</p> <ul><li>Fixes for the latest travian update</li></ul> <p>Version 2.14.15 - Sep 30, 2024:</p> <ul><li>Fixed farmlist oasis scan color</li><li>Added tribes names translations</li><li>Changed alert sound from external url to embedded audio</li></ul> <p>Version 2.24.14 - Aug 14, 2024:</p> <ul><li>Added support for the new Viking tribe</li> <li>Added Slovak translation</li></ul>";
+		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Jan 11, 2025:</p> <ul><li>Added basic support for the Travian New Year's Special 2025 servers</li><li></li></ul> <p>Version 2.25.1 - Jan 10, 2025:</p> <ul><li>Fixed resource bar timer display when minimized on the travian mobile version</li><li>Added back in the market page the possibility to specify a number of merchants when splitting resources by % (percent) or = (equal)</li></ul>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
