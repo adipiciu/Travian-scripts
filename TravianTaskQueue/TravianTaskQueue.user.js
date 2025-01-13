@@ -12,14 +12,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version     2.0.17
+// @version     2.0.18
 // ==/UserScript==
 
 (function () {
 
 function allInOneTTQ () {
 notRunYet = false;
-var sCurrentVersion = "2.0.17";
+var sCurrentVersion = "2.0.18";
 
 //find out if Server errors
 var strTitle = document.title;
@@ -766,8 +766,8 @@ function TTQ_showMenuCommand() {
 		var xy = coordZToXY(villages_id[n8]);
 		tX = xy[0];
 		tY = xy[1];
-		vName = $gc('name',tA)[0].innerHTML;
-		vName = "<span class ='ttq_village_name' onclick='window.location = \""+tA.href+"\";return false;' title='"+aLangStrings[80]+"'>" + vName + "</span>&nbsp;<span class ='ttq_village_name ttq_village_coords' title='"+aLangStrings[81]+"' onclick='window.location = \"position_details.php?x="+tX+"&y="+tY+"\";return false;' >(" + tX + "|" + tY + ")</span>";
+		vName = $gc('name',tA)[0].textContent;
+		vName = '<span class ="ttq_village_name" onclick="window.location = \''+tA.href+'\';return false;" title="'+aLangStrings[80]+'">' + vName + '</span>&nbsp;<span class ="ttq_village_name ttq_village_coords" title="'+aLangStrings[81]+'" onclick="window.location = \'' + window.location.origin + '/position_details.php?x='+tX+'&y='+tY+'\';return false;" >(' + tX + '|' + tY + ')</span>';
 		myPlaceNames[parseInt(tA.href.split("=")[1])] = vName;  // village id
 		myPlaceNames[tX+" "+tY] = vName;
 		n8++;
@@ -935,7 +935,7 @@ function checkSetTasks() {
 	tA = getOption("RELOAD_AT", 0, "integer");
 	if ( tA > 0 ) {
 		if( tA <= oDate ) {
-			window.location = "dorf1.php";
+			window.location.reload();
 			return;
 		}
 	} else setOption('RELOAD_AT', Math.floor((oDate*1000 + Math.round(ttqRandomNumber()*60000))/1000));
@@ -3045,7 +3045,7 @@ function handleMerchantRequestConfirmation(httpRequest, options) {
 	_log(2,"handleMerchantRequestConfirmation> Begin. options = " + options);
 	if (httpRequest.readyState == 4) {
 		var aTask = options;
-		var oldName = options[2];
+		var oldName = getVillageNameZ(parseInt(options[2]));
 		var oldCoords = aTask[3].split("_");
 		oldCoords = "(" + oldCoords[0] + "|" + oldCoords[1] + ")";
 		var oldVID = parseInt(aTask[5]);
@@ -3599,7 +3599,7 @@ function getVillageNameXY(iVillageX, iVillageY){
 	iVillageY = parseInt(iVillageY);
 	if ( isNaN(iVillageX) || Math.abs(iVillageX) > mapRadius || isNaN(iVillageY) ||  Math.abs(iVillageY) > mapRadius ) return aLangStrings[2];
 	if ( typeof(myPlaceNames[iVillageX+" "+iVillageY]) != "undefined" ) return myPlaceNames[iVillageX+" "+iVillageY];
-	var nV, tStr1 = "<span class ='ttq_village_name' title='"+aLangStrings[81]+"' onclick='window.location = \"position_details.php?x="+iVillageX+"&y="+iVillageY+"\";return false;' >";
+	var nV, tStr1 = '<span class ="ttq_village_name" title="'+aLangStrings[81]+'" onclick="window.location = \'' + window.location.origin + '/position_details.php?x='+iVillageX+'&y='+iVillageY+'\';return false;">';
 	var tStr2 = "("+iVillageX+"|"+iVillageY+")</span>";
 	for ( var i = 0, k = otherPlaceNames.length ; i < k ; ++i ) {
 		nV = otherPlaceNames[i].split("|");
