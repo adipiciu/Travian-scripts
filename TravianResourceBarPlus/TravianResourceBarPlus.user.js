@@ -12,14 +12,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.25.3
+// @version        2.25.4
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.25.3';
+var version = '2.25.4';
 
 notRunYet = false;
 
@@ -219,14 +219,15 @@ DICT = {
 		sendres : "Show &laquo;send resource/troops&raquo; icons",
 		sendmess : "Show &laquo;send message&raquo; icons",
 		dorf12links : "Show &laquo;village inside and outside&raquo; icons",
-		vtcoords : "Show village coordinates in village table",
+		vtcoords : "Show village coordinates in village list",
+		vtnames : "Show village names in village list",
 		analyzer : "World analyzer",
 		bigicon : "Show Rally Point icon",
-		addvtable : "Show additional village overview table",
+		addvtable : "Show village list window",
 		addvtableo : ['off','on','stick'],
 		opennote : "Automatically open Notes window",
 		notesize : "Size of Notes window",
-		openoview : "Automatically open villages overview",
+		openoview : "Automatically open villages overview window",
 		resbar : "Resource bar",
 		showres : "Show resource bar in window",
 		redbl : "red (in hours)",
@@ -265,7 +266,8 @@ DICT = {
 		color1 : "Upgrade via NPC",
 		color2 : "Upgrade not possible <br/>(not enough resources)",
 		color3 : "Upgrade not possible <br/>(not enough capacity of granaries/warehouses)",
-		color4 : "Final level"
+		color4 : "Final level",
+		eyecomfort : "Eye comfort on/off"
 	},
 	ru: {
 		// ссобщения в игре
@@ -4765,7 +4767,7 @@ function vlist_addButtonsT4 () {
 		for( var i=0; i<villages.length; i++) {
 			vLink[i] = $a($gc("name",villages[i])[0].innerHTML,[['href',linkVSwitch[i]]]);
 			var cl = villages_id[i]==village_aid?"dot hl":"dot";
-			vilB.appendChild($em('TR',[$c('&#x25CF;',[['class',cl]]),$c($ee('DIV',vLink[i])),RB.Setup[38] != 0 ? $c($a(printCoords(villages_id[i]),[['href',linkVSwitch[i]]])) : '',$c(addDorf12Links(linkVSwitch[i],0),[['style','width:40px;']]),$c(addARLinks(villages_id[i],0))]));
+			vilB.appendChild($em('TR',[$c('&#x25CF;',[['class',cl]]),RB.Setup[60] != 0 ? $c($ee('DIV',vLink[i])) : '',RB.Setup[38] != 0 ? $c($a(printCoords(villages_id[i]),[['href',linkVSwitch[i]]])) : '',$c(addDorf12Links(linkVSwitch[i],0),[['style','width:40px;']]),$c(addARLinks(villages_id[i],0))]));
 		}
 		vilT.appendChild(vilB);
 		if( RB.Setup[21] == 1 ) makeFloatD(vilT,7);
@@ -4982,8 +4984,8 @@ function progressbar_init() {
     var alink3 = $a('[M+]', [['href', jsVoid],['style','font-weight:400;'],['title',gtext("res90")]]);
     alink3.addEventListener('click', saveSpaceLeftToMem, false);
 
-	var aImg3 = $e('IMG',[['src',img_lightbulb],['title',gtext("darkmode")],['style','padding:0px 2px;cursor:pointer;vertical-align: middle;filter: grayscale('+RB.Setup[59]+');']]);
-	aImg3.addEventListener('click', darkMode, false);
+	var aImg3 = $e('IMG',[['src',img_lightbulb],['title',gtext("eyecomfort")],['style','padding:0px 2px;cursor:pointer;vertical-align: middle;filter: grayscale('+RB.Setup[59]+');']]);
+	aImg3.addEventListener('click', eyeComfort, false);
 
 	var hideP = imgHide(0);
 	hideP.addEventListener('click', function (x) { return function() { bodyHide(x); }}([tblBody,0,hideP]), false);
@@ -5322,7 +5324,8 @@ RB.dSetup = [//	0	1	2	3	4	5	6	7	8	9
 	/* 2 */		1,	1,	1,	10,	80,	1,	1,	0,	0,	0,
 	/* 3 */		0,	15,	1,	1,	0,	0,	1,	1,	1,	0,
 	/* 4 */		'',	'',	'',	'',	'',	0,	0,  0,  0,  1,
-	/* 5 */		0,	0,	0,	0,	0,	0,	0,  0,  0,  0
+	/* 5 */		0,	0,	0,	0,	0,	0,	0,  0,  0,  0,
+	/* 6 */		1
 			];
 RB.Setup = RB.dSetup.slice();
 
@@ -5356,19 +5359,20 @@ function rbSetup () {
 			['CB', 32, gtext("buildhint")],
 			['CB', 37, gtext("bmove")],
 		['I', 0, gtext("onallp")],
-			['CB',15, gtext("sendres")],
 			['CB',18, gtext("sendmess")],
+			['CB',15, gtext("sendres")],
 			['CB',39, gtext("dorf12links")],
 			['SEL',19, gtext("analyzer"), analyzers],
 			['B', 0, gtext("analyzer"), [gtext('settings'),analyzerSetup]],
 			['SEL',16, gtext("bigicon"), gtext('addvtableo')],
+			['CB',34, gtext("openoview")],
 			['CB',17, gtext("opennote")],
 			['SEL',35, gtext("notesize"), ['40x15','55x20','70x30','60x45','40x8','30x34']],
 		['I', 0, gtext("villagelist")],
 			['SEL',21, gtext("addvtable"), gtext('addvtableo')],
 			['SEL',14, gtext("buildand"), gtext('buildands'), gtext("buildandh")],
+			['CB',60, gtext("vtnames")],
 			['CB',38, gtext("vtcoords")],
-			['CB',34, gtext("openoview")],
 		['I', 0, gtext("resbar")],
 			['CB', 4, gtext("showres")],
 			['T', 6, gtext("redbl")],
@@ -6804,7 +6808,7 @@ function rbNotes () {
 	windowID[3] = makeFloatD( newNB, 5 );
 }
 
-function darkMode () {
+function eyeComfort () {
 	if ( RB.Setup[59] == 0 ) {
 		this.style.filter = "grayscale(1)";
 		RB.Setup[59] = 1;
@@ -9253,7 +9257,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Travian Resource Bar+";
-		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Jan 26, 2025:</p> <ul><li>Added Dark mode! Finally, you can reduce your eye strain when checking attacks in the middle of the night. </li> <li>Fixed village sorting (first sort will be ascending) </li></ul> <p>Version 2.25.2 - Jan 11, 2025:</p> <ul><li>Added basic support for the Travian New Year's Special 2025 servers</li></ul> <p>Version 2.25.1 - Jan 10, 2025:</p> <ul><li>Fixed resource bar timer display when minimized on the travian mobile version</li><li>Added back in the market page the possibility to specify a number of merchants when splitting resources by % (percent) or = (equal)</li></ul>";
+		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Jan 26, 2025:</p> <ul><li>Added Eye comfort mode! Finally, you can reduce your eye strain when checking attacks in the middle of the night. </li> <li>Fixed village sorting (first sort will be ascending) </li></ul> <p>Version 2.25.2 - Jan 11, 2025:</p> <ul><li>Added basic support for the Travian New Year's Special 2025 servers</li></ul> <p>Version 2.25.1 - Jan 10, 2025:</p> <ul><li>Fixed resource bar timer display when minimized on the travian mobile version</li><li>Added back in the market page the possibility to specify a number of merchants when splitting resources by % (percent) or = (equal)</li></ul>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
