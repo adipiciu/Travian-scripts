@@ -12,14 +12,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.25.4
+// @version        2.25.5
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.25.4';
+var version = '2.25.5';
 
 notRunYet = false;
 
@@ -2937,7 +2937,7 @@ defaultCSSfixes = "#rallyPointSimulators .subTabs {background-color: transparent
 
 darkCSS = "#content {background-color: "+dmColors[0]+" !important;}" +
 //map
-".dialogContainer {background-color: "+dmColors[0]+" !important;}" +
+".dialogV1.dialogWrapper .dialog .dialogContainer {background-color: "+dmColors[0]+" !important;}" +
 "#mapContainer:before { background-color: "+dmColors[1]+";}" +
 "#mapContainer .ruler.x, #mapContainer .ruler.y { background-color: "+dmColors[1]+";}" +
 "table#croplist thead th {background-color: "+dmColors[1]+";}" +
@@ -3006,6 +3006,8 @@ darkCSS = "#content {background-color: "+dmColors[0]+" !important;}" +
 "table.barChart td { background-color: "+dmColors[0]+";}" +
 "table.top10 tbody tr.hover:not(.hl) td, table.top10 tbody tr.noGapTop td { background-color: "+dmColors[0]+";}" +
 "table.top10 tbody tr.hover:hover td { background-color: #fce6c4;}" +
+"div.forum table thead th { background-color: "+dmColors[1]+";}" +
+"div.forum table tbody td { background-color: "+dmColors[0]+";}" +
 //sitter
 "table.sitters2 tr th { background-color: "+dmColors[1]+";}" +
 "table.sitters2 tr td { background-color: "+dmColors[0]+";}" +
@@ -3021,6 +3023,7 @@ darkCSS = "#content {background-color: "+dmColors[0]+" !important;}" +
 //plus account
 "div.village3 table thead tr td { background-color: "+dmColors[1]+";}" +
 "div.village3 table thead tr th { background-color: "+dmColors[1]+";}" +
+"div.village3 table tbody tr td.empty { background-color: "+dmColors[0]+";}" +
 "div.village3 table tbody tr.sum td { background-color: "+dmColors[1]+";}" +
 "div.village3 table tbody tr.hover td { background-color: "+dmColors[0]+";}" +
 "div.village3 table tbody.upkeep tr td { background-color: "+dmColors[1]+";}" +
@@ -3031,8 +3034,8 @@ darkCSS = "#content {background-color: "+dmColors[0]+" !important;}" +
 if( /karte|position/.test(crtPath) ) acss += "."+allIDs[40]+" { height:12px;width:16px;background: url("+img_clipIn+") no-repeat 0px 0px;cursor:pointer; }"+
 	"."+allIDs[41]+" { height:12px;width:16px;background: url("+img_clipOut+") no-repeat 0px 0px;cursor:pointer; }";
 
-acss += "table#vlist td{padding:0;line-height:16px;text-align:"+docDir[0]+";white-space:nowrap;}table#vlist thead td{background-color:transparent;height:22px;text-align:center;padding:0px 3px;}" +
-	"table#vlist td.dot{width:10px;padding:0 3px;}table#vlist td.link{padding-right:10px;}table#vlist thead td a{font-weight:bold;color:#3C3C3C;}" +
+acss += "table#vlist td{padding:0;line-height:16px;text-align:"+docDir[0]+";white-space:nowrap;}table#vlist thead td{background-color:transparent;height:22px;text-align:center;padding:0px 2px;}" +
+	"table#vlist td.dot{padding:0 2px;}table#vlist td.link{padding-right:10px;}table#vlist thead td a{font-weight:bold;color:#3C3C3C;}" +
 	"table#vlist tbody td{font-size:12px;padding:0 2px;}table#vlist td.hl{color:#FF8000;}table#vlist td.link{font-size:14px;}table#vlist {border-collapse:collapse;}" +
 	"table#vlist td a{font-weight:normal;color:#252525;}table#vlist td a.active{font-weight:bold;color:#252525;}" + //#FF8000;
 	"div#build.gid17 table.send_res td {padding:2px 3px;} div.alliance table#offs td.sub div {"+(ltr?"padding-left":"padding-right")+":44px;}" +
@@ -4763,11 +4766,11 @@ function vlist_addButtonsT4 () {
 		if( RB.bodyH[1] == 1 ) $at(vilB,[['style','display:none']]);
 		var hideP = imgHide(1);
 		hideP.addEventListener('click', function (x) { return function() { bodyHide(x); }}([vilB,1,hideP]), false);
-		vilT.appendChild($ee('THEAD',$em('TR',[$c(hideP),$c($gc('boxTitle',vlist)[0].innerHTML.onlyText(),[['colspan',3],['style','font-weight:bold;']])])));
+		vilT.appendChild($ee('THEAD',$em('TR',[$c(hideP),$c($gc('boxTitle',vlist)[0].textContent.onlyText(),[['colspan',3],['style','font-weight:bold;']])])));
 		for( var i=0; i<villages.length; i++) {
 			vLink[i] = $a($gc("name",villages[i])[0].innerHTML,[['href',linkVSwitch[i]]]);
 			var cl = villages_id[i]==village_aid?"dot hl":"dot";
-			vilB.appendChild($em('TR',[$c('&#x25CF;',[['class',cl]]),RB.Setup[60] != 0 ? $c($ee('DIV',vLink[i])) : '',RB.Setup[38] != 0 ? $c($a(printCoords(villages_id[i]),[['href',linkVSwitch[i]]])) : '',$c(addDorf12Links(linkVSwitch[i],0),[['style','width:40px;']]),$c(addARLinks(villages_id[i],0))]));
+			vilB.appendChild($em('TR',[$c('&#x25CF;',[['class',cl]]),RB.Setup[60] != 0 ? $c($ee('DIV',vLink[i])) : $c('',[['style','padding:0;']]),RB.Setup[38] != 0 ? $c($a(printCoords(villages_id[i]),[['href',linkVSwitch[i]]])) : '',$c(addDorf12Links(linkVSwitch[i],0),[['style','width:40px;']]),$c(addARLinks(villages_id[i],0))]));
 		}
 		vilT.appendChild(vilB);
 		if( RB.Setup[21] == 1 ) makeFloatD(vilT,7);
@@ -5100,7 +5103,7 @@ function distanceToMyVillages() {
 	villages = villages.tBodies[0].rows;
 	for( var i = 0; i < villages_id.length; i++ ) {
 		var distance = parseFloat(calcDistance( villages_id[i], curD ).toFixed(1));
-		villages[i].cells[3].appendChild($t(" <-> " + distance));
+		villages[i].cells[villages[i].cells.length-1].appendChild($t(" <-> " + distance));
 	}
 }
 
@@ -9257,7 +9260,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Travian Resource Bar+";
-		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Jan 26, 2025:</p> <ul><li>Added Eye comfort mode! Finally, you can reduce your eye strain when checking attacks in the middle of the night. </li> <li>Fixed village sorting (first sort will be ascending) </li></ul> <p>Version 2.25.2 - Jan 11, 2025:</p> <ul><li>Added basic support for the Travian New Year's Special 2025 servers</li></ul> <p>Version 2.25.1 - Jan 10, 2025:</p> <ul><li>Fixed resource bar timer display when minimized on the travian mobile version</li><li>Added back in the market page the possibility to specify a number of merchants when splitting resources by % (percent) or = (equal)</li></ul>";
+		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Jan 27, 2025:</p> <ul><li>Added Eye comfort mode! Finally, you can reduce your eye strain when checking attacks in the middle of the night </li> <li>Fixed village sorting (first sort will be ascending) </li><li>Minor fixes</li></ul> <p>Version 2.25.2 - Jan 11, 2025:</p> <ul><li>Added basic support for the Travian New Year's Special 2025 servers</li></ul> <p>Version 2.25.1 - Jan 10, 2025:</p> <ul><li>Fixed resource bar timer display when minimized on the travian mobile version</li><li>Added back in the market page the possibility to specify a number of merchants when splitting resources by % (percent) or = (equal)</li></ul>";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
