@@ -12,14 +12,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.25.5
+// @version        2.25.6
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.25.5';
+var version = '2.25.6';
 
 notRunYet = false;
 
@@ -2959,7 +2959,7 @@ darkCSS = "#content {background-color: "+dmColors[0]+" !important;}" +
 "table.troop_details tbody.options td, table.troop_details tbody.options th { background-color: "+dmColors[0]+";}" +
 "table.troop_details tbody.cata td, table.troop_details tbody.cata th { background-color: "+dmColors[0]+";}" +
 "table.troop_details tbody.targets td, table.troop_details tbody.targets th { background-color: "+dmColors[0]+";}" +
-"table.troop_details:not(table.inAttack):not(table.outAttack):not(table.inRaid):not(table.outRaid):not(table.inSupply):not(table.outSupply):not(table.inReturn):not(table.outSpy):not(table.outSettler) thead td { background-color: "+dmColors[1]+";}" +
+"table.troop_details thead td { background-color: "+dmColors[1]+";}" +
 //send troops
 "div.a2b table#short_info { border-collapse: collapse; }" +
 "div.a2b table#short_info tbody th, table#short_info tbody td { background-color: "+dmColors[0]+"; }" +
@@ -2983,8 +2983,6 @@ darkCSS = "#content {background-color: "+dmColors[0]+" !important;}" +
 //statistics
 "#content.statistics table tbody tr.hover:not(.hl) td { background-color: "+dmColors[0]+";}" +
 "#content.statistics table tbody tr.hover:hover td { background-color: #fce6c4;}" +
-"#content.statistics div#search_navi table.transparent td {background-color: transparent;}" +
-"div#search_navi table td { background-color: "+dmColors[0]+";}" +
 "#statisticsV2 .chartWithLegend .legendContainer .simpleLegend, #statisticsV2 .chartWithLegend .legendContainer .legendTabs .tab.active { background-color: "+dmColors[3]+";}" +
 //market
 "table.offers tbody td { background-color: "+dmColors[0]+";}" +
@@ -3000,13 +2998,13 @@ darkCSS = "#content {background-color: "+dmColors[0]+" !important;}" +
 "#allianceBonusOverview div.bonusBox { background-color: "+dmColors[0]+";}" +
 "table.top5 thead td { background-color: "+dmColors[1]+";}" +
 "table.top5 tbody td { background-color: "+dmColors[0]+";}" +
-"#allianceBonusOverview .progressBar .levels>div { background-image: none;}" +
+"#allianceBonusOverview .progressBar .levels>div { opacity: 0.8;}" +
 //alliance //overview
 "table.events td { background-color: "+dmColors[0]+";}" +
 "table.barChart td { background-color: "+dmColors[0]+";}" +
 "table.top10 tbody tr.hover:not(.hl) td, table.top10 tbody tr.noGapTop td { background-color: "+dmColors[0]+";}" +
 "table.top10 tbody tr.hover:hover td { background-color: #fce6c4;}" +
-"div.forum table thead th { background-color: "+dmColors[1]+";}" +
+"div.forum table thead th, div.forum table thead td { background-color: "+dmColors[1]+";}" +
 "div.forum table tbody td { background-color: "+dmColors[0]+";}" +
 //sitter
 "table.sitters2 tr th { background-color: "+dmColors[1]+";}" +
@@ -3948,61 +3946,53 @@ function marketOffer() {
 }
 
 function marketTradeRoutes() {
-	var routesDiv = $g("tradeRoutes",cont);
-	if ( !routesDiv ) { return; }
-	var buttons = $gt('button', routesDiv);
-	for (var i = 0; i < buttons.length; i++ ) {
-		buttons[i].addEventListener('click', function(x) { setTimeout(tradeRoutes,500); }, 0);
+	var routesForm = $g("tradeRouteEditCreate",cont);
+	if ( !routesForm ) { return; }
+	function merUpd () {
+		var aR = 0;
+		for (var i = 1; i < 5; i++ ) { var val = $gn("r"+i,routesForm)[0].value; aR += isNumeric(val) ? parseInt(val) : 0; }
+		m3.textContent = '( '+RB.dictionary[2]+' '+ Math.ceil(aR/RB.village_Var[0]) + (aR % RB.village_Var[0] != 0 ? ' : -' + (RB.village_Var[0] - aR % RB.village_Var[0]):'') + ' )';
 	}
-	function tradeRoutes () {
-		var routesForm = $g("tradeRouteEditCreate",cont);
-		if ( !routesForm ) { return; }
-		function merUpd () {
-			var aR = 0;
-			for (var i = 1; i < 5; i++ ) { var val = $gn("r"+i,routesForm)[0].value; aR += isNumeric(val) ? parseInt(val) : 0; }
-			m3.textContent = '( '+RB.dictionary[2]+' '+ Math.ceil(aR/RB.village_Var[0]) + (aR % RB.village_Var[0] != 0 ? ' : -' + (RB.village_Var[0] - aR % RB.village_Var[0]):'') + ' )';
+	function mofLinkU () {
+		var inp = this.parentNode.previousSibling;
+		var aR = parseInt(inp.value);
+		if ( this.id == "rbplus" ) {
+			updateInput (inp, isNaN(aR) ? RB.village_Var[0] : aR + ( aR % RB.village_Var[0] != 0 ? RB.village_Var[0] - aR % RB.village_Var[0] : RB.village_Var[0] ));
+		} else {
+			updateInput (inp, isNaN(aR) ? 0 : aR <= RB.village_Var[0] ? 0 : aR - ( aR % RB.village_Var[0] != 0 ? aR % RB.village_Var[0] : RB.village_Var[0] ));
 		}
-		function mofLinkU () {
-			var inp = this.parentNode.previousSibling;
-			var aR = parseInt(inp.value);
-			if ( this.id == "rbplus" ) {
-				updateInput (inp, isNaN(aR) ? RB.village_Var[0] : aR + ( aR % RB.village_Var[0] != 0 ? RB.village_Var[0] - aR % RB.village_Var[0] : RB.village_Var[0] ));
-			} else {
-				updateInput (inp, isNaN(aR) ? 0 : aR <= RB.village_Var[0] ? 0 : aR - ( aR % RB.village_Var[0] != 0 ? aR % RB.village_Var[0] : RB.village_Var[0] ));
-			}
-			merUpd();
-		}
-		function mhRowLinkMem () {
-			loadVCookie('vPPH', 'village_PPH', RB.wantsMem[4]);
-			if( RB.wantsMem[4] == 0 ) return;
-			var inp = $gt('input',this.parentNode.previousElementSibling);
-			for( var i = 0; i < 4; i++ ) {
-				var wantRes = parseInt(RB.wantsMem[i]);
-				if( wantRes < 0 ) wantRes = 0;
-				inp[i].value = wantRes;
-			}
-			merUpd();
-		}
-		for (var i = 1; i < 5; i++ ) { 
-			var inp = $gn("r"+i,routesForm)[0];
-			inp.addEventListener('input', merUpd, false); 
-			var divC = $e('DIV',[['style','margin:2px auto;font-size:24px;pointer-events:auto;']]);
-			var refM = $a(' - ',[["id","rbmin"],['href',jsVoid]]);
-			refM.addEventListener('click', mofLinkU, false);
-			var refP = $a(' + ',[["id","rbplus"],['href',jsVoid]]);
-			refP.addEventListener('click', mofLinkU, false);
-			divC.appendChild(refP);
-			divC.appendChild(refM);
-			inp.parentNode.insertBefore(divC,inp.nextSibling);
-		}
-		//var divTC = $e('DIV',[['style','width: 50px;margin: 0 auto 15px;']]);
-		//var ref = $a(' M ',[["id","memory"],['href',jsVoid]]);
-		//ref.addEventListener('click', mhRowLinkMem, false);
-		//divTC.appendChild(ref);
-		//routesForm.insertBefore(divTC, routesForm.children[2]);
-		var m3 = $e('DIV',[['style','margin:8px 0px 5px;']]);
-		$ib(m3, $gc("resourceError",routesForm)[0]);
+		merUpd();
 	}
+	function mhRowLinkMem () {
+		loadVCookie('vPPH', 'village_PPH', RB.wantsMem[4]);
+		if( RB.wantsMem[4] == 0 ) return;
+		var inp = $gt('input',this.parentNode.previousElementSibling);
+		for( var i = 0; i < 4; i++ ) {
+			var wantRes = parseInt(RB.wantsMem[i]);
+			if( wantRes < 0 ) wantRes = 0;
+			inp[i].value = wantRes;
+		}
+		merUpd();
+	}
+	for (var i = 1; i < 5; i++ ) { 
+		var inp = $gn("r"+i,routesForm)[0];
+		inp.addEventListener('input', merUpd, false); 
+		var divC = $e('DIV',[['style','margin:2px auto;font-size:24px;pointer-events:auto;']]);
+		var refM = $a(' - ',[["id","rbmin"],['href',jsVoid]]);
+		refM.addEventListener('click', mofLinkU, false);
+		var refP = $a(' + ',[["id","rbplus"],['href',jsVoid]]);
+		refP.addEventListener('click', mofLinkU, false);
+		divC.appendChild(refP);
+		divC.appendChild(refM);
+		inp.parentNode.insertBefore(divC,inp.nextSibling);
+	}
+	//var divTC = $e('DIV',[['style','width: 50px;margin: 0 auto 15px;']]);
+	//var ref = $a(' M ',[["id","memory"],['href',jsVoid]]);
+	//ref.addEventListener('click', mhRowLinkMem, false);
+	//divTC.appendChild(ref);
+	//routesForm.insertBefore(divTC, routesForm.children[2]);
+	var m3 = $e('DIV',[['style','margin:8px 0px 5px;']]);
+	$ib(m3, $gc("resourceError",routesForm)[0]);
 }
 
 // calculate incomming resourses
@@ -7330,8 +7320,31 @@ function buildDispatcher () {
 	if( !(build) ) return;
 	var gid = build.getAttribute('class');
 	gid = gid.split(/\s/)[0];
+	var init = true;
 	if( gid == 'gid17' ) {
-		setTimeout(marketSend,700); setTimeout(marketSumm,700); marketOffer(); setTimeout(marketBuy,700); setTimeout(marketTradeRoutes,700); stopRP();
+		const mutationCallback = (mutationsList, observer) => {
+			for (const mutation of mutationsList) {
+			  if (mutation.type === 'childList') {
+				mutation.addedNodes.forEach(node => {
+					if (node.nodeType === Node.ELEMENT_NODE) {
+					  if (node.matches('.available')) {
+						if (init) {
+							init = false;
+							marketSend(); marketSumm(); marketOffer(); marketBuy();
+						}
+						observer.disconnect();
+					  }
+					  // If the added node has children, check them as well (in case the class is inside a child element)
+					  node.querySelectorAll('div#tradeRouteEditCreate').forEach(childNode => {
+						marketTradeRoutes();
+					  });
+					}
+				});
+			  }
+			}
+		  };
+		const observer = new MutationObserver(mutationCallback);		  
+		observer.observe(document.body, { childList: true, subtree: true });
 		var gold = $xf('//div[@class="npcMerchant"]//button[contains(@class, "gold")]','l',cont);
 		for( var i = 0; i < gold.snapshotLength; i++ ) {
 			gold.snapshotItem(i).addEventListener('click', function(x) { setTimeout(npcForTroops,500); }, 0);
@@ -9260,7 +9273,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Travian Resource Bar+";
-		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Jan 27, 2025:</p> <ul><li>Added Eye comfort mode! Finally, you can reduce your eye strain when checking attacks in the middle of the night </li> <li>Fixed village sorting (first sort will be ascending) </li><li>Minor fixes</li></ul> <p>Version 2.25.2 - Jan 11, 2025:</p> <ul><li>Added basic support for the Travian New Year's Special 2025 servers</li></ul> <p>Version 2.25.1 - Jan 10, 2025:</p> <ul><li>Fixed resource bar timer display when minimized on the travian mobile version</li><li>Added back in the market page the possibility to specify a number of merchants when splitting resources by % (percent) or = (equal)</li></ul>";
+		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Jan 27, 2025:</p> <ul><li>Fixed the loading of the marketplace functions</li></ul>  <p>Version 2.25.5 - Jan 27, 2025:</p> <ul><li>Added Eye comfort mode! Finally, you can reduce your eye strain when checking attacks in the middle of the night </li> <li>Fixed village sorting (first sort will be ascending) </li><li>Minor fixes</li></ul> <p>Version 2.25.2 - Jan 11, 2025:</p> <ul><li>Added basic support for the Travian New Year's Special 2025 servers</li></ul> ";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
