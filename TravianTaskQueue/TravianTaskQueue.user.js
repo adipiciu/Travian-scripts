@@ -12,14 +12,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version     2.0.18
+// @version     2.0.19
 // ==/UserScript==
 
 (function () {
 
 function allInOneTTQ () {
 notRunYet = false;
-var sCurrentVersion = "2.0.18";
+var sCurrentVersion = "2.0.19";
 
 //find out if Server errors
 var strTitle = document.title;
@@ -1943,7 +1943,7 @@ function createAttackLinks() {
 	} else {
 		//create textbox for hero if it's not present
 		var heroBox = document.getElementsByClassName("line-last column-last");
-		if( heroBox[0].firstElementChild == null ) { //no hero textbox - make one
+		if( ( heroBox.length > 0 ) && heroBox[0].firstElementChild == null ) { //no hero textbox - make one
 			heroBox[0].innerHTML = '<img class="unit uhero" src="/img/x.gif" title="'+aLangTroops[10]+'" alt="'+aLangTroops[10]+'" />'
 				+ '<input type="text" inputmode="numeric" class="text" name="troop[t11]" value="" />'
 				+ '&nbsp;/&nbsp;<a href="#" onclick="jQuery(\'table#troops\').find(\'input[name=\\\'troop[t11]\\\']\').val(1); return false">1 ('+aLangStrings[33]+')</a>';
@@ -4031,7 +4031,7 @@ function onLoad() {
 							break;
 				case 17:	setTimeout(createMarketLinks,700);
 							break;
-				case 16:	if( $gc('a2b').length ) createAttackLinks();
+				case 16:	if( $gc('a2b').length > 0 && $id('troops') ) createAttackLinks();
 							if( $id('rallyPointFarmList') ) { 
 								setTimeout(createGoldClubBtn,700);
 								setTimeout(createGoldClubBtnAll,700);
