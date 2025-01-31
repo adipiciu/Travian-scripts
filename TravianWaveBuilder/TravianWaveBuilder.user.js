@@ -7,12 +7,12 @@
 // @contributionURL https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=Travian+wave+builder+script&currency_code=EUR
 // @match          https://*.travian.com/build.php*
 
-// @version        2.10
+// @version        2.11
 // ==/UserScript==
 
 function allInOneOpera () {
 
-var version = '2.10';
+var version = '2.11';
 var scriptURL = 'https://github.com/adipiciu/Travian-scripts';
 var defInterval = 200;
 var sLang = detectLanguage();
@@ -56,6 +56,15 @@ switch(sLang) {
 }
 
 /*********************** common library ****************************/
+
+function RB_addStyle(css) {
+	var head = document.getElementsByTagName('head')[0];
+	if (head) {
+	  var style = document.createElement("style");
+	  style.appendChild($t(css));
+	  head.appendChild(style);
+	}
+}
 
 function ajaxRequest(url, aMethod, param, onSuccess, onFailure) {
 	var aR = new XMLHttpRequest();
@@ -298,6 +307,9 @@ function sendWaves () {
 	}
 }
 
+twb_css = "table#twbtable { background-color: transparent; border-collapse: collapse; } " +
+"table#twbtable thead td, table#twbtable tbody td, table#twbtable tfoot td { border: 1px solid silver; } "
+
 var build = $g('build');
 if( ! build ) return;
 if( build.getAttribute('class').indexOf('gid16') == -1 ) return;
@@ -310,6 +322,8 @@ if( ! $g('troops') ) return;
 var nation = Math.floor(parseInt($gc('unit')[0].getAttribute('class').match(/\d+/)[0])/10);
 if( nation < 0 ) return;
 
+RB_addStyle(twb_css);
+
 var a2bURL = "build.php?gid=16&tt=2";
 var wCount = 0;
 var wNr = 0;
@@ -320,7 +334,7 @@ var tFormFL = true;
 var fullName = window.location.origin + "/";
 
 // build table header
-var tbl = $e('TABLE');
+var tbl = $e('TABLE',[['id','twbtable']]);
 var plus = $a('+',[['href','#'],['onclick',jsNone],['title',langStrings[0]]]);
 plus.addEventListener('click',addWave,false);
 var multi = $e('INPUT',[['id','twb_multi'],['type','number'],['value',1],['title',langStrings[4]],['min',1],['max',12],['style','width:40px;margin:0 8px;']]);
@@ -341,7 +355,7 @@ var intervaltxt = $ee('SPAN',langStrings[7],[['style','display:inline-block;padd
 var unitTimetxt = $ee('SPAN',langStrings[8],[['style','display:inline-block;padding:0 5px;']]);
 tbl.appendChild($ee('TFOOT',$ee('TR',$em('TD',[intervaltxt,interval,unitTimetxt,sendBtn,
 	$a(' (v'+version+') ',[['href',scriptURL],['target','_blank']])],
-	[['colspan',13],['style','text-align:center !important;padding:3px;']]))));
+	[['colspan',13],['style','background-color: transparent;text-align:center !important;padding:3px;']]))));
 
 build.appendChild(tbl);
 
