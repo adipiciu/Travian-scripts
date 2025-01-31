@@ -295,7 +295,7 @@ function sendTroops (x) {
 }
 
 function sendWaves () {
-	cLog = $c(wlog,[['colspan',13]]);
+	cLog = $c(wlog,[['colspan',13],['style','background-color: transparent;']]);
 	tbl.tFoot.appendChild($ee('TR',cLog));
 	wCount = tbl.tBodies.length;
 	var nextWave = 10;
