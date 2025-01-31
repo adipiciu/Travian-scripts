@@ -12,14 +12,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.25.7
+// @version        2.25.8
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.25.7';
+var version = '2.25.8';
 
 notRunYet = false;
 
@@ -7265,7 +7265,7 @@ function show_alert () {
 			alert('ding ding');
 			break;
 		case 2: // HTML5 audio
-			document.body.appendChild($e('AUDIO',[['id',allIDs[22]],['src',mp3_alert],['autoplay','true']]));
+			document.body.appendChild($e('AUDIO',[['id',allIDs[22]],['src',mp3_alert],['autoplay','true'],['loop','true']]));
 			break;
 	}
 	lastAlert = nt;
@@ -9273,7 +9273,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Travian Resource Bar+";
-		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Jan 31, 2025:</p> <ul><li>Fixed send troops links</li></ul> <p>Version 2.25.6 - Jan 27, 2025:</p> <ul><li>Fixed the loading of the marketplace functions</li></ul>  <p>Version 2.25.5 - Jan 27, 2025:</p> <ul><li>Added Eye comfort mode! Finally, you can reduce your eye strain when checking attacks in the middle of the night </li> <li>Fixed village sorting (first sort will be ascending) </li><li>Minor fixes</li></ul> <p>Version 2.25.2 - Jan 11, 2025:</p> <ul><li>Added basic support for the Travian New Year's Special 2025 servers</li></ul> ";
+		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Jan 31, 2025:</p> <ul><li>Fixed send troops links</li><li>Fixed audio notification</li></ul> <p>Version 2.25.6 - Jan 27, 2025:</p> <ul><li>Fixed the loading of the marketplace functions</li></ul>  <p>Version 2.25.5 - Jan 27, 2025:</p> <ul><li>Added Eye comfort mode! Finally, you can reduce your eye strain when checking attacks in the middle of the night </li> <li>Fixed village sorting (first sort will be ascending) </li><li>Minor fixes</li></ul> <p>Version 2.25.2 - Jan 11, 2025:</p> <ul><li>Added basic support for the Travian New Year's Special 2025 servers</li></ul> ";
 		footer.appendChild(feedback);
 		footer.appendChild(homepage);
 		footer.appendChild(donate);
