@@ -12,18 +12,19 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.25.9
+// @version        2.25.10
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.25.9';
+var version = '2.25.10';
 
 notRunYet = false;
 
 var homepageurl = 'https://github.com/adipiciu/Travian-scripts';
+var scripturl = 'https://github.com/adipiciu/Travian-scripts/raw/main/TravianResourceBarPlus/TravianResourceBarPlus.user.js'
 var bgcolor = ['#66ff66','yellow','red']; //resource bar colors
 var vHColor = '#777777'; //hints (second name) color
 var cnColors = ['#F8FFD8','#FFE85B','#FF8888','#F0B8FF','#A0F0A0']; //Center Number colors
@@ -3681,7 +3682,7 @@ function marketSend () {
 	function checkMerchants () {
 		var merInfo = $gc('summary')[0];
 		moC = $gc('denominator',merInfo)[1];
-		maxM = $gc('denominator',merInfo)[1].textContent.onlyText();
+		maxM = moC.textContent.onlyText();
 		mDiv = merInfo.firstElementChild.nextSibling;
 		mName = mDiv.textContent.split(":")[0];
 		if( mName != RB.dictionary[2] ) {
@@ -3689,7 +3690,7 @@ function marketSend () {
 			saveCookie( 'Dict', 'dictionary' );
 		}
 		maxTr = toNumber($gc('denominator',merInfo)[0].textContent);
-		maxC = maxTr/maxM;
+		maxC = parseInt($gc('merchantCarryInfo')[0].textContent.match(/(\d+)/)[1]);
 		if( maxC != RB.village_Var[0] ) {
 			RB.village_Var[0] = maxC;
 			saveVCookie( 'VV', RB.village_Var );
@@ -4769,7 +4770,7 @@ function vlist_addButtonsT4 () {
 		if( RB.Setup[21] == 1 ) makeFloatD(vilT,7);
 		if( RB.Setup[21] == 2 ) {
 			var xy = offsetPosition( vlist );
-			makeFloat(vilT,xy[0]+25,xy[1]+90);
+			makeFloat(vilT,ltr?xy[0]+41:xy[0]-41,xy[1]+90);
 		}
 	}
 }
@@ -5579,6 +5580,7 @@ function overviewWarehouse () {
 			}
 		}
 		newTR.appendChild($c(RB.village_PPH[3],[['style','text-align:right']]));
+		newTR.appendChild($c(addDorf12Links(linkVSwitch[vn],0)));
 		newTR.appendChild($c(addARLinks(villages_id[vn],0)));
 		newTBody.appendChild(newTR);
 	}
@@ -5656,6 +5658,7 @@ function overviewResources () {
 			newTR.appendChild($c(formatTime(getTTime(calcDistance(villages_id[vn],village_aid),MTime[parseInt(RB.Setup[2])]*sM,0,0),0)));
 		else
 			newTR.appendChild($c('&lt;--'));
+		newTR.appendChild($c(addDorf12Links(linkVSwitch[vn],0)));
 		newTR.appendChild($c(addARLinks(villages_id[vn],0)));
 		newTBody.appendChild(newTR);
 	}
@@ -5713,6 +5716,7 @@ function overviewTroops () {
 		} else newTR.appendChild($c('&nbsp;'));
 		if( hfl ) newTR.appendChild($em('TD',[$ee('DIV',trImg('unit uhero')),$ee('DIV',RB.village_dorf12[2])]));
 		else newTR.appendChild($c(''));
+		newTR.appendChild($c(addDorf12Links(linkVSwitch[vn],0)));
 		newTR.appendChild($c(addARLinks(villages_id[vn],0)));
 		newTBody.appendChild(newTR);
 	}
@@ -6283,7 +6287,7 @@ function viewMessageIWClose() {
 function viewMessageIWDisplay( aLink, tV, xy ) {
 	var messCr = './/div[@class="paper"]';
 	var viewPref = [
-		[messCr,'messages','padding-'+docDir[0]+':25px;text-align:'+docDir[0]+';'],
+		[messCr,'messages','padding-'+docDir[0]+':12px;text-align:'+docDir[0]+';'],
 		['.//*[@id="report_surround" or @id="reportWrapper"]','reports','padding:5px 20px;width:554px;text-align:'+docDir[0]+';']];
 
 	ajaxRequest(aLink, 'GET', null, function(ajaxResp) {
@@ -6667,7 +6671,11 @@ function bigQuickLinks () {
 	var bigIconsHeader = $gc('buttonsWrapper', sidebarBoxActiveVillage)[0];
 	var bigIconsFooter = $gc('content', sidebarBoxActiveVillage)[0];
 	var villageBoxes = $g('villageBoxes');
-	var childrenB = $gt('a',bigIconsHeader);
+	if (villageBoxes) {
+		var childrenB = $gt('button',bigIconsHeader);
+	} else {
+		var childrenB = $gt('a',bigIconsHeader);
+	}
 	var imgs = [];
 
 	for( var j = 0; j < childrenB.length; j++ ) {
@@ -7333,9 +7341,12 @@ function buildDispatcher () {
 						if (node.matches('.available')) {
 							if (init) {
 								init = false;
-								marketSend(); marketSumm(); marketOffer(); marketBuy();
+								marketSend(); marketSumm(); marketOffer();
 							}
 							observer.disconnect();
+						}
+						if (node.matches('table.offers')) {
+							marketBuy();
 						}
 						if (node.matches('.exchangeResources')) {
 							npcForTroops();
@@ -9266,19 +9277,21 @@ function displayWhatIsNew () {
 	if ($g('whatsnew')) { 
 		$g("whatsnew").style.visibility = "visible"; return; } 
 	else {
-		var box = $e('div',[['id','whatsnew'],['style','width:400px;position:fixed;top:50%;left:50%;transform: translate(-50%,-50%);color:black;background-color:'+rbpBckColor+';padding:5px 5px;border-radius:1em;z-index:999;opacity:0.90;']]);
+		var box = $e('div',[['id','whatsnew'],['style','width:400px;position:fixed;top:50%;left:50%;transform: translate(-50%,-50%);color:black;background-color:'+rbpBckColor+';padding:5px 5px;border-radius:1em;z-index:999;opacity:0.95;']]);
 		var header = $e('div',[['style','height:35px;font-size:130%;font-weight:bold;text-align:center;']]);
 		var content = $e('div',[['style','margin:0px 20px;font-size: 13px;']]);
-		var footer = $e('div',[['style','display:table;margin:15px 20px 5px;width:370px;']]);
-		var feedback = $ee('div',$a('Feedback',[['href',homepageurl],['target','_blank']]),[['style','display:table-cell;width:33%;']]);
-		var homepage = $ee('div',$a('Homepage',[['href',homepageurl],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:center;']]);
-		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;text-align:'+docDir[1]+';']]);
+		var footer = $e('div',[['style','display:table;margin:15px 20px 15px;width:360px;']]);
+		var footerline = $e('div',[['style','display:table-row;']]);
+		var homepage = $ee('div',$a('Homepage',[['href',homepageurl],['target','_blank']]),[['style','display:table-cell;width:33%;padding:5px;text-align:'+docDir[0]+';']]);
+		var updateBtn = $ee('div',$a('Check for Update',[['href',scripturl],['target','_blank']]),[['style','display:table-cell;width:33%;padding:5px;text-align:'+docDir[1]+';']]);
+		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;padding:5px;text-align:center;']]);
 		var closeb = $ee('div',$a('X',[['style','font-size:120%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Travian Resource Bar+";
-		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Feb 3, 2025:</p> <ul><li>Changed sound notification</li><li>Added market functions on map popup page</li></ul> <p>Version 2.25.8 - Jan 31, 2025:</p> <ul><li>Fixed audio notification</li></ul> <p>Version 2.25.7 - Jan 31, 2025:</p> <ul><li>Fixed send troops links</li></ul> <p>Version 2.25.6 - Jan 27, 2025:</p> <ul><li>Fixed the loading of the marketplace functions</li></ul>  <p>Version 2.25.5 - Jan 27, 2025:</p> <ul><li>Added Eye comfort mode! Finally, you can reduce your eye strain when checking attacks in the middle of the night </li> <li>Fixed village sorting (first sort will be ascending) </li><li>Minor fixes</li></ul> <p>Version 2.25.2 - Jan 11, 2025:</p> <ul><li>Added basic support for the Travian New Year's Special 2025 servers</li></ul> ";
-		footer.appendChild(feedback);
-		footer.appendChild(homepage);
-		footer.appendChild(donate);
+		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Feb 6, 2025:</p> <ul><li>Minor fixes</li></ul> <p>Version 2.25.9 - Feb 3, 2025:</p> <ul><li>Changed sound notification</li><li>Added market functions on map popup page</li></ul>  <p>Version 2.25.7 - Jan 31, 2025:</p> <ul><li>Fixed send troops links</li><li>Fixed the loading of the marketplace functions</li><li>Added Eye comfort mode! Finally, you can reduce your eye strain when checking attacks in the middle of the night </li> <li>Fixed village sorting (first sort will be ascending) </li></ul>";
+		footer.appendChild(footerline);
+		footerline.appendChild(homepage);
+		footerline.appendChild(donate);
+		footerline.appendChild(updateBtn);
 		box.appendChild(closeb);
 		box.appendChild(header);
 		box.appendChild(content);
