@@ -12,14 +12,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version     2.0.19
+// @version     2.0.20
 // ==/UserScript==
 
 (function () {
 
 function allInOneTTQ () {
 notRunYet = false;
-var sCurrentVersion = "2.0.19";
+var sCurrentVersion = "2.0.20";
 
 //find out if Server errors
 var strTitle = document.title;
@@ -138,6 +138,9 @@ function post(url, data, callback, options) {
 	};
 	if (url.includes("api/v1/farm-list")){
 		httpRequest.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+	}
+	else if (url.includes("api/v1/building/demolish")){
+		httpRequest.setRequestHeader('Content-Type', 'application/json;');
 	}
 	else if (url.includes("api/v1/")){
 		httpRequest.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
@@ -2724,25 +2727,15 @@ function demolish(aTask) {
 						if(reqVID != currentActiveVillage) switchActiveVillage(currentActiveVillage);
 						tmp2 = "["+trim(tmp.getElementsByTagName("td")[1].innerHTML)+"]";
 						_log(1, "Demolish Building request was not sent. It appears we were already busy destroying a building. (No Link 1: "+tmp2+")");
-						printMsg(aTaskDetails+" "+aLangStrings[68]+" "+aLangStrings[64]+" ("+aLangStrings[70]+" 1: "+tmp2+")", true); // Your building can't be demolished. No Link - Something is already being destroyed
-						addToHistory(aTask, false, aLangStrings[70]+" 1: "+tmp2);
+						printMsg(aTaskDetails+" "+aLangStrings[68]+" "+aLangStrings[64]+" ("+aLangStrings[70]+" 1: It appears we were already busy destroying a building: "+tmp2+")", true); // Your building can't be demolished. No Link - Something is already being destroyed
+						addToHistory(aTask, false, aLangStrings[70]+" 1: Already busy demolishing "+tmp2);
 						return;
 					}
-
-					tmp2 = holder.getElementsByClassName("demolish_building");
-					if ( tmp2.length == 1 ) {
-						var sParams = '';
-						tmp2 = tmp2[0];
-						tmp = tmp2.getElementsByTagName("input");
-						for ( var i = 0, k = tmp.length ; i < k ; ++i ) sParams += tmp[i].name + "=" + tmp[i].value + "&";
-						sParams += tmp2.getElementsByTagName("select")[0].name + "=" + aTask[2];
-						post(fullName+"build.php?gid=15", sParams, handleRequestDemolish, aTask);
-						return;
-					}
-					if ( reqVID != currentActiveVillage ) switchActiveVillage ( currentActiveVillage );
-					_log(1, "Demolish Building request was not sent. I can not find the link. (No Link 2)");
-					printMsg(aTaskDetails+" "+aLangStrings[68]+" "+aLangStrings[64]+" ("+aLangStrings[70]+" 2)", true); // Your building can't be demolished. No Link (main building too small?)
-					addToHistory(aTask, false, aLangStrings[70]+" 2");
+					var sParams = {};
+					sParams["villageId"] = reqVID;
+					sParams["slotId"] = parseInt(aTask[2]);
+					sParams["action"] = "demolishBuilding";
+					post(fullName+"api/v1/building/demolish", JSON.stringify(sParams), handleRequestDemolish, aTask);
 					return;
 				}
 				if ( reqVID != currentActiveVillage ) switchActiveVillage ( currentActiveVillage );
@@ -2767,27 +2760,9 @@ function handleRequestDemolish(httpRequest, aTask) {
 		var oldVID = parseInt(aTask[5]);
 		if (isNaN(oldVID)) oldVID = -2;
 		var aTaskDetails = getTaskDetails(aTask);
-		if (httpRequest.status == 200 && httpRequest.responseText) { // ok
-			var holder = document.createElement('div');
-			holder.innerHTML = httpRequest.responseText;
-
-			reqVID = getActiveVillage(holder);
-			if ( reqVID != currentActiveVillage ) switchActiveVillage(currentActiveVillage);
-			if ( reqVID == oldVID && holder.getElementsByClassName("gid15").length == 1 ) {
-				var tmp = holder.getElementsByClassName("transparent");
-				if ( tmp.length > 0 ) {
-					printMsg(aTaskDetails + ' ' + aLangStrings[63]); // Your building is being demolished.
-					addToHistory(aTask, true);
-					return;
-				}
-				_log(1, "Demolish Building request was sent. Everything seems fine, but nothing is demolishing (Confirmation Failed, No Link 3)");
-				printMsg(aTaskDetails + ' ' + aLangStrings[64]+" "+aLangStrings[50]+" ("+aLangStrings[75]+", "+aLangStrings[70]+" 3)", true); // Your building can't be demolished.
-				addToHistory(aTask, false, aLangStrings[75]+", "+aLangStrings[70]+" 3");
-				return;
-			}
-			_log(1, "Demolish Building request was sent. It appears we were redirected when trying to load the Main Building page for confirmation (Confirmation Failed, Server: Redirected 2)");
-			printMsg(aTaskDetails + ' ' + aLangStrings[9]+" "+aLangStrings[64]+" ("+aLangStrings[75]+", "+aLangStrings[74]+" "+aLangStrings[11]+" 2)", true); // Your building can't be demolished.
-			addToHistory(aTask, false, aLangStrings[75]+", "+aLangStrings[74]+" "+aLangStrings[11]+" 2");
+		if (httpRequest.status == 204) { // ok, no response from server
+			printMsg(aTaskDetails + ' ' + aLangStrings[63]); // Your building is being demolished.
+			addToHistory(aTask, true);
 			return;
 		}
 		switchActiveVillage(currentActiveVillage);
