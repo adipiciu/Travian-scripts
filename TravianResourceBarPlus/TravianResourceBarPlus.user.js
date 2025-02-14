@@ -12,14 +12,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.25.11
+// @version        2.25.12
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.25.11';
+var version = '2.25.12';
 
 notRunYet = false;
 
@@ -6731,6 +6731,10 @@ function bigQuickLinks () {
 			bigIconsHeader.insertBefore(CreateBigLinkButton('stable',5,StableImg), bigIconsHeader.firstChild);
 			bigIconsHeader.insertBefore(CreateBigLinkButton('barracks',4,BarracksImg), bigIconsHeader.firstChild);
 			bigIconsHeader.insertBefore(CreateBigLinkButton('market',2,MarkePlaceSendResourcesImg), bigIconsHeader.firstChild);
+			if( RB.Setup[16] != 0) {
+				//bigIconsHeader.insertBefore(CreateBigLinkButton('market',6,MarketPlaceBuyImg), bigIconsHeader.firstElementChild);
+				bigIconsHeader.insertBefore(CreateBigLinkButton('overview',0,RallyPointOverviewImg), bigIconsHeader.firstElementChild);
+			}
 		}
 	} else {
 		if (childrenB[0].className.search('green') == -1 ) { //Plus account active
@@ -6751,11 +6755,10 @@ function bigQuickLinks () {
 				//childrenB[j].href = childrenB[j].href.replace('?gid=21', "?id=" + RB.village_Dorf2[bigIcon[1][1]]+bigIcon[1][2]);
 			//}
 		}
-	}
-
-	if( RB.Setup[16] != 0 ) {
-		//bigIconsHeader.insertBefore(CreateBigLinkButton('market',6,MarketPlaceBuyImg), bigIconsHeader.firstElementChild);
-		bigIconsHeader.insertBefore(CreateBigLinkButton('overview',0,RallyPointOverviewImg), bigIconsHeader.firstElementChild);
+		if( RB.Setup[16] != 0) {
+			//bigIconsHeader.insertBefore(CreateBigLinkButton('market',6,MarketPlaceBuyImg), bigIconsHeader.firstElementChild);
+			bigIconsHeader.insertBefore(CreateBigLinkButton('overview',0,RallyPointOverviewImg), bigIconsHeader.firstElementChild);
+		}
 	}
 
 	var extraBtns = $e('div', [['class','buttonsWrapper'],['style','display: flex; flex-direction: row; justify-content: flex-end; margin: 0 0 -40px;']]);
@@ -9339,7 +9342,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;padding:5px;text-align:center;']]);
 		var closeb = $ee('div',$a('&#x2716;',[['style','font-size:140%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Travian Resource Bar+";
-		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Feb 12, 2025:</p> <ul><li>Added new travian icons for quick links</li><li>Added quick links for Town Hall and Asclepeion</li><li>Added quick links support for new travian servers</li><li>Minor fixes</li></ul> <p>Version 2.25.10 - Feb 6, 2025:</p> <ul><li>Minor fixes</li></ul> <p>Version 2.25.9 - Feb 3, 2025:</p> <ul><li>Changed sound notification</li><li>Added market functions on map popup page</li></ul>  <p>Version 2.25.7 - Jan 31, 2025:</p> <ul><li>Fixed send troops links</li><li>Fixed the loading of the marketplace functions</li><li>Added Eye comfort mode! Finally, you can reduce your eye strain when checking attacks in the middle of the night </li> <li>Fixed village sorting (first sort will be ascending) </li></ul>";
+		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Feb 14, 2025:</p> <ul><li>Added new travian icons for quick links</li><li>Added quick links for Town Hall and Asclepeion</li><li>Added quick links support for new travian servers</li><li>Minor fixes</li></ul> <p>Version 2.25.9 - Feb 3, 2025:</p> <ul><li>Changed sound notification</li><li>Added market functions on map popup page</li></ul>  <p>Version 2.25.7 - Jan 31, 2025:</p> <ul><li>Fixed send troops links</li><li>Fixed the loading of the marketplace functions</li><li>Added Eye comfort mode! Finally, you can reduce your eye strain when checking attacks in the middle of the night </li> <li>Fixed village sorting (first sort will be ascending) </li></ul>";
 		footer.appendChild(footerline);
 		footerline.appendChild(homepage);
 		footerline.appendChild(donate);
