@@ -12,14 +12,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.25.13
+// @version        2.25.14
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.25.13';
+var version = '2.25.14';
 
 notRunYet = false;
 
@@ -223,8 +223,8 @@ DICT = {
 		vtcoords : "Show village coordinates in village list",
 		vtnames : "Show village names in village list",
 		analyzer : "World analyzer",
-		rpicon : "Show Rally Point icon",
-		bigicon : "Show the old Big icons window",
+		qlicons : "Show Quick Link icons",
+		bigicon : "Show the old Quick Link icons window",
 		addvtable : "Show village list window",
 		addvtableo : ['off','on','stick'],
 		opennote : "Automatically open Notes window",
@@ -5392,7 +5392,7 @@ function rbSetup () {
 			['CB',39, gtext("dorf12links")],
 			['SEL',19, gtext("analyzer"), analyzers],
 			['B', 0, gtext("analyzer"), [gtext('settings'),analyzerSetup]],
-			['SEL',16, gtext("rpicon"), gtext('addvtableo')],
+			['SEL',16, gtext("qlicons"), gtext('addvtableo')],
 			['SEL',51, gtext("bigicon"), gtext('addvtableo')],
 			['CB',34, gtext("openoview")],
 			['CB',17, gtext("opennote")],
@@ -6757,10 +6757,8 @@ function bigQuickLinks () {
 			bigIconsHeader.insertBefore(CreateBigLinkButton('stable',5), bigIconsHeader.firstChild);
 			bigIconsHeader.insertBefore(CreateBigLinkButton('barracks',4), bigIconsHeader.firstChild);
 			bigIconsHeader.insertBefore(CreateBigLinkButton('market',2), bigIconsHeader.firstChild);
-			if( RB.Setup[16] != 0) {
-				//bigIconsHeader.insertBefore(CreateBigLinkButton('market',6), bigIconsHeader.firstElementChild);
-				bigIconsHeader.insertBefore(CreateBigLinkButton('overview',0), bigIconsHeader.firstElementChild);
-			}
+			//bigIconsHeader.insertBefore(CreateBigLinkButton('market',6), bigIconsHeader.firstElementChild);
+			bigIconsHeader.insertBefore(CreateBigLinkButton('overview',0), bigIconsHeader.firstElementChild);
 		}
 	} else {
 		if (childrenB[0].className.search('green') == -1 ) { //Plus account active
@@ -6781,10 +6779,8 @@ function bigQuickLinks () {
 				//childrenB[j].href = childrenB[j].href.replace('?gid=21', "?id=" + RB.village_Dorf2[bigIcon[1][1]]+bigIcon[1][2]);
 			//}
 		}
-		if( RB.Setup[16] != 0) {
-			//bigIconsHeader.insertBefore(CreateBigLinkButton('market',6), bigIconsHeader.firstElementChild);
-			bigIconsHeader.insertBefore(CreateBigLinkButton('overview',0), bigIconsHeader.firstElementChild);
-		}
+		//bigIconsHeader.insertBefore(CreateBigLinkButton('market',6), bigIconsHeader.firstElementChild);
+		bigIconsHeader.insertBefore(CreateBigLinkButton('overview',0), bigIconsHeader.firstElementChild);
 	}
 
 	var extraBtns = $e('div', [['class','buttonsWrapper'],['style','display: flex; flex-direction: row; justify-content: flex-end; margin: 0 -20px -40px;']]);
@@ -8691,6 +8687,13 @@ function calcTroopCost () {
 	}
 }
 
+function checkPlusAccount () {
+	var alink = $gt('a',$g('sidebarBoxLinklist'));
+	if (alink.length>0) {
+		alink[0].classList.contains('gold') ? plusAccount = false : plusAccount = true;
+	}
+}
+
 function saveHeroSpeed () {
 	var sb = $gc("speed tooltip",cont);
 	if( sb.length > 0 ) {
@@ -9416,7 +9419,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;padding:5px;text-align:center;']]);
 		var closeb = $ee('div',$a('&#x2716;',[['style','font-size:140%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Travian Resource Bar+";
-		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Feb 19, 2025:</p> <ul><li>Display attacks on new Travian servers</li><li>Added new travian quick link icons for rally point send troops and marketplace send resources</li><li>Changed quick link icons from invisible to disabled if they are not available</li></ul> <p>Version 2.25.12 - Feb 14, 2025:</p> <ul><li>Added new travian icons for quick links</li><li>Added quick links for Town Hall and Asclepeion</li><li>Added quick links support for new travian servers</li><li>Minor fixes</li></ul> <p>Version 2.25.9 - Feb 3, 2025:</p> <ul><li>Changed sound notification</li><li>Added market functions on map popup page</li></ul>  <p>Version 2.25.7 - Jan 31, 2025:</p> <ul><li>Fixed send troops links</li><li>Fixed the loading of the marketplace functions</li><li>Added Eye comfort mode! Finally, you can reduce your eye strain when checking attacks in the middle of the night </li> <li>Fixed village sorting (first sort will be ascending) </li></ul>";
+		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Feb 19, 2025:</p> <ul><li>Added option to disable the Quick link icons</li></ul> <p>Version 2.25.13 - Feb 19, 2025:</p> <ul><li>Display attacks on new Travian servers</li><li>Added new travian quick link icons for rally point send troops and marketplace send resources</li><li>Changed quick link icons from invisible to disabled if they are not available</li></ul> <p>Version 2.25.12 - Feb 14, 2025:</p> <ul><li>Added new travian icons for quick links</li><li>Added quick links for Town Hall and Asclepeion</li><li>Added quick links support for new travian servers</li><li>Minor fixes</li></ul> <p>Version 2.25.9 - Feb 3, 2025:</p> <ul><li>Changed sound notification</li><li>Added market functions on map popup page</li></ul>  <p>Version 2.25.7 - Jan 31, 2025:</p> <ul><li>Fixed send troops links</li><li>Fixed the loading of the marketplace functions</li><li>Added Eye comfort mode! Finally, you can reduce your eye strain when checking attacks in the middle of the night </li> <li>Fixed village sorting (first sort will be ascending) </li></ul>";
 		footer.appendChild(footerline);
 		footerline.appendChild(homepage);
 		footerline.appendChild(donate);
@@ -9456,6 +9459,8 @@ function displayWhatIsNew () {
 	loadCookie ( 'xy', 'XY' );
 	loadCookie ( 'bodyH', 'bodyH' );
 	loadCookie ( 'DictFL', 'dictFL' );
+
+	checkPlusAccount();
 
 	if( RB.Setup[2] == 3 || RB.Setup[2] == 4 || RB.Setup[2] > 8 ) { RB.Setup[2] = 0; saveCookie( 'RBSetup', 'Setup' ); }
 	var aText = $xf('//script[contains(@src, "/Variables.js")]');
@@ -9561,14 +9566,14 @@ function displayWhatIsNew () {
 	if( /build.php/.test(crtPath) ) { neededResAdd(); buildDispatcher(); addSpeedAndRTSend(); }
 
 	setTimeout( function() { progressbar_updValues(); setInterval(progressbar_updValues, 1000); }, (1000-progressbar_time-((Date.now())-RunTime[0])));
-	bigQuickLinks();
+	if( RB.Setup[16] != 0) { bigQuickLinks(); }
 	const mutationCallback = (mutationsList, observer) => {
 		for (const mutation of mutationsList) {
 		if (mutation.type === 'childList') {
 			mutation.addedNodes.forEach(node => {
 				if (node.nodeType === Node.ELEMENT_NODE) {
 					if (node.getAttribute("id") == 'sidebarBoxActiveVillage' ) {
-						bigQuickLinks();
+						if( RB.Setup[16] != 0) { bigQuickLinks(); }
 						villageHintEdit();
 						vlist_addButtonsT4();
 					}
