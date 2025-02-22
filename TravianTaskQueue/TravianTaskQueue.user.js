@@ -12,14 +12,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version     2.0.20
+// @version     2.0.21
 // ==/UserScript==
 
 (function () {
 
 function allInOneTTQ () {
 notRunYet = false;
-var sCurrentVersion = "2.0.20";
+var sCurrentVersion = "2.0.21";
 
 //find out if Server errors
 var strTitle = document.title;
@@ -699,8 +699,9 @@ function vlist_addButtonsT4 () {
 		var nd = parseInt(linkVSwitch[vn].match(/newdid=(\d+)/)[1]);
 		villages_id[vn] = did;
 
-		if( linkEl.hasAttribute('class') && linkEl.getAttribute('class').indexOf("active") != -1 )
+		if( linkEl.hasAttribute('class') && linkEl.getAttribute('class').indexOf("active") != -1 ) {
 			currentActiveVillage = nd;
+		}
 	}
 }
 
@@ -1939,7 +1940,7 @@ function createAttackLinks() {
 	}
 
 	// create the button //Add the new button after the original
-	if ( /[&?]from=\d+/.test(location.search) && $gn("snd").length == 0 ) { //At Send Troops Back screen
+	if ( /[&?]from=\d+/.test(location.search)) { //At Send Troops Back screen
 		var SndLtrBtn = generateButton(aLangStrings[16], scheduleSendBack);
 		var oOkBtn = $id('checksum');
 		oOkBtn.after(SndLtrBtn);
@@ -1953,7 +1954,7 @@ function createAttackLinks() {
 		}
 		var SndLtrBtn = generateButton(aLangStrings[16], scheduleAttack);
 		var oOkBtn = $id('ok');
-		oOkBtn.after(SndLtrBtn);
+		if (oOkBtn) { oOkBtn.after(SndLtrBtn); } else { _log(3, "No Send button found."); }
 	}
 	_log(3, "End createAttackLinks()");
 }
@@ -4006,7 +4007,7 @@ function onLoad() {
 							break;
 				case 17:	setTimeout(createMarketLinks,700);
 							break;
-				case 16:	if( $gc('a2b').length > 0 && $id('troops') ) createAttackLinks();
+				case 16:	if( $gc('a2b').length > 0 && ($id('troops') || $gc('troop_details').length > 0) ) createAttackLinks();
 							if( $id('rallyPointFarmList') ) { 
 								setTimeout(createGoldClubBtn,700);
 								setTimeout(createGoldClubBtnAll,700);
