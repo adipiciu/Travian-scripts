@@ -12,14 +12,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.25.15
+// @version        2.25.16
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.25.15';
+var version = '2.25.16';
 
 notRunYet = false;
 
@@ -2982,6 +2982,7 @@ darkCSS = "#content {background-color: "+dmColors[0]+" !important;}" +
 //messages write/read mail
 "div.messages .paperTop { background-image: none;}" +
 "div.messages .paperBottom { background-image: none;}" +
+"table.friendlist td, table.friendlist input { background-color: "+dmColors[0]+";}" +
 //farm list
 ".farmListWrapper tbody tr td { background-color: "+dmColors[0]+";}" +
 //statistics
@@ -3031,7 +3032,9 @@ darkCSS = "#content {background-color: "+dmColors[0]+" !important;}" +
 "div.village3 table tbody.upkeep tr td { background-color: "+dmColors[1]+";}" +
 "div.village3 table tbody.troops tr td { background-color: "+dmColors[0]+";}" +
 //regions
-"table#neighboringRegions tbody tr:not(.highlight) td { background-color: "+dmColors[0]+";}"
+"table#neighboringRegions tbody tr:not(.highlight) td { background-color: "+dmColors[0]+";}" +
+//production page
+"div#productionOverview table td { background-color: "+dmColors[0]+";}"
 
 if( /karte|position/.test(crtPath) ) acss += "."+allIDs[40]+" { height:12px;width:16px;background: url("+img_clipIn+") no-repeat 0px 0px;cursor:pointer; }"+
 	"."+allIDs[41]+" { height:12px;width:16px;background: url("+img_clipOut+") no-repeat 0px 0px;cursor:pointer; }";
@@ -7779,7 +7782,7 @@ function cropFind () {
 		param = '{"data":{"x":'+a.rX+',"y":'+a.rY+',"zoomLevel":2,"ignorePositions":[]}}';
 		ajaxRequest(fullName+'api/v1/map/position', 'POST', param, function(ajaxResp) {
 			var mapData = JSON.parse(ajaxResp.responseText);
-			var pRules = [[/{k.f1}/,'Crop 9:',c9],[/{k.f6}/,'Crop 15:',c15],[/{k.f7}/,'4-4-3-7:',c7],[/{k.f8}/,'3-4-4-7:',c7],[/{k.f9}/,'4-3-4-7:',c7]];
+			var pRules = [[/{k.f1}/,'Crop 9:',c9],[/{k.f6}/,'Crop 15:',c15],[/{k.f13}/,'Crop 18:',c18],[/{k.f7}/,'4-4-3-7:',c7],[/{k.f8}/,'3-4-4-7:',c7],[/{k.f9}/,'4-3-4-7:',c7]];
 			for( var i=0; i < mapData.tiles.length; i++ ) {
 				if (typeof mapData.tiles[i].title != 'undefined') {
 					if( neFL ) {
@@ -7839,11 +7842,12 @@ function cropFind () {
 	var oX = inps(XY[0],'RBmX');
 	var oY = inps(XY[1],'RBmY');
 	var oZ = $em('select',[$em('OPTION','1',[['value','1']]),$em('OPTION','2',[['value','2'],['selected','']]),$em('OPTION','3',[['value','3']])],[['name','RBzoom'],['id','RBzoom']]);
+	var c18 = inpsC('RBc18',false);
 	var c15 = inpsC('RBc15',true);
 	var c9 = inpsC('RBc9',true);
 	var c7 = inpsC('RBc7',false);
 	var anDiv = $em('SPAN',[' ',trImg('unit u31')]);
-	cont.appendChild($em('DIV',[label(xCoordText,oX),label(yCoordText,oY),label('zoom:',oZ),label('15:',c15),label('9:',c9),label('7:',c7),cfText,' | ',cfText2,anDiv],[['class','contents'],['style','white-space:nowrap;margin:10px 20px;']]));
+	cont.appendChild($em('DIV',[label(xCoordText,oX),label(yCoordText,oY),label('zoom:',oZ),label('18:',c18),label('15:',c15),label('9:',c9),label('7:',c7),cfText,' | ',cfText2,anDiv],[['class','contents'],['style','white-space:nowrap;margin:10px 20px;']]));
 }
 
 function npcForTroops () {
@@ -8371,7 +8375,8 @@ fieldsOfVillage = {
 	'f9':	[2, 3, 3, 0, 0, 1, 2, 3, 3, 2, 2, 3, 3, 0, 3, 1, 0, 1], //4-3-4-7
 	'f10':	[2, 3, 0, 1, 1, 1, 2, 3, 3, 2, 2, 3, 3, 0, 3, 1, 0, 1], //3-5-4-6
 	'f11':	[2, 0, 0, 2, 0, 3, 3, 2, 2, 1, 1, 2, 0, 3, 3, 1, 3, 3], //4-3-5-6
-	'f12':	[0, 3, 0, 0, 1, 1, 2, 3, 3, 2, 2, 3, 3, 0, 3, 1, 0, 1]  //5-4-3-6
+	'f12':	[0, 3, 0, 0, 1, 1, 2, 3, 3, 2, 2, 3, 3, 0, 3, 1, 0, 1], //5-4-3-6
+	'f13':	[3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3]  //18 crop
 };
 //		'f99':	'Natarian village',
 
@@ -8548,7 +8553,7 @@ function cultureCalc () {
 		if( ! contr ) return;
 		blevel = parseInt(blevel[0].innerHTML.match(/\d+/)[0]);
 		var bid = parseInt($g('build').getAttribute('class').match(/\d+/)[0]);
-		var clocks = $gc('culturePointsAndPopulation',contr.parentNode);
+		var clocks = $gc('buildingBenefits',contr.parentNode);
 		var uc = $gc('underConstruction',cont);
 		if (uc.length > 0) blevel = blevel + uc.length;
 		if( clocks.length > 0 ) {
@@ -8574,7 +8579,7 @@ function cultureCalc () {
 }
 
 if( /dorf[1,2]\.php/.test(crtPath) ) TM_ShowMainBuildingNumbers();
-if( /^\/build/.test(relName) ) cultureCalc();
+//if( /^\/build/.test(relName) ) cultureCalc();
 }
 /****************************** end Center Number ****************************/
 
@@ -9419,7 +9424,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;padding:5px;text-align:center;']]);
 		var closeb = $ee('div',$a('&#x2716;',[['style','font-size:140%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Travian Resource Bar+";
-		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Feb 22, 2025:</p> <ul><li>Added support for new Dawn Of The Elders server</li><li>Changed quick links back to invisible if building not available</li></ul> <p>Version 2.25.14 - Feb 20, 2025:</p> <ul><li>Added option to disable the Quick link icons</li></ul> <p>Version 2.25.13 - Feb 19, 2025:</p> <ul><li>Display attacks on new Travian servers</li><li>Added new travian quick link icons for rally point send troops and marketplace send resources</li><li>Changed quick link icons from invisible to disabled if they are not available</li></ul> <p>Version 2.25.12 - Feb 14, 2025:</p> <ul><li>Added new travian icons for quick links</li><li>Added quick links for Town Hall and Asclepeion</li><li>Added quick links support for new travian servers</li><li>Minor fixes</li></ul> <p>Version 2.25.9 - Feb 3, 2025:</p> <ul><li>Changed sound notification</li><li>Added market functions on map popup page</li></ul>  <p>Version 2.25.7 - Jan 31, 2025:</p> <ul><li>Fixed send troops links</li><li>Fixed the loading of the marketplace functions</li><li>Added Eye comfort mode! Finally, you can reduce your eye strain when checking attacks in the middle of the night </li> <li>Fixed village sorting (first sort will be ascending) </li></ul>";
+		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Feb 28, 2025:</p> <ul><li>Added support for 18c cropper villages</li><li>Added option to display 18c croppers in the crop scan</li><li>Disabled culturecalc function because it's already displayed in the game</li><li>Minor theme fixes</li></ul> <p>Version 2.25.15 - Feb 22, 2025:</p> <ul><li>Added support for new Dawn Of The Elders server</li><li>Changed quick links back to invisible if building not available</li></ul> <p>Version 2.25.14 - Feb 20, 2025:</p> <ul><li>Added option to disable the Quick link icons</li></ul> <p>Version 2.25.13 - Feb 19, 2025:</p> <ul><li>Display attacks on new Travian servers</li><li>Added new travian quick link icons for rally point send troops and marketplace send resources</li><li>Changed quick link icons from invisible to disabled if they are not available</li></ul> <p>Version 2.25.12 - Feb 14, 2025:</p> <ul><li>Added new travian icons for quick links</li><li>Added quick links for Town Hall and Asclepeion</li><li>Added quick links support for new travian servers</li><li>Minor fixes</li></ul> <p>Version 2.25.9 - Feb 3, 2025:</p> <ul><li>Changed sound notification</li><li>Added market functions on map popup page</li></ul>  <p>Version 2.25.7 - Jan 31, 2025:</p> <ul><li>Fixed send troops links</li><li>Fixed the loading of the marketplace functions</li><li>Added Eye comfort mode! Finally, you can reduce your eye strain when checking attacks in the middle of the night </li> <li>Fixed village sorting (first sort will be ascending) </li></ul>";
 		footer.appendChild(footerline);
 		footerline.appendChild(homepage);
 		footerline.appendChild(donate);
