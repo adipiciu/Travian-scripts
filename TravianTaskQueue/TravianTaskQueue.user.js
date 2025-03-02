@@ -12,14 +12,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version     2.0.21
+// @version     2.0.22
 // ==/UserScript==
 
 (function () {
 
 function allInOneTTQ () {
 notRunYet = false;
-var sCurrentVersion = "2.0.21";
+var sCurrentVersion = "2.0.22";
 
 //find out if Server errors
 var strTitle = document.title;
@@ -4105,13 +4105,13 @@ if (init) {
 	}
 	if( oLogout.snapshotLength > 0 || errorFL ) TTQ_setValue(CURRENT_SERVER+'login','0');
     var oSysMsg = xpath("//div[@id='sysmsg']");
-	var oLoginBtn = xpath("//table[@id='loginForm']//button[@type='submit']");
+	var oLoginBtn = xpath("//div[@id='loginScene']//button[@type='submit']");
     if ( oLoginBtn.snapshotLength < 1 && (oLogout.snapshotLength > 0 || oSysMsg.snapshotLength > 0) ) {
         _log(1, "Error screen or something. Game is not loaded. Did not start TTQ.");
     } else if ( oLoginBtn.snapshotLength == 1 ) {  //Auto-Login, this assumes that FF has saved your username and password
 		var loginFL = false;
-		var oLogin = xpath("//input[@name='name'][@class='text'][@type='text']").snapshotItem(0);
-		var oPassword = xpath("//input[@name='password'][@class='text'][@type='password']").snapshotItem(0);
+		var oLogin = xpath("//input[@name='name'][@type='text']").snapshotItem(0);
+		var oPassword = xpath("//input[@name='password'][@type='password']").snapshotItem(0);
 		// writed by Serj_LV
 		var logPas = TTQ_getValue(CURRENT_SERVER+'login','0');
 		if( logPas != '0' ) {
@@ -4125,7 +4125,7 @@ if (init) {
 					TTQ_setValue(CURRENT_SERVER+'login',oLogin.value+'/'+oPassword.value);
 			}, false);
 		}
-		if( loginFL ) setTimeout("document.getElementById('loginForm').getElementsByTagName('button')[0].click();",Math.round(ttqRandomNumber()*111)); // 333 - roughly 1.6 to 3.3 with default random min/max settings
+		if( loginFL ) setTimeout("document.getElementById('loginScene').getElementsByTagName('button')[0].click();",Math.round(ttqRandomNumber()*111)); // 333 - roughly 1.6 to 3.3 with default random min/max settings
 		else _log(1,"Auto-Login failed. You must have Firefox/Chrome store the username and password. TTQ does not.");
 	} else {
 		_log(1, "Initialization failed, Auto-login failed. Travian Task Queue is not running");
