@@ -12,14 +12,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.25.16
+// @version        2.25.17
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.25.16';
+var version = '2.25.17';
 
 notRunYet = false;
 
@@ -2951,9 +2951,9 @@ darkCSS = "#content {background-color: "+dmColors[0]+" !important;}" +
 "#build .upgradeBuilding {background-color: "+dmColors[3]+";}" +
 "div#build table:not(.transparent):not(.troop_details) thead th, div#build table:not(.transparent):not(.troop_details) thead td { background-color: "+dmColors[1]+";}" +
 "div#build table:not(.transparent):not(.troop_details) tbody th, div#build table:not(.transparent):not(.troop_details) tbody td { background-color: "+dmColors[0]+";}" +
-//build troops
+//build troops + trappers
 ".innerTroopWrapper {background-color: "+dmColors[0]+" !important;}" +
-"div#build div.action.troop {background-color: "+dmColors[0]+";}" +
+"div#build div.action {background-color: "+dmColors[0]+";}" +
 //culture points
 ".fluidSpeechBubble .fluidSpeechBubble-br, .fluidSpeechBubble .fluidSpeechBubble-bl, .fluidSpeechBubble .fluidSpeechBubble-tr, .fluidSpeechBubble .fluidSpeechBubble-tl { background-image: none;}" +
 //rally point //overview
@@ -6748,10 +6748,8 @@ function bigQuickLinks () {
 	imgs[5] = $e('i', [['class','healTime_medium'],['style','filter: grayscale(100%);']]);
 
 	if (villageBoxes) {
-		var greenbuttons = $xf('.//div[contains(@class,"quickLinkSlot")]/button[contains(@class,"green")]','l',sidebarBoxActiveVillage);
+		var greenbuttons = $xf('.//div[contains(@class,"quickLinks")]/button[contains(@class,"settings") and contains(@class,"gold")]','l',sidebarBoxActiveVillage);
 		if( greenbuttons.snapshotLength > 0 ) {
-			plusAccount = true;
-		} else {
 			var quickLinkSlot = $xf('.//div[contains(@class,"quickLinkSlot")]','l',sidebarBoxActiveVillage);
 			for( var i = 0; i < quickLinkSlot.snapshotLength; i++ ) {
 				quickLinkSlot.snapshotItem(i).style.display = "none";
@@ -6762,6 +6760,8 @@ function bigQuickLinks () {
 			bigIconsHeader.insertBefore(CreateBigLinkButton('market',2), bigIconsHeader.firstChild);
 			//bigIconsHeader.insertBefore(CreateBigLinkButton('market',6), bigIconsHeader.firstElementChild);
 			bigIconsHeader.insertBefore(CreateBigLinkButton('overview',0), bigIconsHeader.firstElementChild);
+		} else {
+			plusAccount = true;
 		}
 	} else {
 		if (childrenB[0].className.search('green') == -1 ) { //Plus account active
@@ -9424,7 +9424,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;padding:5px;text-align:center;']]);
 		var closeb = $ee('div',$a('&#x2716;',[['style','font-size:140%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Travian Resource Bar+";
-		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Feb 28, 2025:</p> <ul><li>Added support for 18c cropper villages</li><li>Added option to display 18c croppers in the crop scan</li><li>Disabled culturecalc function because it's already displayed in the game</li><li>Minor theme fixes</li></ul> <p>Version 2.25.15 - Feb 22, 2025:</p> <ul><li>Added support for new Dawn Of The Elders server</li><li>Changed quick links back to invisible if building not available</li></ul> <p>Version 2.25.14 - Feb 20, 2025:</p> <ul><li>Added option to disable the Quick link icons</li></ul> <p>Version 2.25.13 - Feb 19, 2025:</p> <ul><li>Display attacks on new Travian servers</li><li>Added new travian quick link icons for rally point send troops and marketplace send resources</li><li>Changed quick link icons from invisible to disabled if they are not available</li></ul> <p>Version 2.25.12 - Feb 14, 2025:</p> <ul><li>Added new travian icons for quick links</li><li>Added quick links for Town Hall and Asclepeion</li><li>Added quick links support for new travian servers</li><li>Minor fixes</li></ul> <p>Version 2.25.9 - Feb 3, 2025:</p> <ul><li>Changed sound notification</li><li>Added market functions on map popup page</li></ul>  <p>Version 2.25.7 - Jan 31, 2025:</p> <ul><li>Fixed send troops links</li><li>Fixed the loading of the marketplace functions</li><li>Added Eye comfort mode! Finally, you can reduce your eye strain when checking attacks in the middle of the night </li> <li>Fixed village sorting (first sort will be ascending) </li></ul>";
+		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Mar 4, 2025:</p> <ul><li>Minor fix for quick links</li></ul> <p>Version 2.25.16 - Feb 28, 2025:</p> <ul><li>Added support for 18c cropper villages</li><li>Added option to display 18c croppers in the crop scan</li><li>Disabled culturecalc function because it's already displayed in the game</li><li>Minor theme fixes</li></ul> <p>Version 2.25.15 - Feb 22, 2025:</p> <ul><li>Added support for new Dawn Of The Elders server</li><li>Changed quick links back to invisible if building not available</li></ul> <p>Version 2.25.14 - Feb 20, 2025:</p> <ul><li>Added option to disable the Quick link icons</li></ul> <p>Version 2.25.13 - Feb 19, 2025:</p> <ul><li>Display attacks on new Travian servers</li><li>Added new travian quick link icons for rally point send troops and marketplace send resources</li><li>Changed quick link icons from invisible to disabled if they are not available</li></ul> <p>Version 2.25.12 - Feb 14, 2025:</p> <ul><li>Added new travian icons for quick links</li><li>Added quick links for Town Hall and Asclepeion</li><li>Added quick links support for new travian servers</li><li>Minor fixes</li></ul> <p>Version 2.25.9 - Feb 3, 2025:</p> <ul><li>Changed sound notification</li><li>Added market functions on map popup page</li></ul>  <p>Version 2.25.7 - Jan 31, 2025:</p> <ul><li>Fixed send troops links</li><li>Fixed the loading of the marketplace functions</li><li>Added Eye comfort mode! Finally, you can reduce your eye strain when checking attacks in the middle of the night </li> <li>Fixed village sorting (first sort will be ascending) </li></ul>";
 		footer.appendChild(footerline);
 		footerline.appendChild(homepage);
 		footerline.appendChild(donate);
