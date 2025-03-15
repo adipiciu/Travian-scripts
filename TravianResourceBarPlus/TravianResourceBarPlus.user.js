@@ -12,14 +12,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.25.17
+// @version        2.25.18
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.25.17';
+var version = '2.25.18';
 
 notRunYet = false;
 
@@ -3793,6 +3793,7 @@ function marketSend () {
 	var resSelector = $gc("resourceSelector",basee)[0];
 	var pButt = $gc("buttonFramed plus rectangle",basee)[0].cloneNode(true);
 	pButt.addEventListener('click', mhRowsLinkP, false);
+	pButt.removeAttribute('disabled');
 	var mButt = $gc("buttonFramed minus rectangle",basee)[0].cloneNode(true);
 	mButt.addEventListener('click', mhRowsLinkM, false);
 	mButt.removeAttribute('disabled');
@@ -8638,7 +8639,7 @@ function calcTroopCost () {
 
 		var nts = tshift>0 ? tshift + (RunTime[0] - (Date.now())) / 1e3: 0;
 		var newR = $em('TR',[$em('TD',[$e('i',[['class','clock_medium']]),' ',$eT('SPAN',allWR[0]+nts,0),' ',$e('i',[['class','r5']]),' ',allWR[5]]),$c(newBTX)]);
-		var newTbl = $ee('TABLE',newR,[['class',allIDs[7]],['style','background-color:#FAFAFF;']]);
+		var newTbl = $ee('TABLE',newR,[['class',allIDs[7]],['style','background-color:'+rbpBckColor]]);
 		var newT = needed_show( wantD );
 		newR = $ee('TR',$c(newT,[['colspan',2]]));
 		newTbl.appendChild(newR);
@@ -9424,7 +9425,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;padding:5px;text-align:center;']]);
 		var closeb = $ee('div',$a('&#x2716;',[['style','font-size:140%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Travian Resource Bar+";
-		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Mar 4, 2025:</p> <ul><li>Minor fix for quick links</li></ul> <p>Version 2.25.16 - Feb 28, 2025:</p> <ul><li>Added support for 18c cropper villages</li><li>Added option to display 18c croppers in the crop scan</li><li>Disabled culturecalc function because it's already displayed in the game</li><li>Minor theme fixes</li></ul> <p>Version 2.25.15 - Feb 22, 2025:</p> <ul><li>Added support for new Dawn Of The Elders server</li><li>Changed quick links back to invisible if building not available</li></ul> <p>Version 2.25.14 - Feb 20, 2025:</p> <ul><li>Added option to disable the Quick link icons</li></ul> <p>Version 2.25.13 - Feb 19, 2025:</p> <ul><li>Display attacks on new Travian servers</li><li>Added new travian quick link icons for rally point send troops and marketplace send resources</li><li>Changed quick link icons from invisible to disabled if they are not available</li></ul> <p>Version 2.25.12 - Feb 14, 2025:</p> <ul><li>Added new travian icons for quick links</li><li>Added quick links for Town Hall and Asclepeion</li><li>Added quick links support for new travian servers</li><li>Minor fixes</li></ul> <p>Version 2.25.9 - Feb 3, 2025:</p> <ul><li>Changed sound notification</li><li>Added market functions on map popup page</li></ul>  <p>Version 2.25.7 - Jan 31, 2025:</p> <ul><li>Fixed send troops links</li><li>Fixed the loading of the marketplace functions</li><li>Added Eye comfort mode! Finally, you can reduce your eye strain when checking attacks in the middle of the night </li> <li>Fixed village sorting (first sort will be ascending) </li></ul>";
+		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Mar 15, 2025:</p> <ul><li>Fix market plus button sometimes it's disabled</li></ul>";
 		footer.appendChild(footerline);
 		footerline.appendChild(homepage);
 		footerline.appendChild(donate);
