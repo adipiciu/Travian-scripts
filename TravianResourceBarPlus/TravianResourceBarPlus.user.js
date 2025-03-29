@@ -12,14 +12,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.25.18
+// @version        2.25.19
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.25.18';
+var version = '2.25.19';
 
 notRunYet = false;
 
@@ -5226,6 +5226,8 @@ function fillXYtoRP() {
 			var troopImg = $xf('.//img[contains(@class,"unit u")]','f',tt);
 			if( ! troopImg ) return;
 			race = Math.floor(parseInt(troopImg.getAttribute('class').match(/\d+/)[0])/10);
+			RB.village_Var[2] = race;
+			saveVCookie( 'VV', RB.village_Var );
 			if( race != RB.Setup[2] ) {
 				RB.Setup[2] = race;
 				saveCookie( 'RBSetup', 'Setup' );
@@ -6449,6 +6451,8 @@ function parseDorf1 () {
 		var village = $g("resourceFieldContainer");
 		if (village) {
 			var race = parseInt(village.getAttribute('class').match(/tribe(\d+)/)[1])-1;
+			RB.village_Var[2] = race;
+			saveVCookie( 'VV', RB.village_Var );
 			if( race != RB.Setup[2] ) {
 				RB.Setup[2] = race;
 				saveCookie( 'RBSetup', 'Setup' );
@@ -8953,14 +8957,6 @@ function goldClubInfo () {
 					allBer.snapshotItem(t).removeAttribute('href');
 				}
 			}
-
-			/*
-			var flID = $gt('INPUT',fList[i].parentNode)[0].getAttribute("onclick").match(/\d+/)[0];
-			if( flID != RB.village_Var[2] ) {
-				RB.village_Var[2] = flID;
-				saveVCookie( 'VV', RB.village_Var );
-			}
-			*/
 		}
 	}
 	function selectMessage ( a ) {
@@ -9425,7 +9421,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;padding:5px;text-align:center;']]);
 		var closeb = $ee('div',$a('&#x2716;',[['style','font-size:140%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Travian Resource Bar+";
-		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Mar 15, 2025:</p> <ul><li>Fix market plus button sometimes it's disabled</li></ul>";
+		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Mar 29, 2025:</p> <ul><li>Added support for multiple village types on the same account</li></ul> <p>Version 2.25.18 - Mar 15, 2025:</p> <ul><li>Fix market plus button sometimes it's disabled</li></ul>";
 		footer.appendChild(footerline);
 		footerline.appendChild(homepage);
 		footerline.appendChild(donate);
@@ -9471,7 +9467,7 @@ function displayWhatIsNew () {
 	if( RB.Setup[2] == 3 || RB.Setup[2] == 4 || RB.Setup[2] > 8 ) { RB.Setup[2] = 0; saveCookie( 'RBSetup', 'Setup' ); }
 	var aText = $xf('//script[contains(@src, "/Variables.js")]');
 	if (aText) {
-		if (RB.Setup[45] == 0 || RB.Setup[46] == 0 || RB.Setup[47] == 0 || RB.Setup[48] == 0 || RB.Setup[50] == 0) {
+		if (RB.Setup[45] == 0 || RB.Setup[46] == 0 || RB.Setup[47] == 0 || RB.Setup[48] == 0 || RB.Setup[50] == 0 || RB.Setup[52] == 0) {
 			ajaxRequest(aText.src, 'GET', null, function(ajaxResp) {
 				var ad = ajaxNDIV(ajaxResp);
 				T4_Variables = JSON.parse(ad.textContent.match(/Travian.Variables\s*=\s*(.*});/)[1]);
@@ -9491,6 +9487,7 @@ function displayWhatIsNew () {
 				}
 				if (RB.Setup[48] == 0) { RB.Setup[48] = T4_Variables.Map.Size.width; }
 				if (RB.Setup[50] == 0) { RB.Setup[50] = T4_Variables.feature_flags.travelOverTheWorldEdge ? 1 : 2; }
+				if (RB.Setup[52] == 0) { RB.Setup[52] = T4_Variables.keepVidOnConquer ? 1 : 2; }
 				saveCookie( 'RBSetup', 'Setup' );
 			});
 			return;
@@ -9516,6 +9513,9 @@ function displayWhatIsNew () {
 	//save "produce per hour"
 	if( ! getResources() ) return;
 	if( /dorf[12].php/.test(crtPath) ) parseDorf1();
+
+	//If keep tribe on conquer feature, then use the village specific tribe.
+	if (RB.Setup[52] == 1) RB.Setup[2] = RB.village_Var[2];
 
 	if( RB.overview[0] > -1 ) {
 		var i =  parseInt(RB.overview[0]) +1;
