@@ -12,14 +12,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.25.19
+// @version        2.25.20
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.25.19';
+var version = '2.25.20';
 
 notRunYet = false;
 
@@ -4741,22 +4741,23 @@ function vlist_addButtonsT4 () {
 			linkVSwitch[vn] = linkEl.getAttribute('href');
 			var coords = $gc("coordinatesGrid",villages[vn])[0];
 			var myVid = getVidFromCoords(coords.innerHTML);
-			var villageID = villages[vn].getAttribute('data-did');
-			var reg = new RegExp('"id":' + villageID + ',"name.+?(?=incomingAttacksAmount)incomingAttacksAmount":(\\d+)');
-			if ( reg.test(aText) ) {
-				if (aText.match(reg)[1] != 0) {
-					//villages[vn].classList.add("attack");
-					if (villages[vn].getAttribute('class').match(/attack/i)) {
-						//plusAccount = true;
-					} else {
-						var img = trImg('att1',aText.match(reg)[1]+' '+RB.dictionary[12]);
-						img.style.backgroundSize = "14px 14px";
-						linkEl.firstElementChild.prepend(img);
+			villages_id[vn] = myVid;
+			if (!plusAccount) {
+				var villageID = villages[vn].getAttribute('data-did');
+				var reg = new RegExp('"id":' + villageID + ',"name.+?(?=incomingAttacksAmount)incomingAttacksAmount":(\\d+)');
+				if ( reg.test(aText) ) {
+					if (aText.match(reg)[1] != 0) {
+						//villages[vn].classList.add("attack");
+						if (villages[vn].getAttribute('class').match(/attack/i)) {
+							//plusAccount = true;
+						} else {
+							var img = trImg('att1',aText.match(reg)[1]+' '+RB.dictionary[12]);
+							img.style.backgroundSize = "14px 14px";
+							linkEl.firstElementChild.prepend(img);
+						}
 					}
-					
 				}
 			}
-			villages_id[vn] = myVid;
 
 			if( linkEl.hasAttribute('class') && linkEl.getAttribute('class').match(/active/i) ) {
 				village_aid = myVid; village_aNum = vn;
@@ -9421,7 +9422,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;padding:5px;text-align:center;']]);
 		var closeb = $ee('div',$a('&#x2716;',[['style','font-size:140%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Travian Resource Bar+";
-		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Mar 29, 2025:</p> <ul><li>Added support for multiple village types on the same account</li></ul> <p>Version 2.25.18 - Mar 15, 2025:</p> <ul><li>Fix market plus button sometimes it's disabled</li></ul>";
+		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Apr 15, 2025:</p> <ul><li>Minor fix</li></ul> <p>Version 2.25.19 - Mar 29, 2025:</p> <ul><li>Added support for multiple village types on the same account</li></ul> <p>Version 2.25.18 - Mar 15, 2025:</p> <ul><li>Fix market plus button sometimes it's disabled</li></ul>";
 		footer.appendChild(footerline);
 		footerline.appendChild(homepage);
 		footerline.appendChild(donate);
