@@ -12,14 +12,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.25.20
+// @version        2.25.21
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.25.20';
+var version = '2.25.21';
 
 notRunYet = false;
 
@@ -4738,12 +4738,13 @@ function vlist_addButtonsT4 () {
 	if (villages.length > 0 ) {
 		for ( var vn = 0; vn < villages.length; vn++ ) {
 			var linkEl = $gt("a",villages[vn])[0];
-			linkVSwitch[vn] = linkEl.getAttribute('href');
+			var villageID = villages[vn].getAttribute('data-did');
+			//linkVSwitch[vn] = linkEl.getAttribute('href');
+			linkVSwitch[vn] = "?newdid=" + villageID + "&"
 			var coords = $gc("coordinatesGrid",villages[vn])[0];
 			var myVid = getVidFromCoords(coords.innerHTML);
 			villages_id[vn] = myVid;
 			if (!plusAccount) {
-				var villageID = villages[vn].getAttribute('data-did');
 				var reg = new RegExp('"id":' + villageID + ',"name.+?(?=incomingAttacksAmount)incomingAttacksAmount":(\\d+)');
 				if ( reg.test(aText) ) {
 					if (aText.match(reg)[1] != 0) {
@@ -4767,12 +4768,14 @@ function vlist_addButtonsT4 () {
 			if( RB.Setup[21] != 2 && RB.Setup[39] > 0 ) {
 				var f12Links = addDorf12Links(linkVSwitch[vn],0);
 				f12Links.setAttribute('class',allIDs[49]);
-				insertAfter(f12Links,$gc('name',linkEl)[0]);
+				//insertAfter(f12Links,$gc('name',linkEl)[0]);
+				insertAfter(f12Links,linkEl);
 			}
 			if( RB.Setup[21] != 2 && RB.Setup[15] > 0 ) {
 				var newAR = addARLinks(villages_id[vn],0);
 				newAR.setAttribute('class',allIDs[48]);
-				insertAfter(newAR,$gc('name',linkEl)[0]);
+				//insertAfter(newAR,$gc('name',linkEl)[0]);
+				insertAfter(newAR,linkEl);
 			}
 		}
 	} else {
@@ -9408,6 +9411,39 @@ function oasisKirilloid (vf) {
 	return $a('(kirilloid.ru)',[['href','http://travian.kirilloid.ru/warsim2.php'+kirillS],['target','_blank'],['style','font-size:11px;']]);
 }
 
+function createSemiLargerMapHTML() {
+	var div = $e('DIV',[['class','iconButton viewFullGold'],['title','Semi Larger map (no plus needed) ||']]);
+	div.open = false;
+	var iconCropFinder = $g('iconFullscreen');
+	if (iconCropFinder) {
+		div.onclick = function () {
+			const map1 = document.querySelector("#mapContainer > div:nth-child(1)");
+			const elements = [
+				document.querySelector("#topBar"),
+				document.querySelector("#topBarHeroWrapper"),
+				document.querySelector("#header"),
+				document.querySelector("#servertime"),
+				document.querySelector("#sidebarBeforeContent"),
+				document.querySelector("#sidebarAfterContent"),
+			];
+			if (this.open) {
+				elements.forEach(el => {
+					el.style.visibility = "";
+				});
+				map1.style.overflow = "hidden";
+				this.open = false;
+				return;
+			}
+			elements.forEach(el => {
+				el.style.visibility = "hidden";
+			});
+			map1.style.overflow = "unset";
+			this.open = true;
+		};
+		insertAfter(div,iconCropFinder);
+	}
+}
+
 function displayWhatIsNew () {
 	if ($g('whatsnew')) { 
 		$g("whatsnew").style.visibility = "visible"; return; } 
@@ -9422,7 +9458,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;padding:5px;text-align:center;']]);
 		var closeb = $ee('div',$a('&#x2716;',[['style','font-size:140%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Travian Resource Bar+";
-		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Apr 15, 2025:</p> <ul><li>Minor fix</li></ul> <p>Version 2.25.19 - Mar 29, 2025:</p> <ul><li>Added support for multiple village types on the same account</li></ul> <p>Version 2.25.18 - Mar 15, 2025:</p> <ul><li>Fix market plus button sometimes it's disabled</li></ul>";
+		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Oct 25, 2025:</p> <ul><li>Added view Large Map function</li><li>Fix reading village link in latest Travian update</li></ul> <p>Version 2.25.20 - Apr 15, 2025:</p> <ul><li>Minor fix</li></ul> <p>Version 2.25.19 - Mar 29, 2025:</p> <ul><li>Added support for multiple village types on the same account</li></ul> <p>Version 2.25.18 - Mar 15, 2025:</p> <ul><li>Fix market plus button sometimes it's disabled</li></ul>";
 		footer.appendChild(footerline);
 		footerline.appendChild(homepage);
 		footerline.appendChild(donate);
@@ -9554,7 +9590,7 @@ function displayWhatIsNew () {
 	if( /report/.test(crtPath) ) reportsDelOrSearch(); else if( RB.overview[0] < -2 ) { RB.overview[0] = -1; saveCookie('OV', 'overview'); }
 	if( /messages\//.test(crtPath) ) { convertCoordsInMessagesToLinks(); }
 	if( /karte.php\?(.*&)?[zdxy]=/.test(crtPath) ) { distanceToMyVillages(); linkOnT4Karte(); }
-	if( /karte.php/.test(crtPath) ) { karteDistance(); cropFind(); resSendOnMap(); }
+	if( /karte.php/.test(crtPath) ) { karteDistance(); cropFind(); resSendOnMap(); createSemiLargerMapHTML(); }
 	if( /position_details.php\?(.*&)?[zdxy]=/.test(crtPath) ) { troopsOasis(); distanceToMyVillages(); viewMessageIWK(); linkOnT4Karte(); }
 	if( ! /dorf.\.php/.test(crtPath) ) addRefIGM();
 	if( crtPath.indexOf('alliance') != -1 ) {
@@ -9569,7 +9605,8 @@ function displayWhatIsNew () {
 		if ( ! $g('PlayerProfileEditor') ) { parseSpieler(); spielerSort(); }
 	}
 	if( /report.+id=/.test(crtPath) ) { addSpeedAndRTSend(); analyzerBattle(); getTroopNames(); }
-	if( /hero/.test(crtPath) ) { speedBids(); timeToBids(); neededResAdd(); restHeroTime(); saveHeroSpeed(); saveHeroPower(); saveHeroMount(); addSpeedAndRTSend(); addSpeedAndRTSend($gc('boxes',cont)[0]); }
+	if( /hero/.test(crtPath) ) { neededResAdd(); restHeroTime(); saveHeroSpeed(); saveHeroPower(); saveHeroMount(); addSpeedAndRTSend(); addSpeedAndRTSend($gc('boxes',cont)[0]); }
+	if( /auctions/.test(crtPath) ) { speedBids(); timeToBids(); }
 	if( /build.php/.test(crtPath) ) { neededResAdd(); buildDispatcher(); addSpeedAndRTSend(); }
 
 	setTimeout( function() { progressbar_updValues(); setInterval(progressbar_updValues, 1000); }, (1000-progressbar_time-((Date.now())-RunTime[0])));
