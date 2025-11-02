@@ -12,14 +12,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version     2.0.22
+// @version     2.0.23
 // ==/UserScript==
 
 (function () {
 
 function allInOneTTQ () {
 notRunYet = false;
-var sCurrentVersion = "2.0.22";
+var sCurrentVersion = "2.0.23";
 
 //find out if Server errors
 var strTitle = document.title;
@@ -693,7 +693,9 @@ function vlist_addButtonsT4 () {
 	var villages = $gc("listEntry village",vlist);
 	for ( var vn = 0; vn < villages.length; vn++ ) {
 		var linkEl = $gt("a",villages[vn])[0];
-		linkVSwitch[vn] = linkEl.getAttribute('href');
+		var villageID = villages[vn].getAttribute('data-did');
+		//linkVSwitch[vn] = linkEl.getAttribute('href');
+		linkVSwitch[vn] = "?newdid=" + villageID + "&"
 		var coords = $gc("coordinatesGrid",villages[vn])[0];
 		var did = getVidFromCoords(coords.innerHTML);
 		var nd = parseInt(linkVSwitch[vn].match(/newdid=(\d+)/)[1]);
