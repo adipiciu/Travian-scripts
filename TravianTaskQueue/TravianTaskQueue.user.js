@@ -12,14 +12,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version     2.0.23
+// @version     2.0.24
 // ==/UserScript==
 
 (function () {
 
 function allInOneTTQ () {
 notRunYet = false;
-var sCurrentVersion = "2.0.23";
+var sCurrentVersion = "2.0.24";
 
 //find out if Server errors
 var strTitle = document.title;
@@ -755,29 +755,23 @@ function TTQ_showMenuCommand() {
 	// Put Coords next to village names and make them clickable to view that village's details screen, and move the villages names over to the left some, and save them all for getVillageName() and getVillageNameXY()
 	var vlist = $id("sidebarBoxVillagelist");
 	if( ! vlist ) { vlist = $id("sidebarBoxVillageList") }
-	var iMyRace = $gt('li',vlist); //Recycled variable
-	if ( iMyRace.length ==0 ) {
-		iMyRace = $gc('listEntry village',vlist);
-	}
-	var l8, m8, n8, nFL=true;  //Sorry for the names, i was just being funny.
-	for ( n8 = 0, m8 = 0, l8 = iMyRace.length ; m8 < l8 ; ++m8 ) {
+	var villages = $gc('listEntry village',vlist); //Recycled variable
+	var l8, m8, n8;  //Sorry for the names, i was just being funny.
+	for ( n8 = 0, m8 = 0, l8 = villages.length ; m8 < l8 ; ++m8 ) {
 	//Determine the coordinates of the active building and create a SPAN with clickable links to the village.
-		tA = iMyRace[m8];
-		tA = $gt("a",tA)[0];
-		if ( nFL ) {
-			iSiteId = tA.href.split("&id=");
-			if ( iSiteId.length > 1 ) iSiteId = parseInt(iSiteId[1]);
-			nFL = false;
-		}
+		tA = villages[m8];
+		var villageID = tA.getAttribute('data-did');
 		var xy = coordZToXY(villages_id[n8]);
 		tX = xy[0];
 		tY = xy[1];
 		vName = $gc('name',tA)[0].textContent;
-		vName = '<span class ="ttq_village_name" onclick="window.location = \''+tA.href+'\';return false;" title="'+aLangStrings[80]+'">' + vName + '</span>&nbsp;<span class ="ttq_village_name ttq_village_coords" title="'+aLangStrings[81]+'" onclick="window.location = \'' + window.location.origin + '/position_details.php?x='+tX+'&y='+tY+'\';return false;" >(' + tX + '|' + tY + ')</span>';
-		myPlaceNames[parseInt(tA.href.split("=")[1])] = vName;  // village id
+		vName = '<span class ="ttq_village_name" onclick="window.location = \''+fullName+'?newdid='+villageID+'&'+'\';return false;" title="'+aLangStrings[80]+'">' + vName + '</span>&nbsp;<span class ="ttq_village_name ttq_village_coords" title="'+aLangStrings[81]+'" onclick="window.location = \'' + window.location.origin + '/position_details.php?x='+tX+'&y='+tY+'\';return false;" >(' + tX + '|' + tY + ')</span>';
+		myPlaceNames[parseInt(villageID)] = vName;  // village id
 		myPlaceNames[tX+" "+tY] = vName;
 		n8++;
 	}
+	var iSiteId = crtPath.split("?id=");
+	if ( iSiteId.length > 1 ) iSiteId = parseInt(iSiteId[1]);
 	// Grab Building site id while we are here... if its there.
 	if ( isNaN(iSiteId) || iSiteId < 0 ) iSiteId = getSiteId();
 	//Grab any other place (village) names I can see here and save them
