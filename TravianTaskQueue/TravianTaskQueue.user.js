@@ -12,14 +12,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version     2.0.24
+// @version     2.0.25
 // ==/UserScript==
 
 (function () {
 
 function allInOneTTQ () {
 notRunYet = false;
-var sCurrentVersion = "2.0.24";
+var sCurrentVersion = "2.0.25";
 
 //find out if Server errors
 var strTitle = document.title;
@@ -2385,7 +2385,9 @@ function sendGoldClub2(httpRequest,aTask) {
 			var build = holder.getElementsByClassName('gid16');
 			var scripts = build[0].getElementsByTagName('script');
 			_log(3,"Script content: "+scripts[0].textContent);
-			var data = JSON.parse(scripts[0].textContent.match(/viewData:.*}} /)[0].replace('viewData','{ "viewData"').replace(new RegExp('}} $'), '}}}'));
+			//var data = JSON.parse(scripts[0].textContent.match(/viewData:.*}} /)[0].replace('viewData','{ "viewData"').replace(new RegExp('}} $'), '}}}'));
+			var data = JSON.parse(scripts[0].textContent.match(/viewData:.*}}}/)[0].replace('viewData','{ "viewData"'));
+			_log(3,"Script content: "+data);
 			var farmLists = data.viewData.ownPlayer.farmLists;
 			var sParams;
 			aTask[3] = aTask[3].replace(/;$/, "");
