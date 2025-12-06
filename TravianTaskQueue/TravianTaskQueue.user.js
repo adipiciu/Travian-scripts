@@ -12,14 +12,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version     2.0.26
+// @version     2.0.27
 // ==/UserScript==
 
 (function () {
 
 function allInOneTTQ () {
 notRunYet = false;
-var sCurrentVersion = "2.0.26";
+var sCurrentVersion = "2.0.27";
 
 //find out if Server errors
 var strTitle = document.title;
@@ -1479,7 +1479,7 @@ function createBuildLinks() {
 	}
 	iTask = 1; //Upgrade existing building
 
-	var xpBuildDesc = xpath("//div[contains(@class,'build_desc') or contains(@class,'stickyImage') or contains(@class,'upgradeHeader')]");
+	var xpBuildDesc = xpath("//div[contains(@class,'buildingWrapper') or contains(@class,'stickyImage') or contains(@class,'upgradeHeader')]");
 	for ( var i = 0, j = xpBuildDesc.snapshotLength ; i < j ; ++i ) {
 		var bBuildDesc = xpBuildDesc.snapshotItem(i);
 		var bIMG = bBuildDesc.getElementsByTagName("img");
@@ -1538,7 +1538,7 @@ function upgradebuild(aTask) {
 					}
 					var myBuilds = holder.getElementsByClassName("roundedCornersBox");
 					if (myBuilds.length <=0 ) myBuilds = holder.getElementsByClassName("upgradeHeader");
-					if (myBuilds.length <=0 ) myBuilds = holder.getElementsByClassName("build_desc");
+					if (myBuilds.length <=0 ) myBuilds = holder.getElementsByClassName("buildingWrapper");
 
 					var reqVID = getActiveVillage(holder);
 
