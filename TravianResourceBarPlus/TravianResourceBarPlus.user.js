@@ -9338,7 +9338,7 @@ function villageBMover () {
 			for( var i=0; i<colorLayer.length; i++) {
 				colorLayer[i].removeAttribute('href');
 			}
-			for( var i=0; i<areas.length-3; i++) {
+			for( var i=0; i<areas.length-2; i++) {
 				elClone = areas[i].cloneNode(true);
 				areas[i].parentNode.replaceChild(elClone, areas[i]);
 				areas[i].addEventListener('click',function(x) { return function() { villBMClick(x) }}(i),false);
@@ -9370,7 +9370,7 @@ function villageBMover () {
 	var cross = [];
 	if( areas.length < 21 ) return;
 	loadZVCookie('vBMn','vBMn');
-	for( var i=0; i<areas.length-3; i++) cross[i]=i+19;
+	for( var i=0; i<areas.length-2; i++) cross[i]=i+19;
 	var crossN = cross.slice();
 	var crossR = cross.slice();
 
@@ -9658,3 +9658,4 @@ else if (window.addEventListener) window.addEventListener("load",function () { i
 setTimeout(backupStart, 500);
 
 })();
+
