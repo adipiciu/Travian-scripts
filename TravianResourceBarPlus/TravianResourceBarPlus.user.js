@@ -12,20 +12,20 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.25.23
+// @version        2.25.24
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.25.23';
+var version = '2.25.24';
 
 notRunYet = false;
 
 var homepageurl = 'https://github.com/adipiciu/Travian-scripts';
 var scripturl = 'https://github.com/adipiciu/Travian-scripts/raw/main/TravianResourceBarPlus/TravianResourceBarPlus.user.js'
-var bgcolor = ['#66ff66','yellow','red']; //resource bar colors
+var bgcolor = ['#66ff66','#ffff4c','#ff5252']; //resource bar colors
 var vHColor = '#777777'; //hints (second name) color
 var cnColors = ['#F8FFD8','#FFE85B','#FF8888','#F0B8FF','#A0F0A0']; //Center Number colors
 var dmColors = ['#F4EFE4','#F0E1CC','#DDC6A2','#E9EBD6']; //Dark mode colors
@@ -66,6 +66,7 @@ var lMap = '';
 var crtName = window.location.hostname;
 var fullName = window.location.origin + "/";
 var relName = window.location.pathname;
+var urlParams = window.location.search.substring(1);
 var crtLang = crtName.split('.'); crtLang = crtLang[crtLang.length-1];
 var srv = document.title.substring(8);
 var flinks = new Object();
@@ -4741,7 +4742,7 @@ function vlist_addButtonsT4 () {
 			var linkEl = $gt("a",villages[vn])[0];
 			var villageID = villages[vn].getAttribute('data-did');
 			//linkVSwitch[vn] = linkEl.getAttribute('href');
-			linkVSwitch[vn] = "?newdid=" + villageID + "&"
+			linkVSwitch[vn] = "?newdid=" + villageID + "&";
 			var coords = $gc("coordinatesGrid",villages[vn])[0];
 			var myVid = getVidFromCoords(coords.innerHTML);
 			villages_id[vn] = myVid;
@@ -6337,6 +6338,8 @@ function viewMessageIWDisplay( aLink, tV, xy ) {
 		viewMessageIWClose();
 		var ad = ajaxNDIV(ajaxResp);
 		var aV = $xf(viewPref[tV][0], 'f', ad);
+		var sI = $xf('.//div[@id="standaloneItem"]', 'f', ad);
+		if (sI) sI.remove();
 		ad = null;
 		if (aV) {
 			var newBTX = $ee('BUTTON',gtext("close")+' (X)',[['onclick',jsNone],['class',allIDs[15]]]);
@@ -9338,7 +9341,7 @@ function villageBMover () {
 			for( var i=0; i<colorLayer.length; i++) {
 				colorLayer[i].removeAttribute('href');
 			}
-			for( var i=0; i<areas.length-3; i++) {
+			for( var i=0; i<areas.length-(wall.length ? 3 : 2); i++) {
 				elClone = areas[i].cloneNode(true);
 				areas[i].parentNode.replaceChild(elClone, areas[i]);
 				areas[i].addEventListener('click',function(x) { return function() { villBMClick(x) }}(i),false);
@@ -9367,10 +9370,11 @@ function villageBMover () {
 	var zBN = 0;
 	var zImg = '';
 	var areas = $gc('buildingSlot',vmap);
+	var wall = $gc('bottom',vmap);
 	var cross = [];
 	if( areas.length < 21 ) return;
 	loadZVCookie('vBMn','vBMn');
-	for( var i=0; i<areas.length-3; i++) cross[i]=i+19;
+	for( var i=0; i<areas.length-(wall.length ? 3 : 2); i++) cross[i]=i+19;
 	var crossN = cross.slice();
 	var crossR = cross.slice();
 
@@ -9459,7 +9463,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;padding:5px;text-align:center;']]);
 		var closeb = $ee('div',$a('&#x2716;',[['style','font-size:140%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Travian Resource Bar+";
-		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Dec 6, 2025:</p> <ul><li>Fixed marketplace invalid resource sum</li></ul> <p>Version 2.25.21 - Oct 25, 2025:</p> <ul><li>Added view Large Map function</li><li>Fix reading village link in latest Travian update</li></ul> <p>Version 2.25.20 - Apr 15, 2025:</p> <ul><li>Minor fix</li></ul> <p>Version 2.25.19 - Mar 29, 2025:</p> <ul><li>Added support for multiple village types on the same account</li></ul> <p>Version 2.25.18 - Mar 15, 2025:</p> <ul><li>Fix market plus button sometimes it's disabled</li></ul>";
+		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Dec 23, 2025:</p> <ul><li>Changed RB colors to make the black text over red background more readable</li><li>Fixed building move for villages without wall</li></ul> <p>Version "+version+" - Dec 6, 2025:</p> <ul><li>Fixed marketplace invalid resource sum</li></ul> <p>Version 2.25.21 - Oct 25, 2025:</p> <ul><li>Added view Large Map function</li><li>Fix reading village link in latest Travian update</li></ul> <p>Version 2.25.20 - Apr 15, 2025:</p> <ul><li>Minor fix</li></ul> <p>Version 2.25.19 - Mar 29, 2025:</p> <ul><li>Added support for multiple village types on the same account</li></ul> <p>Version 2.25.18 - Mar 15, 2025:</p> <ul><li>Fix market plus button sometimes it's disabled</li></ul>";
 		footer.appendChild(footerline);
 		footerline.appendChild(homepage);
 		footerline.appendChild(donate);
