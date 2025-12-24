@@ -12,14 +12,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.25.24
+// @version        2.25.25
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.25.24';
+var version = '2.25.25';
 
 notRunYet = false;
 
@@ -4108,7 +4108,7 @@ function marketSummReal () {
 	resourceCalculatorInit();
 	var incomingResArr = [];
 	for (i = 0; i < aT.length; i++) {
-		if (aT[i].classList.contains('history') || aT[i].classList.contains('return')) continue;
+		if (aT[i].classList.contains('history') || aT[i].classList.contains('return') || aT[i].classList.contains('predicted')) continue;
 		// get time to go
 		//var timeToGo = toSeconds(aT[i].rows[1].cells[1].innerHTML);
 		//var timeToGo = parseInt($gc('timer',aT[i])[0].getAttribute("data-value"));
@@ -9463,7 +9463,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;padding:5px;text-align:center;']]);
 		var closeb = $ee('div',$a('&#x2716;',[['style','font-size:140%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Travian Resource Bar+";
-		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Dec 23, 2025:</p> <ul><li>Changed RB colors to make the black text over red background more readable</li><li>Fixed building move for villages without wall</li></ul> <p>Version "+version+" - Dec 6, 2025:</p> <ul><li>Fixed marketplace invalid resource sum</li></ul> <p>Version 2.25.21 - Oct 25, 2025:</p> <ul><li>Added view Large Map function</li><li>Fix reading village link in latest Travian update</li></ul> <p>Version 2.25.20 - Apr 15, 2025:</p> <ul><li>Minor fix</li></ul> <p>Version 2.25.19 - Mar 29, 2025:</p> <ul><li>Added support for multiple village types on the same account</li></ul> <p>Version 2.25.18 - Mar 15, 2025:</p> <ul><li>Fix market plus button sometimes it's disabled</li></ul>";
+		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Dec 24, 2025:</p> <ul><li>Removed resource calculation for 2x, 3x merchants transports because it's unreliable and breaks the expected resources values</li></ul> <p>Version 2.25.24 - Dec 23, 2025:</p> <ul><li>Changed RB colors to make the black text over red background more readable</li><li>Fixed building move for villages without wall</li></ul> <p>Version 2.25.3 - Dec 6, 2025:</p> <ul><li>Fixed marketplace invalid resource sum</li></ul> <p>Version 2.25.21 - Oct 25, 2025:</p> <ul><li>Added view Large Map function</li><li>Fix reading village link in latest Travian update</li></ul> <p>Version 2.25.20 - Apr 15, 2025:</p> <ul><li>Minor fix</li></ul> <p>Version 2.25.19 - Mar 29, 2025:</p> <ul><li>Added support for multiple village types on the same account</li></ul> <p>Version 2.25.18 - Mar 15, 2025:</p> <ul><li>Fix market plus button sometimes it's disabled</li></ul>";
 		footer.appendChild(footerline);
 		footerline.appendChild(homepage);
 		footerline.appendChild(donate);
