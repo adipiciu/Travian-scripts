@@ -12,14 +12,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.25.25
+// @version        2.25.26
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.25.25';
+var version = '2.25.26';
 
 notRunYet = false;
 
@@ -4054,54 +4054,56 @@ function marketSummReal () {
 	}
 	*/
 // add 2x 1x tables
-	if (RB.Setup[10] < 3 && RB.Setup[33] > 0 && 0) {
+	if (RB.Setup[10] < 3 && RB.Setup[33] > 0) {
 		var extRT = new Array();
 		for (i = 0; i < aT.length; i++) {
-			// get count of retry
-			if (aT[i].classList.contains('history') || aT[i].classList.contains('return')) continue;
-			var multFL = $gc('repeat',aT[i]);
-			if( multFL.length > 0 ) {
+			if (aT[i].classList.contains('history') || aT[i].classList.contains('return')) { aT[i].setAttribute('style','display:none;'); }
+			if (aT[i].classList.contains('history') || aT[i].classList.contains('return')) continue;	
+			if (aT[i].classList.contains('predicted')) {
 				// get time to go
-				var timeToGo = toSeconds(aT[i].rows[1].cells[1].innerHTML);
-				var tdist = calcDistance(village_aid,getVid($gt('A',aT[i].rows[0].cells[1])[0].getAttribute('href')));
-				var htR = getTTime( tdist, MTime[parseInt(RB.Setup[2])]*sM, 0, 0 );
-				var cnt = parseInt(multFL[0].innerHTML.match(/\d/)[0]);
-				for( var nc=cnt-1; nc>0; nc-- ) {
-					var tmpNode = aT[i].cloneNode(true);
-					$gc('repeat',tmpNode)[0].textContent=nc+'x';
-					var newT = htR * (cnt-nc)*2 + timeToGo;
-					$gc('at',tmpNode)[0].textContent = $gc('at',tmpNode)[0].innerHTML.replace(/\d+:\d+/,formatTime(absTime(newT),5));
-					var j=timerB.length;
-					timerB[j] = new Object();
-					timerB[j].time = newT;
-					timerB[j].obj = $gt('span',$gc('in',tmpNode)[0])[0];
-					timerB[j].obj.removeAttribute("class");
-					timerB[j].obj.removeAttribute('id');
-					timerB[j].obj.textContent = formatTime(newT,0);
-					tmpNode.rows[1].cells[1].setAttribute('style','background-color:#F8FFEE;');
-					extRT.push([newT,tmpNode]);
+				var timeToGo = toSeconds($gc('timer',aT[i])[0].innerHTML);
+				var tmpNode = aT[i].cloneNode(true);
+				var tmpParentNode = aT[i].parentNode.cloneNode(true);
+				while (tmpParentNode.childNodes.length > 1) {
+					tmpParentNode.removeChild(tmpParentNode.lastChild);
 				}
+				tmpParentNode.appendChild(tmpNode);
+				//$gc('predicted',tmpNode)[0].textContent='1'+'x';
+				//$gc('at',tmpNode)[0].textContent = $gc('at',tmpNode)[0].innerHTML.replace(/\d+:\d+/,formatTime(absTime(newT),5));
+				var j=timerB.length;
+				timerB[j] = new Object();
+				timerB[j].time = timeToGo;
+				timerB[j].obj = $gt('span',$gc('arriveInAt',tmpNode)[0])[0];
+				timerB[j].obj.removeAttribute('id');
+				timerB[j].obj.textContent = formatTime(timeToGo,0);
+				aT[i].setAttribute('style','display:none;');
+				var aTp = aT[i].parentNode.querySelectorAll('.delivery.current.transport');
+				if (aTp.length < 1) { aT[i].parentNode.setAttribute('style','display:none;'); }
+				tmpParentNode.setAttribute('style','background-color:#F8FFEE;');
+				tmpNode.classList.remove("predicted");
+				tmpNode.classList.add("RBpredicted");
+				extRT.push([timeToGo,tmpParentNode]);
 			}
 		}
+
 		if( extRT.length > 0 ) {
 			lastTimerB = timerB.length;
 			extRT.sort(function(a,b){return a[0]-b[0];});
-			for (var i = 0; i < aT.length; i++) {
-				// get time to go
-				if (aT[i].classList.contains('history') || aT[i].classList.contains('return')) continue;
-				var timeToGo = toSeconds(aT[i].rows[1].cells[1].innerHTML);
-				if( timeToGo > extRT[0][0] ) {
-					aT[i].parentNode.insertBefore(extRT[0][1],aT[i]);
-					extRT.shift();
-					if( extRT.length == 0 ) { i++; break; }
+			var act = incomingMerchants.querySelectorAll('.delivery.current.transport');
+			for (var j = 0; j < extRT.length; j++) {
+				for (var i = 0; i < aT.length; i++) {
+					// get time to go
+					if (aT[i].classList.contains('history') || aT[i].classList.contains('return') || aT[i].classList.contains('predicted')) continue;
+					var timeToGo = toSeconds($gc('timer',aT[i])[0].innerHTML);
+					if( timeToGo > extRT[j][1] ) {
+						aT[i].parentNode.parentNode.insertBefore(extRT[j][1],aT[i].parentNode);
+					} else {
+						aT[i].parentNode.parentNode.appendChild(extRT[j][1]);
+					}
 				}
-			}
-			var nc = aT[--i].nextElementSibling;
-			for (i = 0; i < extRT.length; i++) {
-				if( nc )
-					nc.parentNode.insertBefore(extRT[i][1],nc);
-				else
-					aT[i].parentNode.appendChild(extRT[i][1]);
+				if (act.length < 1) {
+					aT[0].parentNode.parentNode.appendChild(extRT[j][1]);
+				}
 			}
 		}
 	}
@@ -8934,7 +8936,7 @@ function goldClubInfo () {
 		for( var i=0; i < fList.length; i+=2 ) {
 			if (fList[i].tagName != 'INPUT') continue;
 			fTable = fList[i].parentNode.parentNode.parentNode.parentNode.parentNode;
-			if (fTable.parentElement.parentElement.classList.contains('collapsed') ) continue;
+			if (fTable.parentNode.parentNode.classList.contains('collapsed') ) continue;
 			var fListInput = $gt('INPUT',fTable.tHead);
 			if( fListInput.length > 1 ) continue;
 			var fListID = fList[i].getAttribute('data-farm-list-id');
@@ -9463,7 +9465,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;padding:5px;text-align:center;']]);
 		var closeb = $ee('div',$a('&#x2716;',[['style','font-size:140%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Travian Resource Bar+";
-		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Dec 24, 2025:</p> <ul><li>Removed resource calculation for 2x, 3x merchants transports because it's unreliable and breaks the expected resources values</li></ul> <p>Version 2.25.24 - Dec 23, 2025:</p> <ul><li>Changed RB colors to make the black text over red background more readable</li><li>Fixed building move for villages without wall</li></ul> <p>Version 2.25.3 - Dec 6, 2025:</p> <ul><li>Fixed marketplace invalid resource sum</li></ul> <p>Version 2.25.21 - Oct 25, 2025:</p> <ul><li>Added view Large Map function</li><li>Fix reading village link in latest Travian update</li></ul> <p>Version 2.25.20 - Apr 15, 2025:</p> <ul><li>Minor fix</li></ul> <p>Version 2.25.19 - Mar 29, 2025:</p> <ul><li>Added support for multiple village types on the same account</li></ul> <p>Version 2.25.18 - Mar 15, 2025:</p> <ul><li>Fix market plus button sometimes it's disabled</li></ul>";
+		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Dec 28, 2025:</p> <ul><li>Re-added calculation for 2x, 3x merchants transports and sort them in chronological order. This can be disabled from the script settings menu.</li></ul> <p>Version 2.25.25 - Dec 24, 2025:</p> <ul><li>Removed resource calculation for 2x, 3x merchants transports because it's unreliable and breaks the expected resources values</li></ul> <p>Version 2.25.24 - Dec 23, 2025:</p> <ul><li>Changed RB colors to make the black text over red background more readable</li><li>Fixed building move for villages without wall</li></ul> <p>Version 2.25.3 - Dec 6, 2025:</p> <ul><li>Fixed marketplace invalid resource sum</li></ul>";
 		footer.appendChild(footerline);
 		footerline.appendChild(homepage);
 		footerline.appendChild(donate);
