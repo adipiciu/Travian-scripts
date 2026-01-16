@@ -12,14 +12,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.26.1
+// @version        2.26.2
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.26.1';
+var version = '2.26.2';
 
 notRunYet = false;
 
@@ -4061,7 +4061,13 @@ function marketSummReal () {
 			if (aT[i].classList.contains('history') || aT[i].classList.contains('return')) continue;	
 			if (aT[i].classList.contains('predicted')) {
 				// get time to go
-				var timeToGo = toSeconds($gc('timer',aT[i])[0].innerHTML);
+				var timerEl = $gc('timer',aT[i]);
+				if (timerEl.length > 0) {
+					var timeToGo = toSeconds(timerEl[0].innerHTML);
+				} else {
+					timerEl = $gc('timerReact',aT[i]);
+					var timeToGo = toSeconds(timerEl[0].innerHTML);
+				}
 				var tmpNode = aT[i].cloneNode(true);
 				var tmpParentNode = aT[i].parentNode.cloneNode(true);
 				while (tmpParentNode.childNodes.length > 1) {
@@ -4094,8 +4100,14 @@ function marketSummReal () {
 				for (var i = 0; i < aT.length; i++) {
 					// get time to go
 					if (aT[i].classList.contains('history') || aT[i].classList.contains('return') || aT[i].classList.contains('predicted')) continue;
-					var timeToGo = toSeconds($gc('timer',aT[i])[0].innerHTML);
-					if( timeToGo > extRT[j][1] ) {
+					var timerEl = $gc('timer',aT[i]);
+					if (timerEl.length > 0) {
+						var timeToGo = toSeconds(timerEl[0].innerHTML);
+					} else {
+						timerEl = $gc('timerReact',aT[i]);
+						var timeToGo = toSeconds(timerEl[0].innerHTML);
+					}
+					if( timeToGo > extRT[j][0] ) {
 						aT[i].parentNode.parentNode.insertBefore(extRT[j][1],aT[i].parentNode);
 					} else {
 						aT[i].parentNode.parentNode.appendChild(extRT[j][1]);
@@ -4114,7 +4126,13 @@ function marketSummReal () {
 		// get time to go
 		//var timeToGo = toSeconds(aT[i].rows[1].cells[1].innerHTML);
 		//var timeToGo = parseInt($gc('timer',aT[i])[0].getAttribute("data-value"));
-		var timeToGo = toSeconds($gc('timer',aT[i])[0].innerHTML);
+		var timerEl = $gc('timer',aT[i]);
+		if (timerEl.length > 0) {
+			var timeToGo = toSeconds(timerEl[0].innerHTML);
+		} else {
+			timerEl = $gc('timerReact',aT[i]);
+			var timeToGo = toSeconds(timerEl[0].innerHTML);
+		}
 		// get incoming resources
 		//var incomingRes = aT[i].rows[2].cells[1].innerHTML.match( />\s*?\d+.?/g );
 		var incomingRes = $gc('value',aT[i]);
@@ -9478,7 +9496,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;padding:5px;text-align:center;']]);
 		var closeb = $ee('div',$a('&#x2716;',[['style','font-size:140%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Travian Resource Bar+";
-		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Jan 10, 2026:</p> <ul><li>Fixed attack detector</li><li>Suppress the alarm if the attacks are marked with green, yellow or red</li></ul> <p>Version 2.25.6 - Dec 28, 2025:</p> <ul><li>Re-added calculation for 2x, 3x merchants transports and sort them in chronological order. This can be disabled from the script settings menu.</li></ul> <p>Version 2.25.25 - Dec 24, 2025:</p> <ul><li>Removed resource calculation for 2x, 3x merchants transports because it's unreliable and breaks the expected resources values</li></ul> <p>Version 2.25.24 - Dec 23, 2025:</p> <ul><li>Changed RB colors to make the black text over red background more readable</li><li>Fixed building move for villages without wall</li></ul> <p>Version 2.25.3 - Dec 6, 2025:</p> <ul><li>Fixed marketplace invalid resource sum</li></ul>";
+		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Jan 16, 2026:</p> <ul><li>Fixed market resources sum for the new travian update</li><li>Fixed 2x, 3x transports sorting</li></ul> <p>Version 2.26.1 - Jan 10, 2026:</p> <ul><li>Fixed attack detector</li><li>Suppress the alarm if the attacks are marked with green, yellow or red</li></ul> <p>Version 2.25.26 - Dec 28, 2025:</p> <ul><li>Re-added calculation for 2x, 3x merchants transports and sort them in chronological order. This can be disabled from the script settings menu.</li></ul> <p>Version 2.25.24 - Dec 23, 2025:</p> <ul><li>Changed RB colors to make the black text over red background more readable</li><li>Fixed building move for villages without wall</li></ul> <p>Version 2.25.23 - Dec 6, 2025:</p> <ul><li>Fixed marketplace invalid resource sum</li></ul>";
 		footer.appendChild(footerline);
 		footerline.appendChild(homepage);
 		footerline.appendChild(donate);
