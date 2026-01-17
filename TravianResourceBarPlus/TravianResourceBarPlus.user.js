@@ -12,14 +12,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.26.2
+// @version        2.26.3
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.26.2';
+var version = '2.26.3';
 
 notRunYet = false;
 
@@ -4108,9 +4108,11 @@ function marketSummReal () {
 						var timeToGo = toSeconds(timerEl[0].innerHTML);
 					}
 					if( timeToGo > extRT[j][0] ) {
-						aT[i].parentNode.parentNode.insertBefore(extRT[j][1],aT[i].parentNode);
+						aT[i].parentNode.parentNode.insertBefore(extRT[j][1],aT[i].parentNode); break;
 					} else {
-						aT[i].parentNode.parentNode.appendChild(extRT[j][1]);
+						if (i == aT.length - 1 ) { //if last node and timeToGo smaller, then append
+							aT[i].parentNode.parentNode.appendChild(extRT[j][1]);
+						}
 					}
 				}
 				if (act.length < 1) {
@@ -9496,7 +9498,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;padding:5px;text-align:center;']]);
 		var closeb = $ee('div',$a('&#x2716;',[['style','font-size:140%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Travian Resource Bar+";
-		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Jan 16, 2026:</p> <ul><li>Fixed market resources sum for the new travian update</li><li>Fixed 2x, 3x transports sorting</li></ul> <p>Version 2.26.1 - Jan 10, 2026:</p> <ul><li>Fixed attack detector</li><li>Suppress the alarm if the attacks are marked with green, yellow or red</li></ul> <p>Version 2.25.26 - Dec 28, 2025:</p> <ul><li>Re-added calculation for 2x, 3x merchants transports and sort them in chronological order. This can be disabled from the script settings menu.</li></ul> <p>Version 2.25.24 - Dec 23, 2025:</p> <ul><li>Changed RB colors to make the black text over red background more readable</li><li>Fixed building move for villages without wall</li></ul> <p>Version 2.25.23 - Dec 6, 2025:</p> <ul><li>Fixed marketplace invalid resource sum</li></ul>";
+		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Jan 17, 2026:</p> <ul><li>Fixed 2x, 3x merchant transports sorting</li></ul> <p>Version 2.26.2 - Jan 16, 2026:</p> <ul><li>Fixed market resources sum for the new travian update</li></ul> <p>Version 2.26.1 - Jan 10, 2026:</p> <ul><li>Fixed attack detector</li><li>Suppress the alarm if the attacks are marked with green, yellow or red</li></ul>";
 		footer.appendChild(footerline);
 		footerline.appendChild(homepage);
 		footerline.appendChild(donate);
