@@ -12,14 +12,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.26.3
+// @version        2.26.4
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.26.3';
+var version = '2.26.4';
 
 notRunYet = false;
 
@@ -66,7 +66,7 @@ var lMap = '';
 var crtName = window.location.hostname;
 var fullName = window.location.origin + "/";
 var relName = window.location.pathname;
-var urlParams = window.location.search.substring(1);
+var urlParams = window.location.search;
 var crtLang = crtName.split('.'); crtLang = crtLang[crtLang.length-1];
 var srv = document.title.substring(8);
 var flinks = new Object();
@@ -4357,6 +4357,8 @@ function resSendOnMap () {
 				if (node.nodeType === Node.ELEMENT_NODE) {
 					if (node.matches('span.timer')) {
 						marketSend();
+					} else if (node.matches('span.timerReact')) {
+						marketSend();
 					}
 				}
 			});
@@ -4764,7 +4766,9 @@ function vlist_addButtonsT4 () {
 			var linkEl = $gt("a",villages[vn])[0];
 			var villageID = villages[vn].getAttribute('data-did');
 			//linkVSwitch[vn] = linkEl.getAttribute('href');
-			linkVSwitch[vn] = "?newdid=" + villageID + "&";
+			var params = new URLSearchParams(urlParams);
+			params.set("newdid", villageID);
+			linkVSwitch[vn] = "?" + params.toString();
 			var coords = $gc("coordinatesGrid",villages[vn])[0];
 			var myVid = getVidFromCoords(coords.innerHTML);
 			villages_id[vn] = myVid;
@@ -9498,7 +9502,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;padding:5px;text-align:center;']]);
 		var closeb = $ee('div',$a('&#x2716;',[['style','font-size:140%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Travian Resource Bar+";
-		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Jan 17, 2026:</p> <ul><li>Fixed 2x, 3x merchant transports sorting</li></ul> <p>Version 2.26.2 - Jan 16, 2026:</p> <ul><li>Fixed market resources sum for the new travian update</li></ul> <p>Version 2.26.1 - Jan 10, 2026:</p> <ul><li>Fixed attack detector</li><li>Suppress the alarm if the attacks are marked with green, yellow or red</li></ul>";
+		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Jan 18, 2026:</p> <ul><li>Fixed village list links</li><li>Fixes for the latest travian update</li></ul> <p>Version 2.26.3 - Jan 17, 2026:</p> <ul><li>Fixed 2x, 3x merchant transports sorting</li></ul> <p>Version 2.26.2 - Jan 16, 2026:</p> <ul><li>Fixed market resources sum for the new travian update</li></ul> <p>Version 2.26.1 - Jan 10, 2026:</p> <ul><li>Fixed attack detector</li><li>Suppress the alarm if the attacks are marked with green, yellow or red</li></ul>";
 		footer.appendChild(footerline);
 		footerline.appendChild(homepage);
 		footerline.appendChild(donate);
