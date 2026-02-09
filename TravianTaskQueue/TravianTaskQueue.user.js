@@ -12,14 +12,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version     2.0.27
+// @version     2.0.28
 // ==/UserScript==
 
 (function () {
 
 function allInOneTTQ () {
 notRunYet = false;
-var sCurrentVersion = "2.0.27";
+var sCurrentVersion = "2.0.28";
 
 //find out if Server errors
 var strTitle = document.title;
@@ -2368,7 +2368,7 @@ function sendGoldClub (aTask) {
 	_log(1, "End attack from gold-club ("+aTask+")");
 }
 function getActiveVillage (el,adoc) {
-	var reqVID = xpath('//div[@id="sidebarBoxVillagelist"]//a[@class="active"] | //div[@id="sidebarBoxVillageList"]//a[@class="active"]',el,true,adoc);
+	var reqVID = xpath('//div[@id="sidebarBoxVillageList"]//a[@class="active"]',el,true,adoc);
 	if ( reqVID ) {
 		reqVID = parseInt(reqVID.href.split("=")[1]);
 		if ( isNaN(reqVID) ) reqVID = -1;
@@ -2716,9 +2716,7 @@ function demolish(aTask) {
 			if (httpRequest.status == 200 && httpRequest.responseText) { // ok
 				var parser = new DOMParser();
 				var holder = parser.parseFromString(httpRequest.responseText, "text/html");
-
-				var reqVID = getActiveVillage(holder);
-
+				var reqVID = getActiveVillage(holder,holder);
 				if ( reqVID == oldVID && holder.getElementsByClassName("gid15").length == 1 ) {
 					var tmp = holder.getElementById("demolish");
 					var tmp2;
