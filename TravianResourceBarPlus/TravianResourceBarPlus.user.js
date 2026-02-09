@@ -12,14 +12,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.26.4
+// @version        2.26.5
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.26.4';
+var version = '2.26.5';
 
 notRunYet = false;
 
@@ -4534,7 +4534,7 @@ function showAllTTime ( vType, tVil, arena, art, shoes, leftHand ) {
 		[3, [8,18,28,58,68,78]] // Fire Catapult, Catapult, Trebuchet, Stone Catapult, Ballista
 		];
 	}
-	if (crtName.startsWith('cw.x2') || crtName.startsWith('cw2.x2') || crtName.startsWith('cw.x5')) { //Community Week – Barbarians (Teutons, Gauls and Roman tribes re-balancing)
+	if (crtName.startsWith('cw.x2') || crtName.startsWith('cw2.x2') || crtName.startsWith('cw.x5') || crtName.startsWith('romani') || crtName.startsWith('france') || crtName.startsWith('hux.x3') ) { //Community Week – Barbarians (Teutons, Gauls and Roman tribes re-balancing)
 		TTime = [
 		[19, [24,63]], // Theutates Thunder, Spotter
 		[17, [23]], // Pathfinder
@@ -4580,7 +4580,7 @@ function showAllTTime ( vType, tVil, arena, art, shoes, leftHand ) {
 	if( typeof(tVil) != 'object' ) {
 		var distance = calcDistance(tVil, village_aid);
 		var xy = id2xy(tVil);
-		var nL = $a(printCoords(tVil),[['href','position_details.php?x='+xy[0]+'&y='+xy[1]],['style','color:#252525;']]);
+		var nL = $a(printCoords(tVil),[['href','karte.php?x='+xy[0]+'&y='+xy[1]],['style','color:#252525;']]);
 		nL.appendChild($e('SPAN',[['class',allIDs[29]]]));
 		var newTR = $ee('TR',$c(nL,[['style','font-weight:bold;']]));
 	} else {
@@ -6940,7 +6940,7 @@ function linkOnT4Karte ( vV ) {
 		var ln = $gt('A',$gc('detailImage',vilView)[0]);
 		if( ln.length > 0 ) {
 			var xy = id2xy(getVid(ln[0].getAttribute('href')));
-			var nLink = $a('->',[['href','position_details.php?x='+xy[0]+'&y='+xy[1]],['style','margin:0px 5px;']]);
+			var nLink = $a('->',[['href','karte.php?x='+xy[0]+'&y='+xy[1]],['style','margin:0px 5px;']]);
 			h1.appendChild(nLink);
 		}
 	}
@@ -7258,7 +7258,7 @@ function scanTroopsData () {
 		//Spartans
 		50,35,30,110,185,110,35,6*m,60,1, 0,40,22,185,150,35,75,9*m,0,1, 40,85,45,145,95,245,45,8*m,40,1, 90,55,40,130,200,400,65,6*m,50,1, 55,120,90,555,445,330,110,16*m,110,2, 195,80,75,660,495,995,165,9*m,80,3, 65,30,80,525,260,790,130,4*m,0,3, 50,60,10,550,1240,825,135,3*m,0,6, 40,60,40,33450,30665,36240,13935,4*m,0,4, 10,80,80,5115,5580,6045,3255,5*m,3000,1
 	];
-	if (crtName.startsWith('cw.x2') || crtName.startsWith('cw2.x2') || crtName.startsWith('cw.x5')) RB.tropsI = [
+	if (crtName.startsWith('cw.x2') || crtName.startsWith('cw2.x2') || crtName.startsWith('cw.x5') || crtName.startsWith('romani') || crtName.startsWith('france') || crtName.startsWith('hux.x3')) RB.tropsI = [
 		//Romans
 		50,40,55,100,80,130,30,7*m,50,1, 30,65,35,100,120,150,60,6*m,20,1, 75,40,25,150,160,210,80,7*m,50,1, 0,20,10,140,160,20,40,16*m,0,2, 130,65,50,480,380,280,80,15*m,100,3, 195,80,105,550,640,800,180,10*m,70,4, 60,30,75,900,360,500,70,4*m,0,3, 75,60,10,950,1350,600,90,3*m,0,6, 50,40,30,30750,27200,45000,37500,4*m,0,5, 0,80,80,4600,4200,5800,4400,5*m,3000,1,
 		//Teutons
@@ -7749,7 +7749,7 @@ function cropFind () {
 					$c((typeof aCCs[i][3].uid != "undefined" ? $em('A',[aCCs[i][0],(aCCs[i][3].v<8?$e('i',[['class','tribe'+aCCs[i][3].v+'_small']]):"")],[['href','/profile/'+aCCs[i][3].uid[0]]]):"")),
 					$c((typeof aCCs[i][3].aid != "undefined" ? ($a(aCCs[i][3].aid[1],[['href','/alliance/'+aCCs[i][3].aid[0]]])):"")),
 					$c(aCCs[i][3].e),$c(''),$c(''),
-					$c($a(aCCs[i][1]+'|'+aCCs[i][2],[['href',('position_details.php?x='+aCCs[i][1]+'&y='+aCCs[i][2])]])),
+					$c($a(aCCs[i][1]+'|'+aCCs[i][2],[['href',('karte.php?x='+aCCs[i][1]+'&y='+aCCs[i][2])]])),
 					$c($a('&#10140;',[['onclick',("Travian.WindowManager.closeAllWindows(); window.Travian.React.FarmList.openSlotDialog(window.Travian.React.FarmList.SLOT_DIALOG_TYPE_CREATE, { coordinates: {x: "+aCCs[i][1]+", y: "+aCCs[i][2]+"},});")]])),
 					$c(calcDistance(xy2id(aCCs[i][1],aCCs[i][2]), cell_id).toFixed(1))
 				]));
@@ -8897,13 +8897,18 @@ function goldClubInfo () {
 		return $e('INPUT',[['type','checkbox']]);
 	}
 	function oasisXY (farmList) {
-		var oXY = $gc('coordinatesWrapper',farmList);
+		var oXY = $gc('target',farmList);
+		var oasis = false;
 		for(var i=0; i<oXY.length; i++) {
-			//var xy = id2xy(getVidFromCoords(oXY[i].innerHTML));
-			//var newA = '<a href="position_details.php?x='+xy[0]+'&y='+xy[1]+'">'+oXY[i].innerHTML+'</a>';
-			//oXY[i].innerHTML = newA;
+			var aLink = $gt('a',oXY[i]);
+			var span = $gt('span',aLink[0]);
+			var xy = id2xy(getVid(aLink[0].getAttribute('href')));
+			if (span.length == 0 ) {
+				oasis = true;
+				oXY[i].innerHTML = oXY[i].innerHTML + ' ('+ xy[0] +'|' + xy[1] + ') ';
+			}
 		}
-		return i;
+		return oasis;
 	}
 	function uncheckOasis (nd) {
 		while (nd.parentNode) {
@@ -8987,6 +8992,7 @@ function goldClubInfo () {
 			addARLFilter('bounty_half_small','','i');
 			addARLFilter('bounty_empty_small','','i');
 
+			/*
 			if( oasisXY(fTable) ) {
 				if( typeof(chkOasisFL[fListID]) == 'undefined'  )
 					chkOasisFL[fListID] = new Object;
@@ -8995,6 +9001,7 @@ function goldClubInfo () {
 				anim.addEventListener('click',function(x) { return function() { findAnim(x[0],x[1],x[2]) }}([fTable,fListID,anim]),false);
 				$am(sp.firstElementChild,[' | ',anim]);
 			}
+			*/
 
 			var allBer = $xf('.//a[contains(@href, "report?id=")]','l',fTable);
 			for( var t=0; t < allBer.snapshotLength; t++ ) {
@@ -9502,7 +9509,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;padding:5px;text-align:center;']]);
 		var closeb = $ee('div',$a('&#x2716;',[['style','font-size:140%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Travian Resource Bar+";
-		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Jan 18, 2026:</p> <ul><li>Fixed village list links</li><li>Fixes for the latest travian update</li></ul> <p>Version 2.26.3 - Jan 17, 2026:</p> <ul><li>Fixed 2x, 3x merchant transports sorting</li></ul> <p>Version 2.26.2 - Jan 16, 2026:</p> <ul><li>Fixed market resources sum for the new travian update</li></ul> <p>Version 2.26.1 - Jan 10, 2026:</p> <ul><li>Fixed attack detector</li><li>Suppress the alarm if the attacks are marked with green, yellow or red</li></ul>";
+		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Feb 9, 2026:</p> <ul><li>Updated the list of servers with rebalanced troops</li><li>Minor fixes</li></ul> <p>Version 2.26.4 - Jan 18, 2026:</p> <ul><li>Fixed village list links</li><li>Fixes for the latest travian update</li></ul> <p>Version 2.26.3 - Jan 17, 2026:</p> <ul><li>Fixed 2x, 3x merchant transports sorting</li></ul> <p>Version 2.26.2 - Jan 16, 2026:</p> <ul><li>Fixed market resources sum for the new travian update</li></ul> <p>Version 2.26.1 - Jan 10, 2026:</p> <ul><li>Fixed attack detector</li><li>Suppress the alarm if the attacks are marked with green, yellow or red</li></ul>";
 		footer.appendChild(footerline);
 		footerline.appendChild(homepage);
 		footerline.appendChild(donate);
