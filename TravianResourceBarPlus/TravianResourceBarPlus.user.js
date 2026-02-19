@@ -12,14 +12,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.26.5
+// @version        2.26.6
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.26.5';
+var version = '2.26.6';
 
 notRunYet = false;
 
@@ -8905,7 +8905,7 @@ function goldClubInfo () {
 			var xy = id2xy(getVid(aLink[0].getAttribute('href')));
 			if (span.length == 0 ) {
 				oasis = true;
-				oXY[i].innerHTML = oXY[i].innerHTML + ' ('+ xy[0] +'|' + xy[1] + ') ';
+				//oXY[i].innerHTML = oXY[i].innerHTML + ' ('+ xy[0] +'|' + xy[1] + ') ';
 			}
 		}
 		return oasis;
@@ -8920,7 +8920,7 @@ function goldClubInfo () {
 		}
 	}
 	function findAnimA (x) {
-		var vid = getVidFromCoords(x[0].innerHTML);
+		var vid = getVid(x[0].getAttribute('href'));
 		var xy = id2xy(vid);
 		param = '{"x":'+xy[0]+',"y":'+xy[1]+'}';
 		ajaxRequest(fullName+'api/v1/map/tile-details', 'POST', param, function(ajaxResp) {
@@ -8944,19 +8944,23 @@ function goldClubInfo () {
 		}, dummy);
 	}
 	function findAnim (farmList,fListID,cb) {
-		var ac = $gc('coordinatesWrapper',farmList.parentNode);
+		var ac = $gc('target',farmList);
 		var curTO = 0;
 		for(var i=ac.length-1; i>=0; i--) {
-			var vid = getVidFromCoords(ac[i].innerHTML);
-			if( typeof(chkOasisFL[fListID][vid]) == 'undefined' ) {
-				cb.style.color = cb.style.color=='black'?'red':'black';
-				setTimeout(function(x) { return function() { findAnimA(x) }}([ac[i],fListID,cb,i]), curTO);
-				curTO += getRandom(250,1000);
-			} else {
-				if( chkOasisFL[fListID][vid] ) {
-					uncheckOasis(ac[i]);
-					if( chkOasisFL[fListID].fl )
-						addToolTip(chkOasisFL[fListID][vid],ac[i].parentNode);
+			var aLink = $gt('a',ac[i]);
+			var span = $gt('span',aLink[0]);
+			if (span.length == 0 && !ac[i].parentNode.classList.contains('disabled')) {
+				var vid = getVid(aLink[0].getAttribute('href'));
+				if( typeof(chkOasisFL[fListID][vid]) == 'undefined' ) {
+					cb.style.color = cb.style.color=='black'?'red':'black';
+					setTimeout(function(x) { return function() { findAnimA(x) }}([aLink[0],fListID,cb,i]), curTO);
+					curTO += getRandom(250,1000);
+				} else {
+					if( chkOasisFL[fListID][vid] ) {
+						uncheckOasis(ac[i]);
+						if( chkOasisFL[fListID].fl )
+							addToolTip(chkOasisFL[fListID][vid],ac[i].parentNode);
+					}
 				}
 			}
 		}
@@ -8992,16 +8996,14 @@ function goldClubInfo () {
 			addARLFilter('bounty_half_small','','i');
 			addARLFilter('bounty_empty_small','','i');
 
-			/*
-			if( oasisXY(fTable) ) {
+			if( oasisXY(fTable.tBodies[0]) ) {
 				if( typeof(chkOasisFL[fListID]) == 'undefined'  )
 					chkOasisFL[fListID] = new Object;
 				chkOasisFL[fListID].fl = true;
 				var anim = $em('BUTTON',[trImg('unit u31'),' ??? '],[['type','button'],['style','color:black;'],['onclick','return false;']]);
-				anim.addEventListener('click',function(x) { return function() { findAnim(x[0],x[1],x[2]) }}([fTable,fListID,anim]),false);
+				anim.addEventListener('click',function(x) { return function() { findAnim(x[0],x[1],x[2]) }}([fTable.tBodies[0],fListID,anim]),false);
 				$am(sp.firstElementChild,[' | ',anim]);
 			}
-			*/
 
 			var allBer = $xf('.//a[contains(@href, "report?id=")]','l',fTable);
 			for( var t=0; t < allBer.snapshotLength; t++ ) {
@@ -9509,7 +9511,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;padding:5px;text-align:center;']]);
 		var closeb = $ee('div',$a('&#x2716;',[['style','font-size:140%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Travian Resource Bar+";
-		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Feb 9, 2026:</p> <ul><li>Updated the list of servers with rebalanced troops</li><li>Minor fixes</li></ul> <p>Version 2.26.4 - Jan 18, 2026:</p> <ul><li>Fixed village list links</li><li>Fixes for the latest travian update</li></ul> <p>Version 2.26.3 - Jan 17, 2026:</p> <ul><li>Fixed 2x, 3x merchant transports sorting</li></ul> <p>Version 2.26.2 - Jan 16, 2026:</p> <ul><li>Fixed market resources sum for the new travian update</li></ul> <p>Version 2.26.1 - Jan 10, 2026:</p> <ul><li>Fixed attack detector</li><li>Suppress the alarm if the attacks are marked with green, yellow or red</li></ul>";
+		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Feb 19, 2026:</p> <ul><li>Fixed oasis animals scan button in farm lists</li></ul> <p>Version 2.26.5 - Feb 9, 2026:</p> <ul><li>Updated the list of servers with rebalanced troops</li><li>Minor fixes</li></ul> <p>Version 2.26.4 - Jan 18, 2026:</p> <ul><li>Fixed village list links</li><li>Fixes for the latest travian update</li></ul> <p>Version 2.26.3 - Jan 17, 2026:</p> <ul><li>Fixed 2x, 3x merchant transports sorting</li></ul> <p>Version 2.26.2 - Jan 16, 2026:</p> <ul><li>Fixed market resources sum for the new travian update</li></ul> <p>Version 2.26.1 - Jan 10, 2026:</p> <ul><li>Fixed attack detector</li><li>Suppress the alarm if the attacks are marked with green, yellow or red</li></ul>";
 		footer.appendChild(footerline);
 		footerline.appendChild(homepage);
 		footerline.appendChild(donate);
