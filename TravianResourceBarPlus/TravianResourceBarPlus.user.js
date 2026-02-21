@@ -12,14 +12,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.26.6
+// @version        2.26.7
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.26.6';
+var version = '2.26.7';
 
 notRunYet = false;
 
@@ -85,7 +85,7 @@ var docDir = ['left', 'right'];
 var ltr = true;
 if (document.body.className.includes('rtl')) { docDir = ['right', 'left']; ltr = false; }
 
-var sK = 0;
+var sK = 1;
 var sM = 1;
 var sC = [1.6,1000];
 
@@ -4516,24 +4516,6 @@ function showAllTTime ( vType, tVil, arena, art, shoes, leftHand ) {
 		[3, [8,18,28]] // Fire Catapult, Catapult, Trebuchet
 		];
 	}
-	if (crtName.startsWith('cw.x1')) { //Community Week – Restoring Rome (Roman tribe re-balancing)
-		TTime = [
-		[19, [24,63]], // Theutates Thunder, Spotter
-		[17, [23]], // Pathfinder
-		[16, [4,25,54,64,75]], // Equites Legati, Druidrider, Sopdu Explorer, Steppe Rider, Elpida Rider
-		[15, [5,55,65]], // Equites Imperatoris, Anhur Guard, Marksman
-		[14, [66]], // Marauder
-		[13, [26]], // Haeduan
-		[10, [6,15,56]], // Equites Caesaris, Paladin, Resheph Chariot
-		[9, [14,16,72,76]], // Scout, Teutonic Knight, Sentinel, Corinthian
-		[8, [73]], // Shieldsman
-		[7, [1,3,11,12,21,51,53]], // Legionnaire, Imperian, Clubswinger, Spearman, Phalanx, Slave Militia, Khopesh Warrior
-		[6, [2,13,22,52,61,62,71,74]], // Praetorian, Axeman, Swordsman, Ash Warden, Mercenary, Bowman, Hoplite, Twinsteel
-		[5, [10,20,29,30,60,69,70,80]], // Settler, Chieftain, Logades
-		[4, [7,9,17,19,27,57,59,67,77,79]], // Battering Ram, Senator, Ram, Chief, Ram, Ram (Egyptians), Nomarch, Ram (Huns), Ram (Spartans), Ephor
-		[3, [8,18,28,58,68,78]] // Fire Catapult, Catapult, Trebuchet, Stone Catapult, Ballista
-		];
-	}
 	if (crtName.startsWith('cw.x2') || crtName.startsWith('cw2.x2') || crtName.startsWith('cw.x5') || crtName.startsWith('romani') || crtName.startsWith('france') || crtName.startsWith('hux.x3') ) { //Community Week – Barbarians (Teutons, Gauls and Roman tribes re-balancing)
 		TTime = [
 		[19, [24,63]], // Theutates Thunder, Spotter
@@ -4591,9 +4573,6 @@ function showAllTTime ( vType, tVil, arena, art, shoes, leftHand ) {
 	newTABLE.appendChild(newTR);
 
 	if( distance > 0 ) {
-		if( sK == 0 ) {
-			sK = troopInfo(1,7) != 0 ? troopInfo(1,7)/6: 1;
-		}
 		if( vType < 2 ) {
 			var newTR = $e('TR');
 			var ht = appendTTime( getTTime( distance, MTime[parseInt(RB.Setup[2])]*sM, 0, 0) );
@@ -7200,7 +7179,7 @@ function calcAllTroops() {
 	}
 }
 
-function scanTroopsData () {
+function TroopsData () {
 	var m = 1;
 	switch(parseInt(RB.Setup[45])) {
 	  case 1:
@@ -7219,6 +7198,7 @@ function scanTroopsData () {
 		m = 4;
 		break;
 	}
+	sK = m; //Troops speed
 	//Attack, Infantry defense, Cavalery defense, Wood, Clay, Iron, Crop, Speed, Carry, Upkeep
 	RB.tropsI = [//Romans
 		//Legionnaire 					   Praetorian 						 Imperian 						   Equites Legati  				   Equites Imperatoris					 Equites Caesaris					   Battering ram					Fire Catapult					  Senator 									Settler
@@ -7239,24 +7219,6 @@ function scanTroopsData () {
 		50,35,30,110,185,110,35,6*m,60,1, 0,40,22,185,150,35,75,9*m,0,1, 40,85,45,145,95,245,45,8*m,40,1, 90,55,40,130,200,400,65,6*m,50,1, 55,120,90,555,445,330,110,16*m,110,2, 195,80,75,660,495,995,165,9*m,80,3, 65,30,80,525,260,790,130,4*m,0,3, 50,60,10,550,1240,825,135,3*m,0,6, 40,60,40,33450,30665,36240,13935,4*m,0,4, 10,80,80,5115,5580,6045,3255,5*m,3000,1,
 		//Vikings
 		45,22,5,95,80,50,40,7*m,55,1, 20,50,30,125,70,85,40,7*m,40,1, 70,30,25,235,220,200,70,5*m,75,2, 0,10,5,155,95,50,50,9*m,0,1, 45,95,100,385,295,290,85,12*m,110,2, 160,50,75,475,535,515,100,9*m,80,2, 65,30,80,950,325,375,70,4*m,0,3, 50,60,10,850,1225,625,60,3*m,0,6, 40,40,60,35500,26600,25000,27200,5*m,0,4, 10,80,80,5800,4600,4800,4800,5*m,3000,1
-	];
-	if (crtName.startsWith('cw.x1')) RB.tropsI = [
-		//Romans
-		50,40,55,100,80,130,30,7*m,50,1, 30,65,35,100,120,150,60,6*m,20,1, 75,40,25,150,160,210,80,7*m,50,1, 0,20,10,140,160,20,40,16*m,0,2, 130,65,50,480,380,280,80,15*m,100,3, 195,80,105,550,640,800,180,10*m,70,4, 60,30,75,900,360,500,70,4*m,0,3, 75,60,10,950,1350,600,90,3*m,0,6, 50,40,30,30750,27200,45000,37500,4*m,0,5, 0,80,80,4600,4200,5800,4400,5*m,3000,1,
-		//Teutons
-		40,20,5,95,75,40,40,7*m,60,1, 10,35,60,145,70,85,40,7*m,40,1, 60,30,30,130,120,170,70,6*m,50,1,0, 10,5,160,100,50,50,9*m,0,1, 55,100,40,370,270,290,75,10*m,110,2, 150,50,75,450,515,480,80,9*m,80,3, 65,30,80,1000,300,350,70,4*m,0,3, 50,60,10,900,1200,600,60,3*m,0,6, 40,60,40,35500,26600,25000,27200,4*m,0,4, 10,80,80,5800,4400,4600,5200,5*m,3000,1,
-		//Gauls
-		15,40,50,100,130,55,30,7*m,35,1, 65,35,20,140,150,185,60,6*m,45,1, 0,20,10,170,150,20,40,17*m,0,2, 100,25,40,350,450,230,60,19*m,75,2, 45,115,55,360,330,280,120,16*m,35,2, 140,60,165,500,620,675,170,13*m,65,3, 50,30,105,950,555,330,75,4*m,0,3, 70,45,10,960,1450,630,90,3*m,0,6, 40,50,50,30750,45400,31000,37500,5*m,0,4, 0,80,80,4400,5600,4200,3900,5*m,3000,1,
-		//Nature
-		10,25,20,100,100,100,100,20*m,0,1, 20,35,40,100,100,100,100,20*m,0,1, 60,40,60,100,100,100,100,20*m,0,1, 80,66,50,100,100,100,100,20*m,0,1, 50,70,33,100,100,100,100,20*m,0,2, 100,80,70,100,100,100,100,20*m,0,2, 250,140,200,100,100,100,100,20*m,0,3, 450,380,240,100,100,100,100,20*m,0,3, 200,170,250,100,100,100,100,20*m,0,3, 600,440,520,100,100,100,100,20*m,0,5,
-		//Natars
-		20,35,50,100,100,100,50,6*m,10,1, 65,30,10,100,100,100,50,7*m,10,1, 100,90,75,150,150,150,150,6*m,10,1, 0,10,10,50,50,50,50,25*m,10,1, 155,80,50,300,150,150,100,14*m,10,2, 170,140,80,250,250,400,150,12*m,10,3, 250,120,150,400,300,300,400,5*m,10,4, 60,45,10,200,200,200,100,3*m,10,5, 80,50,50,1000,1000,1000,1000,5*m,10,1, 30,40,40,200,200,200,200,5*m,3000,1,
-		//Egyptians
-		10,30,20,45,60,30,15,7*m,15,1, 30,55,40,115,100,145,60,6*m,50,1, 65,50,20,170,180,220,80,7*m,45,1, 0,20,10,170,150,20,40,16*m,0,2, 50,110,50,360,330,280,120,15*m,50,2, 110,120,150,450,560,610,180,10*m,70,3, 55,30,95,995,575,340,80,4*m,0,3, 65,55,10,980,1510,660,100,3*m,0,6, 40,50,50,34000,50000,34000,42000,4*m,0,4, 0,80,80,5040,6510,4830,4620,5*m,3000,1,
-		//Huns
-		35,40,30,130,80,40,40,6*m,50,1, 50,30,10,140,110,60,60,6*m,30,1, 0,20,10,170,150,20,40,19*m,0,2, 120,30,15,290,370,190,45,16*m,75,2, 110,80,70,320,350,330,50,15*m,105,2, 180,60,40,450,560,610,140,14*m,80,3, 65,30,90,1060,330,360,70,4*m,0,3, 45,55,10,950,1280,620,60,3*m,0,6, 50,40,30,37200,27600,25200,27600,5*m,0,4, 10,80,80,6100,4600,4800,5400,5*m,3000,1,
-		//Spartans
-		50,35,30,110,185,110,35,6*m,60,1, 0,40,22,185,150,35,75,9*m,0,1, 40,85,45,145,95,245,45,8*m,40,1, 90,55,40,130,200,400,65,6*m,50,1, 55,120,90,555,445,330,110,16*m,110,2, 195,80,75,660,495,995,165,9*m,80,3, 65,30,80,525,260,790,130,4*m,0,3, 50,60,10,550,1240,825,135,3*m,0,6, 40,60,40,33450,30665,36240,13935,4*m,0,4, 10,80,80,5115,5580,6045,3255,5*m,3000,1
 	];
 	if (crtName.startsWith('cw.x2') || crtName.startsWith('cw2.x2') || crtName.startsWith('cw.x5') || crtName.startsWith('romani') || crtName.startsWith('france') || crtName.startsWith('hux.x3')) RB.tropsI = [
 		//Romans
@@ -9511,7 +9473,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;padding:5px;text-align:center;']]);
 		var closeb = $ee('div',$a('&#x2716;',[['style','font-size:140%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Travian Resource Bar+";
-		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Feb 19, 2026:</p> <ul><li>Fixed oasis animals scan button in farm lists</li></ul> <p>Version 2.26.5 - Feb 9, 2026:</p> <ul><li>Updated the list of servers with rebalanced troops</li><li>Minor fixes</li></ul> <p>Version 2.26.4 - Jan 18, 2026:</p> <ul><li>Fixed village list links</li><li>Fixes for the latest travian update</li></ul> <p>Version 2.26.3 - Jan 17, 2026:</p> <ul><li>Fixed 2x, 3x merchant transports sorting</li></ul> <p>Version 2.26.2 - Jan 16, 2026:</p> <ul><li>Fixed market resources sum for the new travian update</li></ul> <p>Version 2.26.1 - Jan 10, 2026:</p> <ul><li>Fixed attack detector</li><li>Suppress the alarm if the attacks are marked with green, yellow or red</li></ul>";
+		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Feb 21, 2026:</p> <ul><li>Fixed distance calculator for servers with rebalanced troops</li></ul> <p>Version 2.26.6 - Feb 19, 2026:</p> <ul><li>Fixed oasis animals scan button in farm lists</li></ul> <p>Version 2.26.5 - Feb 9, 2026:</p> <ul><li>Updated the list of servers with rebalanced troops</li></ul>";
 		footer.appendChild(footerline);
 		footerline.appendChild(homepage);
 		footerline.appendChild(donate);
@@ -9584,6 +9546,7 @@ function displayWhatIsNew () {
 		}
 	}
 
+	TroopsData();
 	var mapWidth = RB.Setup[48];
 	var mapRadius = (mapWidth - 1) / 2;
 
@@ -9685,8 +9648,6 @@ function displayWhatIsNew () {
 	if( RB.Setup[12] > 0 ) showLinks();
 	if( RB.Setup[17] == 1 ) rbNotes();
 	addSpeedRTSendMessageInLLinks();
-	//if( RB.dictFL[13] < 3 || RB.Setup[20] == 2) scanTroopsData();
-	scanTroopsData();
 	if( RB.Setup[32] == 1 ) centerNumber();
 	if( RB.Setup[34] == 1 ) overviewAll();
 	if( nextFL ) if( RB_getValue(GMcookieID + 'next', -1) > 0 ) RB_setValue(GMcookieID + 'next', -1);
