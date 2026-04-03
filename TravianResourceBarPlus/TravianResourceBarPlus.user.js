@@ -12,14 +12,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.26.8
+// @version        2.26.9
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.26.8';
+var version = '2.26.9';
 
 notRunYet = false;
 
@@ -2767,14 +2767,14 @@ function getResources () {
 }
 
 function getServerTime() {
-	var srvTime = $xf('//*[@id="servertime"]/span','f',$g(pageElem[3]));
+	var srvTime = $xf('//div[@id="servertime"]//span[@class="timer"]','f',$g(pageElem[3]));
 	srvTime.parentNode.style.width = "186px";
 	if( loadServerTime == 0 ) loadServerTime = toSeconds(srvTime.innerHTML);
 	return loadServerTime + Math.round((Date.now() - RunTime[0])/1e3);
 }
 
 function getTimeOffset () {
-	return (new Date().getHours()) - parseInt($xf('//*[@id="servertime"]/span','f',$g(pageElem[3])).innerHTML.match(/\d+/)[0]);
+	return (new Date().getHours()) - parseInt($xf('//div[@id="servertime"]//span[@class="timer"]','f',$g(pageElem[3])).innerHTML.match(/\d+/)[0]);
 }
 
 function absTime( time , stime ) {
@@ -9473,7 +9473,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;padding:5px;text-align:center;']]);
 		var closeb = $ee('div',$a('&#x2716;',[['style','font-size:140%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Travian Resource Bar+";
-		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Mar 12, 2026:</p> <ul><li>Updated the list of servers with rebalanced troops</li></ul> <p>Version 2.26.7 - Feb 21, 2026:</p> <ul><li>Fixed distance calculator for servers with rebalanced troops</li></ul> <p>Version 2.26.6 - Feb 19, 2026:</p> <ul><li>Fixed oasis animals scan button in farm lists</li></ul>";
+		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Apr 3, 2026:</p> <ul><li>Fixes for the latest Travian update</li></ul> <p>Version 2.26.8 - Mar 12, 2026:</p> <ul><li>Updated the list of servers with rebalanced troops</li></ul> <p>Version 2.26.7 - Feb 21, 2026:</p> <ul><li>Fixed distance calculator for servers with rebalanced troops</li></ul> <p>Version 2.26.6 - Feb 19, 2026:</p> <ul><li>Fixed oasis animals scan button in farm lists</li></ul>";
 		footer.appendChild(footerline);
 		footerline.appendChild(homepage);
 		footerline.appendChild(donate);
