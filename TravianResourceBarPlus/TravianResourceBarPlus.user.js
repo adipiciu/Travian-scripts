@@ -12,14 +12,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.26.9
+// @version        2.26.10
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.26.9';
+var version = '2.26.10';
 
 notRunYet = false;
 
@@ -8863,9 +8863,9 @@ function goldClubInfo () {
 		var oasis = false;
 		for(var i=0; i<oXY.length; i++) {
 			var aLink = $gt('a',oXY[i]);
-			var span = $gt('span',aLink[0]);
-			var xy = id2xy(getVid(aLink[0].getAttribute('href')));
-			if (span.length == 0 ) {
+			var span = $gc('coordinatesWrapper',aLink[0]);
+			//var xy = id2xy(getVid(aLink[0].getAttribute('href')));
+			if (span.length != 0 ) {
 				oasis = true;
 				//oXY[i].innerHTML = oXY[i].innerHTML + ' ('+ xy[0] +'|' + xy[1] + ') ';
 			}
@@ -8882,7 +8882,8 @@ function goldClubInfo () {
 		}
 	}
 	function findAnimA (x) {
-		var vid = getVid(x[0].getAttribute('href'));
+		//var vid = getVid(x[0].getAttribute('href'));
+		var vid = getVidFromCoords(x[0].innerHTML);
 		var xy = id2xy(vid);
 		param = '{"x":'+xy[0]+',"y":'+xy[1]+'}';
 		ajaxRequest(fullName+'api/v1/map/tile-details', 'POST', param, function(ajaxResp) {
@@ -8895,7 +8896,7 @@ function goldClubInfo () {
 					ad = $xf('.//table[@id="village_info"]','f',adv);
 					if( ad ) chkOasisFL[x[1]][vid] = ad;
 				}
-				addToolTip(chkOasisFL[x[1]][vid],x[0].parentNode);
+				addToolTip(chkOasisFL[x[1]][vid],x[0].parentNode.parentNode);
 				if( chkOasisFL[x[1]][vid] )
 					uncheckOasis(x[0]);
 			}
@@ -8906,23 +8907,20 @@ function goldClubInfo () {
 		}, dummy);
 	}
 	function findAnim (farmList,fListID,cb) {
-		var ac = $gc('target',farmList);
+		var ac = $gc('coordinatesWrapper',farmList);
+		var target = $gc('target',farmList);
 		var curTO = 0;
 		for(var i=ac.length-1; i>=0; i--) {
-			var aLink = $gt('a',ac[i]);
-			var span = $gt('span',aLink[0]);
-			if (span.length == 0 && !ac[i].parentNode.classList.contains('disabled')) {
-				var vid = getVid(aLink[0].getAttribute('href'));
-				if( typeof(chkOasisFL[fListID][vid]) == 'undefined' ) {
-					cb.style.color = cb.style.color=='black'?'red':'black';
-					setTimeout(function(x) { return function() { findAnimA(x) }}([aLink[0],fListID,cb,i]), curTO);
-					curTO += getRandom(250,1000);
-				} else {
-					if( chkOasisFL[fListID][vid] ) {
-						uncheckOasis(ac[i]);
-						if( chkOasisFL[fListID].fl )
-							addToolTip(chkOasisFL[fListID][vid],ac[i].parentNode);
-					}
+			var vid = getVidFromCoords(ac[i].innerHTML);
+			if( typeof(chkOasisFL[fListID][vid]) == 'undefined' && !target[i].parentNode.classList.contains('disabled') ) {
+				cb.style.color = cb.style.color=='black'?'red':'black';
+				setTimeout(function(x) { return function() { findAnimA(x) }}([ac[i],fListID,cb,i]), curTO);
+				curTO += getRandom(250,1000);
+			} else {
+				if( chkOasisFL[fListID][vid] ) {
+					uncheckOasis(ac[i]);
+					if( chkOasisFL[fListID].fl )
+						addToolTip(chkOasisFL[fListID][vid],ac[i].parentNode);
 				}
 			}
 		}
@@ -9473,7 +9471,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;padding:5px;text-align:center;']]);
 		var closeb = $ee('div',$a('&#x2716;',[['style','font-size:140%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Travian Resource Bar+";
-		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Apr 3, 2026:</p> <ul><li>Fixes for the latest Travian update</li></ul> <p>Version 2.26.8 - Mar 12, 2026:</p> <ul><li>Updated the list of servers with rebalanced troops</li></ul> <p>Version 2.26.7 - Feb 21, 2026:</p> <ul><li>Fixed distance calculator for servers with rebalanced troops</li></ul> <p>Version 2.26.6 - Feb 19, 2026:</p> <ul><li>Fixed oasis animals scan button in farm lists</li></ul>";
+		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Apr 11, 2026:</p> <ul><li>Fixed oasis animals scan button in farm lists</li></ul> <p>Version 2.26.9 - Apr 3, 2026:</p> <ul><li>Fixes for the latest Travian update</li></ul> <p>Version 2.26.8 - Mar 12, 2026:</p> <ul><li>Updated the list of servers with rebalanced troops</li></ul> <p>Version 2.26.7 - Feb 21, 2026:</p> <ul><li>Fixed distance calculator for servers with rebalanced troops</li></ul>";
 		footer.appendChild(footerline);
 		footerline.appendChild(homepage);
 		footerline.appendChild(donate);
