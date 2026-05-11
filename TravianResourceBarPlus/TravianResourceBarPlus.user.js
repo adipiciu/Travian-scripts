@@ -1067,7 +1067,7 @@ DICT = {
 		color4 : "Completamente Evoluido"
 	},
 	bg: { // Bulgarian language, thx Dushevadeca
-		// ingame messages 
+		// ingame messages
 		ok : "Потвърди",
 		cancel : "Отмени",
 		close : "Затвори",
@@ -2227,7 +2227,7 @@ DICT = {
 		sendres : "εμφάνισε «στείλε ύλες/στρατεύματα» εικονίδια",
 		sendmess : "εμφάνισε «στείλε μήνυμα» εικονίδιο",
 		analyzer : "World analyzer",
-		bigicon : "εμφάνισε πλατεία συγκέντρωσης ειδών",	
+		bigicon : "εμφάνισε πλατεία συγκέντρωσης ειδών",
 		addvtable : "Εμφάνιση επιπλέον πίνακα χωριών",
 		addvtableo : ['ανενεργό','ενεργό','κολλημένο'],
 		opennote : "άνοιξε αυτόματα σημειωματάριο",
@@ -2721,7 +2721,7 @@ function getUserID() {
 			var ad = ajaxNDIV(ajaxResp);
 			var aV = $xf('//td[contains(@class,"pla")]/a[contains(@href,"profile") and text() = "' + uName + '"]', 'f', ad);
 			ad = null;
-			if (aV) { 
+			if (aV) {
 				var uId = aV.href.match(/profile\/(\d+)/)[1];
 				uidcookie += uName +"\/@_"+ uId +"@@_";
 				RB_setValue(crtName + '-TRBP-UID', uidcookie);
@@ -3128,7 +3128,7 @@ var dragMaster = (function() {
 		}
 	}
 	function mouseMove(e){
-		var ev = touchFL?e.touches[0]:e; 
+		var ev = touchFL?e.touches[0]:e;
 		if (mouseDownAt) if (Math.abs(mouseDownAt.x-ev.pageX)<10 && Math.abs(mouseDownAt.y-ev.pageY)<10) return;
 		with(dragObject.style) {
 			position = 'absolute';
@@ -3251,7 +3251,7 @@ function needed_show( base ) {
 		return timerB[j].obj;
 	}
 
-	var neededRes = base.match(/>(\d+).+?>(\d+).+?>(\d+).+?>(\d+)/);
+	var neededRes = base.match(/<span class="value value">([^<]+)<\/span>[\s\S]*?<span class="value value">([^<]+)<\/span>[\s\S]*?<span class="value value">([^<]+)<\/span>[\s\S]*?<span class="value value">([^<]+)<\/span>/);
 	wfl = false;
 	var wantsResMem = [0,0,0,0,0,0,0,0,0,0];
 	var wantsResMemP = RB.wantsMem.slice();
@@ -3259,7 +3259,7 @@ function needed_show( base ) {
 	var forNPC = [0,0];
 	var beforeThis = $e('DIV');
 	for (var e = 0; e < 4; e++) {
-		wantsResMem[e+5] = parseInt(neededRes[e+1]);
+		wantsResMem[e+5] = parseInt(neededRes[e+1].replace(/[^\d]/g, ''));
 		wantsResMemP[e+5] = parseInt(wantsResMemP[e+5]) + wantsResMem[e+5];
 		var wantsRes = resNow[e] - wantsResMem[e+5];
 		var wantsResP = resNow[e] - wantsResMemP[e+5];
@@ -3297,7 +3297,7 @@ function needed_show( base ) {
 	return beforeThis;
 }
 
-function neededResAdd () {	
+function neededResAdd () {
 	function addNPC( base ) {
 		var gold = $gc('gold',base);
 		if( gold.length > 0 ) {
@@ -3308,7 +3308,7 @@ function neededResAdd () {
 	var baseWrap = $xf('.//div[contains(@class,"resourceWrapper")]','l',cont);
 	for( var i = 0; i < baseWrap.snapshotLength; i++ ) {
 		var base = baseWrap.snapshotItem(i);
-		if ( ! />(\d+).+?>(\d+).+?>(\d+).+?>(\d+)/.test(base.innerHTML) ) break;
+		if ( base.querySelectorAll('.value').length < 4 ) continue;
 		var newD = needed_show( base.innerHTML );
 		if (base.parentNode.classList.contains("contractWrapper") || base.parentNode.classList.contains("information") || base.parentNode.classList.contains("details") || (/hero/.test(crtPath))) {
 			addNPC(base.parentNode);
@@ -3969,9 +3969,9 @@ function marketTradeRoutes() {
 		}
 		merUpd();
 	}
-	for (var i = 1; i < 5; i++ ) { 
+	for (var i = 1; i < 5; i++ ) {
 		var inp = $gn("r"+i,routesForm)[0];
-		inp.addEventListener('input', merUpd, false); 
+		inp.addEventListener('input', merUpd, false);
 		var divC = $e('DIV',[['style','margin:2px auto;font-size:24px;pointer-events:auto;']]);
 		var refM = $a(' - ',[["id","rbmin"],['href',jsVoid]]);
 		refM.addEventListener('click', mofLinkU, false);
@@ -4058,7 +4058,7 @@ function marketSummReal () {
 		var extRT = new Array();
 		for (i = 0; i < aT.length; i++) {
 			if (aT[i].classList.contains('history') || aT[i].classList.contains('return')) { aT[i].setAttribute('style','display:none;'); }
-			if (aT[i].classList.contains('history') || aT[i].classList.contains('return')) continue;	
+			if (aT[i].classList.contains('history') || aT[i].classList.contains('return')) continue;
 			if (aT[i].classList.contains('predicted')) {
 				// get time to go
 				var timerEl = $gc('timer',aT[i]);
@@ -4365,7 +4365,7 @@ function resSendOnMap () {
 		}
 		}
 	};
-	const observer = new MutationObserver(mutationCallback);		  
+	const observer = new MutationObserver(mutationCallback);
 	observer.observe(document.body, { childList: true, subtree: true });
 }
 
@@ -7475,7 +7475,7 @@ function buildDispatcher () {
 			  }
 			}
 		};
-		const observer = new MutationObserver(mutationCallback);		  
+		const observer = new MutationObserver(mutationCallback);
 		observer.observe(document.body, { childList: true, subtree: true });
 	} else if( gid == 'gid15' ) {
 		demolishSave();
@@ -8155,7 +8155,7 @@ function detectAttack () {
 			lastTimerB = timerNum+1;
 		}
 		if( RB.attackList.length < 2 ) {
-			aDv.innerHTML = 'No attack'; 
+			aDv.innerHTML = 'No attack';
 		} else {
 			aDv.innerHTML = '';
 		}
@@ -8241,9 +8241,9 @@ function detectAttack () {
 			var ad = ajaxNDIV(ajaxResp);
 			var move = $xf('.//div[contains(@class,"listEntry village") and contains(@class,"attack")]','f',ad);
 			ad = null;
-			if (move) { 
+			if (move) {
 				triggerAlarm();
-				return true; 
+				return true;
 			} else { noAttack(); }
 		}, showError);
 	}
@@ -8756,7 +8756,7 @@ function saveHeroPower () {
 			saveCookie( 'DictFL', 'dictFL' );
 		}
 	}
-	
+
 }
 
 function saveHeroMount () {
@@ -8772,7 +8772,7 @@ function saveHeroMount () {
 			});
 		});
 		observer.observe(hr, { childList: true, subtree: true });
-	
+
 		function checkHeroMount () {
 			if( hr.hasChildNodes() ) {
 				RB.dictFL[18] = 1;
@@ -8842,7 +8842,7 @@ function goldClubInfo () {
 		for( var t=0; t < ac.snapshotLength; t++ ) {
 			var inp = $gt('INPUT',ac.snapshotItem(t))[0];
 			if (inp.checked != chkbox.checked ) inp.click();
-		}	
+		}
 	}
 	function checkGreen () {
 		checkClass('attack_won_withoutLosses_small',this);
@@ -9182,14 +9182,14 @@ function messagesTopButtons () {
 			var markasreadButt = buttons[i];
 		}
 		if (buttons[i].name == 'delete') {
-			var delButt = buttons[i];	
+			var delButt = buttons[i];
 		}
 		if (buttons[i].name == 'archive') {
 			var archiveButton = buttons[i];
 		}
 	}
 	if (buttons.length > 0) {
-		if ( archiveButton ) { 
+		if ( archiveButton ) {
 			var newArcAbove = archiveButton.cloneNode(true);
 			ltr ? newArcAbove.style.marginLeft = "4px" : newArcAbove.style.marginRight = "4px";
 			messagesForm.prepend(newArcAbove);
@@ -9198,7 +9198,7 @@ function messagesTopButtons () {
 			var newDelAbove = delButt.cloneNode(true);
 			ltr ? newDelAbove.style.marginLeft = "4px" : newDelAbove.style.marginRight = "4px";
 			messagesForm.prepend(newDelAbove);
-		}	
+		}
 		if ( markasreadButt ) {
 			var newMarkAbove = markasreadButt.cloneNode(true);
 			messagesForm.prepend(newMarkAbove);
@@ -9458,8 +9458,8 @@ function createSemiLargerMapHTML() {
 }
 
 function displayWhatIsNew () {
-	if ($g('whatsnew')) { 
-		$g("whatsnew").style.visibility = "visible"; return; } 
+	if ($g('whatsnew')) {
+		$g("whatsnew").style.visibility = "visible"; return; }
 	else {
 		var box = $e('div',[['id','whatsnew'],['style','width:400px;position:fixed;top:50%;left:50%;transform: translate(-50%,-50%);color:black;background-color:'+rbpBckColor+';padding:5px 5px;border-radius:1em;z-index:999;opacity:0.95;']]);
 		var header = $e('div',[['style','height:35px;font-size:130%;font-weight:bold;text-align:center;']]);
@@ -9533,7 +9533,7 @@ function displayWhatIsNew () {
 						if (T4_Variables.playableTribeIds[2]) RB.Setup[47] = 2; //Romans, Gauls, Teutons
 						if (T4_Variables.playableTribeIds[4]) RB.Setup[47] = 1; //Huns, Egyptians, Spartans, Vikings
 					}
-					
+
 				}
 				if (RB.Setup[48] == 0) { RB.Setup[48] = T4_Variables.Map.Size.width; }
 				if (RB.Setup[50] == 0) { RB.Setup[50] = T4_Variables.feature_flags.travelOverTheWorldEdge ? 1 : 2; }
@@ -9640,7 +9640,7 @@ function displayWhatIsNew () {
 		}
 		}
 	};
-	const observer = new MutationObserver(mutationCallback);		  
+	const observer = new MutationObserver(mutationCallback);
 	observer.observe($g('sidebarAfterContent'), { childList: true, subtree: true });
 	if( RB.Setup[14] > 0 ) showDorf1();
 	if( RB.Setup[12] > 0 ) showLinks();
