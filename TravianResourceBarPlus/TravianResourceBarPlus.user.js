@@ -8645,7 +8645,7 @@ function calcTroopCost () {
 			nc = parseInt(wRes[i][0].value).NaN0();
 			for( var t=0; t<6; t++ ) allWR[t] += wRes[i][t+2] * nc;
 		}
-		var wantD = '>'+allWR[1]+' >'+allWR[2]+' >'+allWR[3]+' >'+allWR[4];
+		var wantD = '<span class="value value">'+allWR[1]+'</span> <span class="value value">'+allWR[2]+'</span> <span class="value value">'+allWR[3]+'</span> <span class="value value">'+allWR[4]+'</span>';
 
 		var newBTX = $ee('BUTTON',gtext("close")+' (X)',[['onclick',jsNone],['class',allIDs[15]],['style','direction:ltr']]);
 		newBTX.addEventListener('click', closeTip, true);
@@ -8677,8 +8677,8 @@ function calcTroopCost () {
 			var base = res[0].innerHTML;
 			var nTime = toSeconds($gc('duration', tinp.parentNode.parentNode)[0].innerHTML);
 		}
-		var nRes = base.match(/>(\d+).+?>(\d+).+?>(\d+).+?>(\d+).+?>(\d+)/);
-		wRes[t++] = [tinp,tname,nTime,parseInt(nRes[1]),parseInt(nRes[2]),parseInt(nRes[3]),parseInt(nRes[4]),parseInt(nRes[5])];
+		var nRes = base.match(/<span class="value value">([^<]+)<\/span>[\s\S]*?<span class="value value">([^<]+)<\/span>[\s\S]*?<span class="value value">([^<]+)<\/span>[\s\S]*?<span class="value value">([^<]+)<\/span>[\s\S]*?<span class="value value">([^<]+)<\/span>/);
+		wRes[t++] = [tinp,tname,nTime,parseInt(nRes[1].replace(/[^\d]/g,'')),parseInt(nRes[2].replace(/[^\d]/g,'')),parseInt(nRes[3].replace(/[^\d]/g,'')),parseInt(nRes[4].replace(/[^\d]/g,'')),parseInt(nRes[5].replace(/[^\d]/g,''))];
 		tinp.addEventListener('keyup', resRecalc, false);
 		tinp.addEventListener('click', resRecalc, false);
 	}
