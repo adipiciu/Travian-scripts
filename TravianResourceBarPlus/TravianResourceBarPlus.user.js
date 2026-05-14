@@ -12,14 +12,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.26.10
+// @version        2.26.11
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.26.10';
+var version = '2.26.11';
 
 notRunYet = false;
 
@@ -3004,6 +3004,8 @@ darkCSS = "#content {background-color: "+dmColors[0]+" !important;}" +
 "#allianceBonusOverview div.bonusBox { background-color: "+dmColors[0]+";}" +
 "table.top5 thead td { background-color: "+dmColors[1]+";}" +
 "table.top5 tbody td { background-color: "+dmColors[0]+";}" +
+"table#regionalTop5 thead th { background-color: "+dmColors[1]+";}" +
+"table#regionalTop5 tbody td { background-color: "+dmColors[0]+";}" +
 "#allianceBonusOverview .progressBar .levels>div { opacity: 0.9;}" +
 //alliance //overview
 "table.events td { background-color: "+dmColors[0]+";}" +
@@ -3034,6 +3036,12 @@ darkCSS = "#content {background-color: "+dmColors[0]+" !important;}" +
 "div.village3 table tbody.troops tr td { background-color: "+dmColors[0]+";}" +
 //regions
 "table#neighboringRegions tbody tr:not(.highlight) td { background-color: "+dmColors[0]+";}" +
+//region overview
+"table.regionControlDetails thead td { background-color: "+dmColors[1]+";}" +
+"table.regionControlDetails tbody td { background-color: "+dmColors[0]+";}" +
+"div#regionPieChartAgenda table { background-color: "+dmColors[0]+" !important;}" +
+"div#regionPieChartAgenda table td { background-color: "+dmColors[0]+";}" +
+"div#statisticsVictoryTop5 table td { background-color: "+dmColors[0]+";}" +
 //production page
 "div#productionOverview table td { background-color: "+dmColors[0]+";}"
 
@@ -8756,7 +8764,6 @@ function saveHeroPower () {
 			saveCookie( 'DictFL', 'dictFL' );
 		}
 	}
-
 }
 
 function saveHeroMount () {
@@ -9471,7 +9478,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;padding:5px;text-align:center;']]);
 		var closeb = $ee('div',$a('&#x2716;',[['style','font-size:140%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Travian Resource Bar+";
-		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Apr 11, 2026:</p> <ul><li>Fixed oasis animals scan button in farm lists</li></ul> <p>Version 2.26.9 - Apr 3, 2026:</p> <ul><li>Fixes for the latest Travian update</li></ul> <p>Version 2.26.8 - Mar 12, 2026:</p> <ul><li>Updated the list of servers with rebalanced troops</li></ul> <p>Version 2.26.7 - Feb 21, 2026:</p> <ul><li>Fixed distance calculator for servers with rebalanced troops</li></ul>";
+		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - May 13, 2026:</p> <ul><li>Fixed show needed resources for the new Travian update</li><li>Fixed link hints for Plus account</li><li>Minor fixes</li></ul> <p>Version 2.26.10 - Apr 11, 2026:</p> <ul><li>Fixed oasis animals scan button in farm lists</li></ul> <p>Version 2.26.9 - Apr 3, 2026:</p> <ul><li>Fixes for the latest Travian update</li></ul> <p>Version 2.26.8 - Mar 12, 2026:</p> <ul><li>Updated the list of servers with rebalanced troops</li></ul> <p>Version 2.26.7 - Feb 21, 2026:</p> <ul><li>Fixed distance calculator for servers with rebalanced troops</li></ul>";
 		footer.appendChild(footerline);
 		footerline.appendChild(homepage);
 		footerline.appendChild(donate);
@@ -9533,7 +9540,6 @@ function displayWhatIsNew () {
 						if (T4_Variables.playableTribeIds[2]) RB.Setup[47] = 2; //Romans, Gauls, Teutons
 						if (T4_Variables.playableTribeIds[4]) RB.Setup[47] = 1; //Huns, Egyptians, Spartans, Vikings
 					}
-
 				}
 				if (RB.Setup[48] == 0) { RB.Setup[48] = T4_Variables.Map.Size.width; }
 				if (RB.Setup[50] == 0) { RB.Setup[50] = T4_Variables.feature_flags.travelOverTheWorldEdge ? 1 : 2; }
@@ -9599,7 +9605,7 @@ function displayWhatIsNew () {
 	if( /dorf1.php/.test(crtPath) ) { troopsDorf1(); normalizeProduction(); }
 	villageHintEdit();
 	if( /dorf2.php/.test(crtPath) ) { parseDorf2(); if( RB.Setup[37] > 0 ) villageBMover(); }
-	if( /dorf3.php/.test(crtPath) ) villageHintDorf3();
+	if( /village\/statistics/.test(crtPath) ) { villageHintDorf3(); }
 	if( /(?:messages|report)/.test(crtPath) ) { viewMessageIW(); messagesTopButtons(); }
 	if( /report/.test(crtPath) ) reportsDelOrSearch(); else if( RB.overview[0] < -2 ) { RB.overview[0] = -1; saveCookie('OV', 'overview'); }
 	if( /messages\//.test(crtPath) ) { convertCoordsInMessagesToLinks(); }
