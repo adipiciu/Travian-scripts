@@ -12,14 +12,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.26.11
+// @version        2.26.12
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.26.11';
+var version = '2.26.12';
 
 notRunYet = false;
 
@@ -8653,7 +8653,7 @@ function calcTroopCost () {
 			nc = parseInt(wRes[i][0].value).NaN0();
 			for( var t=0; t<6; t++ ) allWR[t] += wRes[i][t+2] * nc;
 		}
-		var wantD = '>'+allWR[1]+' >'+allWR[2]+' >'+allWR[3]+' >'+allWR[4];
+		var wantD = $em('DIV',[$ee('span',allWR[1],[['class','value']]),$ee('span',allWR[2],[['class','value']]),$ee('span',allWR[3],[['class','value']]),$ee('span',allWR[4],[['class','value']])]);
 
 		var newBTX = $ee('BUTTON',gtext("close")+' (X)',[['onclick',jsNone],['class',allIDs[15]],['style','direction:ltr']]);
 		newBTX.addEventListener('click', closeTip, true);
@@ -8682,11 +8682,10 @@ function calcTroopCost () {
 		if( tarm ) tarm = tarm[1]; else continue;
 		var res = $gc('resourceWrapper', tinp.parentNode.parentNode);
 		if (res.length > 0 ) {
-			var base = res[0].innerHTML;
+			var base = res[0].querySelectorAll('span.value');
 			var nTime = toSeconds($gc('duration', tinp.parentNode.parentNode)[0].innerHTML);
 		}
-		var nRes = base.match(/>(\d+).+?>(\d+).+?>(\d+).+?>(\d+).+?>(\d+)/);
-		wRes[t++] = [tinp,tname,nTime,parseInt(nRes[1]),parseInt(nRes[2]),parseInt(nRes[3]),parseInt(nRes[4]),parseInt(nRes[5])];
+		wRes[t++] = [tinp,tname,nTime,parseInt(base[0].textContent.replace(/([\u2000-\u20ff])/g,'')),parseInt(base[1].textContent.replace(/([\u2000-\u20ff])/g,'')),parseInt(base[2].textContent.replace(/([\u2000-\u20ff])/g,'')),parseInt(base[3].textContent.replace(/([\u2000-\u20ff])/g,'')),parseInt(base[4].textContent.replace(/([\u2000-\u20ff])/g,''))];
 		tinp.addEventListener('keyup', resRecalc, false);
 		tinp.addEventListener('click', resRecalc, false);
 	}
@@ -9478,7 +9477,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;padding:5px;text-align:center;']]);
 		var closeb = $ee('div',$a('&#x2716;',[['style','font-size:140%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Travian Resource Bar+";
-		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - May 13, 2026:</p> <ul><li>Fixed show needed resources for the new Travian update</li><li>Fixed link hints for Plus account</li><li>Minor fixes</li></ul> <p>Version 2.26.10 - Apr 11, 2026:</p> <ul><li>Fixed oasis animals scan button in farm lists</li></ul> <p>Version 2.26.9 - Apr 3, 2026:</p> <ul><li>Fixes for the latest Travian update</li></ul> <p>Version 2.26.8 - Mar 12, 2026:</p> <ul><li>Updated the list of servers with rebalanced troops</li></ul> <p>Version 2.26.7 - Feb 21, 2026:</p> <ul><li>Fixed distance calculator for servers with rebalanced troops</li></ul>";
+		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - May 14, 2026:</p> <ul><li>Fixed show needed resources for training troops</li><li>Fixed link hints for Plus account</li><li>Minor fixes</li></ul> <p>Version 2.26.11 - May 13, 2026:</p> <ul><li>Fixed show needed resources for the new Travian update</li><li>Fixed link hints for Plus account</li><li>Minor fixes</li></ul> ";
 		footer.appendChild(footerline);
 		footerline.appendChild(homepage);
 		footerline.appendChild(donate);
