@@ -12,5 +12,5 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.26.12
+// @version        2.26.13
 // ==/UserScript==

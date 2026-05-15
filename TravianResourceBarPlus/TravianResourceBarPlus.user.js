@@ -12,14 +12,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.26.12
+// @version        2.26.13
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.26.12';
+var version = '2.26.13';
 
 notRunYet = false;
 
@@ -3267,7 +3267,7 @@ function needed_show( base ) {
 	var forNPC = [0,0];
 	var beforeThis = $e('DIV');
 	for (var e = 0; e < 4; e++) {
-		wantsResMem[e+5] = parseInt(neededRes[e].textContent.replace(/([\u2000-\u20ff])/g,''));
+		wantsResMem[e+5] = parseInt(neededRes[e].textContent.onlyText().replace(/\s/g, '').replace(/\./g, '').replace(/,/g, ''));
 		wantsResMemP[e+5] = parseInt(wantsResMemP[e+5]) + wantsResMem[e+5];
 		var wantsRes = resNow[e] - wantsResMem[e+5];
 		var wantsResP = resNow[e] - wantsResMemP[e+5];
@@ -8685,7 +8685,7 @@ function calcTroopCost () {
 			var base = res[0].querySelectorAll('span.value');
 			var nTime = toSeconds($gc('duration', tinp.parentNode.parentNode)[0].innerHTML);
 		}
-		wRes[t++] = [tinp,tname,nTime,parseInt(base[0].textContent.replace(/([\u2000-\u20ff])/g,'')),parseInt(base[1].textContent.replace(/([\u2000-\u20ff])/g,'')),parseInt(base[2].textContent.replace(/([\u2000-\u20ff])/g,'')),parseInt(base[3].textContent.replace(/([\u2000-\u20ff])/g,'')),parseInt(base[4].textContent.replace(/([\u2000-\u20ff])/g,''))];
+		wRes[t++] = [tinp,tname,nTime,parseInt(base[0].textContent.onlyText().replace(/\s/g, '').replace(/\./g, '').replace(/,/g, '')),parseInt(base[1].textContent.onlyText().replace(/\s/g, '').replace(/\./g, '').replace(/,/g, '')),parseInt(base[2].textContent.onlyText().replace(/\s/g, '').replace(/\./g, '').replace(/,/g, '')),parseInt(base[3].textContent.onlyText().replace(/\s/g, '').replace(/\./g, '').replace(/,/g, '')),parseInt(base[4].textContent.onlyText().replace(/\s/g, '').replace(/\./g, '').replace(/,/g, ''))];
 		tinp.addEventListener('keyup', resRecalc, false);
 		tinp.addEventListener('click', resRecalc, false);
 	}
@@ -9477,7 +9477,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;padding:5px;text-align:center;']]);
 		var closeb = $ee('div',$a('&#x2716;',[['style','font-size:140%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Travian Resource Bar+";
-		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - May 14, 2026:</p> <ul><li>Fixed show needed resources for training troops</li><li>Fixed link hints for Plus account</li><li>Minor fixes</li></ul> <p>Version 2.26.11 - May 13, 2026:</p> <ul><li>Fixed show needed resources for the new Travian update</li><li>Fixed link hints for Plus account</li><li>Minor fixes</li></ul> ";
+		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - May 15, 2026:</p> <ul><li>Fixed show needed resources again</li></ul> <p>Version 2.26.11 - May 13, 2026:</p> <ul><li>Fixed show needed resources for the new Travian update</li><li>Fixed link hints for Plus account</li><li>Minor fixes</li></ul> ";
 		footer.appendChild(footerline);
 		footerline.appendChild(homepage);
 		footerline.appendChild(donate);
