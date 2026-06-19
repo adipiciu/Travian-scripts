@@ -12,14 +12,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.26.13
+// @version        2.26.14
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.26.13';
+var version = '2.26.14';
 
 notRunYet = false;
 
@@ -3313,7 +3313,7 @@ function neededResAdd () {
 		}
 	}
 
-	var baseWrap = $xf('.//div[contains(@class,"resourceWrapper")]','l',cont);
+	var baseWrap = $xf('.//div/div[contains(@class,"resourceWrapper")]','l',cont);
 	for( var i = 0; i < baseWrap.snapshotLength; i++ ) {
 		var base = baseWrap.snapshotItem(i);
 		if ( base.querySelector('span.value') == null ) break;
@@ -9431,7 +9431,7 @@ function oasisKirilloid (vf) {
 }
 
 function createSemiLargerMapHTML() {
-	var div = $e('DIV',[['class','iconButton viewFullGold'],['title','Semi Larger map (no plus needed) ||']]);
+	var div = $e('DIV',[['class','mapToolbarButton viewFull'],['title','Semi Larger map (no plus needed) ||']]);
 	div.open = false;
 	var iconCropFinder = $g('iconFullscreen');
 	if (iconCropFinder) {
@@ -9477,7 +9477,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;padding:5px;text-align:center;']]);
 		var closeb = $ee('div',$a('&#x2716;',[['style','font-size:140%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Travian Resource Bar+";
-		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - May 15, 2026:</p> <ul><li>Fixed show needed resources again</li></ul> <p>Version 2.26.11 - May 13, 2026:</p> <ul><li>Fixed show needed resources for the new Travian update</li><li>Fixed link hints for Plus account</li><li>Minor fixes</li></ul> ";
+		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - June 19, 2026:</p> <ul><li>Minor fixes</li></ul> <p>Version 2.26.13 - May 15, 2026:</p> <ul><li>Fixed show needed resources</li></ul> ";
 		footer.appendChild(footerline);
 		footerline.appendChild(homepage);
 		footerline.appendChild(donate);
