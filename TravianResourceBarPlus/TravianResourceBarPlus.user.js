@@ -12,14 +12,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.26.14
+// @version        2.26.15
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.26.14';
+var version = '2.26.15';
 
 notRunYet = false;
 
@@ -3528,12 +3528,6 @@ function marketSend () {
 		var coordX = parseInt($gt('input',$gc('coordinateX',basee)[0])[0].getAttribute("value"));
 		var coordY = parseInt($gt('input',$gc('coordinateY',basee)[0])[0].getAttribute("value"));
 		if (arXY[0] != coordX || arXY[1] != coordY) { sendResourses( RB.wantsMem[4] ); return; }
-		//var coordXInput = $gt('input',$gc('coordinateX',basee)[0])[0];
-		//var coordYInput = $gt('input',$gc('coordinateY',basee)[0])[0];
-		//var coordX = parseInt(coordXInput.getAttribute("value"));
-		//var coordY = parseInt(coordYInput.getAttribute("value"));
-		//if (arXY[0] != coordX) updateInput(coordXInput,arXY[0]);
-		//if (arXY[1] != coordY) updateInput(coordYInput,arXY[1]);
 		var htR = getTTime( calcDistance(RB.wantsMem[4], village_aid), MTime[parseInt(RB.Setup[2])]*sM, 0, 0 );
 		var ht = parseInt(RB.wantsMem[9]) < htR ? htR - parseInt(RB.wantsMem[9]): 0;
 		for( var i = 0; i < 4; i++ ) { updateInput(rxI[i],0); } //reset values so they will not overflow
@@ -3673,6 +3667,14 @@ function marketSend () {
 		var ss = basee.querySelectorAll('button[type=submit]');
 		//for( i=0; i<ss.length; i++ ) ss[i].addEventListener('click', removeACh, true);
 		for( i=0; i<ss.length; i++ ) ss[i].addEventListener('click', mhRowLinkAMem, true);
+		// fix for react button doesn't trigger click event
+		document.addEventListener('click', (event) => {
+			const selector = '.textButtonV2.buttonFramed.send';
+			const button = event.target.closest(selector);
+			if (button) {
+				mhRowLinkAMem();
+			}
+		}, true);
 		// travel time
 		//if( ! fl && ss.length > 0 )
 		//	addShowDistanceIn( ss[0].parentNode, -1 );
@@ -3705,8 +3707,8 @@ function marketSend () {
 			RB.dictionary[2] = mName;
 			saveCookie( 'Dict', 'dictionary' );
 		}
-		maxTr = toNumber($gc('denominator',merInfo)[0].textContent);
-		maxC = parseInt($gc('merchantCarryInfo')[0].textContent.match(/(\d+)/)[1]);
+		maxTr = toNumber($gc('denominator',merInfo)[0].textContent.onlyText());
+		maxC = parseInt($gc('merchantCarryInfo')[0].textContent.onlyText().match(/(\d+)/)[1]);
 		if( maxC != RB.village_Var[0] ) {
 			RB.village_Var[0] = maxC;
 			saveVCookie( 'VV', RB.village_Var );
@@ -9477,7 +9479,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;padding:5px;text-align:center;']]);
 		var closeb = $ee('div',$a('&#x2716;',[['style','font-size:140%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Travian Resource Bar+";
-		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - June 19, 2026:</p> <ul><li>Minor fixes</li></ul> <p>Version 2.26.13 - May 15, 2026:</p> <ul><li>Fixed show needed resources</li></ul> ";
+		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - July 31, 2026:</p> <ul><li>Fixed the memory function not subtracting the resources already sent in the marketplace</li></ul> <p>Version 2.26.14 - June 19, 2026:</p> <ul><li>Minor fixes</li></ul> <p>Version 2.26.13 - May 15, 2026:</p> <ul><li>Fixed show needed resources</li></ul> ";
 		footer.appendChild(footerline);
 		footerline.appendChild(homepage);
 		footerline.appendChild(donate);
