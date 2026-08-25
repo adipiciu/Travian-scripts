@@ -12,14 +12,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.26.15
+// @version        2.26.16
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.26.15';
+var version = '2.26.16';
 
 notRunYet = false;
 
@@ -4526,7 +4526,7 @@ function showAllTTime ( vType, tVil, arena, art, shoes, leftHand ) {
 		[3, [8,18,28]] // Fire Catapult, Catapult, Trebuchet
 		];
 	}
-	if (crtName.startsWith('cw.x2') || crtName.startsWith('cw2.x2') || crtName.startsWith('cw2.x5') || crtName.startsWith('romani') || crtName.startsWith('france') || crtName.startsWith('hux.x3') || crtName.startsWith('alpler') || crtName.startsWith('eternos') ) { //Community Week – Barbarians (Teutons, Gauls and Roman tribes re-balancing)
+	if (crtName.startsWith('cw.x2') || crtName.startsWith('cw2.x2') || crtName.startsWith('cw2.x5') || crtName.startsWith('romani') || crtName.startsWith('france') || crtName.startsWith('hux.x3') || crtName.startsWith('alpler') || crtName.startsWith('eternos') || crtName.startsWith('nordics') || crtName.startsWith('czsk') || crtName.startsWith('united') || crtName.startsWith('lusobr') || crtName.startsWith('garuda') ) { //Community Week – Barbarians (Teutons, Gauls and Roman tribes re-balancing)
 		TTime = [
 		[19, [24,63]], // Theutates Thunder, Spotter
 		[17, [23]], // Pathfinder
@@ -7230,7 +7230,7 @@ function TroopsData () {
 		//Vikings
 		45,22,5,95,80,50,40,7*m,55,1, 20,50,30,125,70,85,40,7*m,40,1, 70,30,25,235,220,200,70,5*m,75,2, 0,10,5,155,95,50,50,9*m,0,1, 45,95,100,385,295,290,85,12*m,110,2, 160,50,75,475,535,515,100,9*m,80,2, 65,30,80,950,325,375,70,4*m,0,3, 50,60,10,850,1225,625,60,3*m,0,6, 40,40,60,35500,26600,25000,27200,5*m,0,4, 10,80,80,5800,4600,4800,4800,5*m,3000,1
 	];
-	if (crtName.startsWith('cw.x2') || crtName.startsWith('cw2.x2') || crtName.startsWith('cw2.x5') || crtName.startsWith('romani') || crtName.startsWith('france') || crtName.startsWith('hux.x3') || crtName.startsWith('alpler') || crtName.startsWith('eternos')) RB.tropsI = [
+	if (crtName.startsWith('cw.x2') || crtName.startsWith('cw2.x2') || crtName.startsWith('cw2.x5') || crtName.startsWith('romani') || crtName.startsWith('france') || crtName.startsWith('hux.x3') || crtName.startsWith('alpler') || crtName.startsWith('eternos') || crtName.startsWith('nordics') || crtName.startsWith('czsk') || crtName.startsWith('united') || crtName.startsWith('lusobr') || crtName.startsWith('garuda') ) RB.tropsI = [
 		//Romans
 		50,40,55,100,80,130,30,7*m,50,1, 30,65,35,100,120,150,60,6*m,20,1, 75,40,25,150,160,210,80,7*m,50,1, 0,20,10,140,160,20,40,16*m,0,2, 130,65,50,480,380,280,80,15*m,100,3, 195,80,105,550,640,800,180,10*m,70,4, 60,30,75,900,360,500,70,4*m,0,3, 75,60,10,950,1350,600,90,3*m,0,6, 50,40,30,30750,27200,45000,37500,4*m,0,5, 0,80,80,4600,4200,5800,4400,5*m,3000,1,
 		//Teutons
@@ -9479,7 +9479,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;padding:5px;text-align:center;']]);
 		var closeb = $ee('div',$a('&#x2716;',[['style','font-size:140%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Travian Resource Bar+";
-		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - July 31, 2026:</p> <ul><li>Fixed the memory function not subtracting the resources already sent in the marketplace</li></ul> <p>Version 2.26.14 - June 19, 2026:</p> <ul><li>Minor fixes</li></ul> <p>Version 2.26.13 - May 15, 2026:</p> <ul><li>Fixed show needed resources</li></ul> ";
+		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - July 31, 2026:</p> <ul><li>Added more servers with rebalanced troops</li></ul> <p>Version 2.26.15 - July 31, 2026:</p> <ul><li>Fixed the memory function not subtracting the resources already sent in the marketplace</li></ul> <p>Version 2.26.14 - June 19, 2026:</p> <ul><li>Minor fixes</li></ul> <p>Version 2.26.13 - May 15, 2026:</p> <ul><li>Fixed show needed resources</li></ul> ";
 		footer.appendChild(footerline);
 		footerline.appendChild(homepage);
 		footerline.appendChild(donate);
