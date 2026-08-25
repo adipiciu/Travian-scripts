@@ -12,14 +12,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version     2.0.28
+// @version     2.0.29
 // ==/UserScript==
 
 (function () {
 
 function allInOneTTQ () {
 notRunYet = false;
-var sCurrentVersion = "2.0.28";
+var sCurrentVersion = "2.0.29";
 
 //find out if Server errors
 var strTitle = document.title;
@@ -4076,7 +4076,7 @@ if (init) {
 	ttqAddEventListener ( document, "mousedown", mouseDown, false );
 	ttqAddEventListener ( document, "mouseup",   mouseUp,   false );
 //	ttqAddEventListener ( window,   "load",      onLoad,    false );
-	ttqAddEventListener ( window,   "unload",    unLoad,    false );
+	ttqAddEventListener ( window,   "pagehide",    unLoad,    false );
 	var inittime = Date.now();
 	_log(1, "TTQ starting...");
 	var tmp = Math.round(ttqRandomNumber()*60000);
