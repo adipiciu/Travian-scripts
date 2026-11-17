@@ -12,14 +12,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.26.16
+// @version        2.26.17
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.26.16';
+var version = '2.26.17';
 
 notRunYet = false;
 
@@ -67,6 +67,9 @@ var crtName = window.location.hostname;
 var fullName = window.location.origin + "/";
 var relName = window.location.pathname;
 var urlParams = window.location.search;
+var isResourcesPage = /^(?:\/resources|\/dorf1\.php)$/.test(relName);
+var isVillagePage = /^(?:\/village|\/dorf2\.php)$/.test(relName);
+var isBuildPage = /^(?:\/slot|\/building|\/build\.php)$/.test(relName);
 var crtLang = crtName.split('.'); crtLang = crtLang[crtLang.length-1];
 var srv = document.title.substring(8);
 var flinks = new Object();
@@ -2756,22 +2759,33 @@ function getUserID() {
 var initRes = true;
 function getResources () {
 	if( initRes ) {
-		try {
-			var aText = $xf('//script[contains(text(),"var resources")]').textContent;
-			if ( /production:\s*({.*}),/.test(aText) ) {
-				var production = JSON.parse(aText.match( /production:\s*({.*}),/)[1]);
-			}
-			if ( /maxStorage:\s*({.*})\s*/.test(aText) ) {
-				var maxStorage = JSON.parse(aText.match( /maxStorage:\s*({.*})\s*/)[1]);
-			}
-		} catch(e) { loadVCookie('vPPH', 'village_PPH'); }
+		var production, maxStorage;
+		for (var script of document.scripts) {
+			var prod = script.textContent.match(/["']?production["']?\s*:\s*(\{[^{}]*\})/);
+			var capacity = script.textContent.match(/["']?maxStorage["']?\s*:\s*(\{[^{}]*\})/);
+			try { if (prod) production = JSON.parse(prod[1]); } catch (e) {}
+			try { if (capacity) maxStorage = JSON.parse(capacity[1]); } catch (e) {}
+		}
+		function amount(text) {
+			var value = String(text == null ? '' : text).replace(/[\u200e\u200f\u202a-\u202e\u2066-\u2069]/g, '').replace(/−/g, '-').trim();
+			if (!/^-?\d+(?:[\s.,'’]\d{3})*$/.test(value)) return NaN;
+			var number = Number(value.replace(/[\s.,'’]/g, ''));
+			return Number.isSafeInteger(number) ? number : NaN;
+		}
 		for( var i = 0; i < 4; i++ ) {
 			var wholeRes = $g("l" + (1+i));
 			if( ! wholeRes ) return false;
-			income[i] = production['l'+(1+i)];
+			var row = Array.from(document.querySelectorAll('#production tbody tr')).find(row => row.querySelector('.r'+(i+1)));
+			income[i] = production && production['l'+(1+i)];
+			if (!Number.isFinite(income[i])) income[i] = amount(row && row.querySelector('.num')?.textContent);
+			iresNow[i] = amount(wholeRes.textContent);
+			fullRes[i] = maxStorage && maxStorage['l'+(1+i)];
+			if (!Number.isFinite(fullRes[i])) fullRes[i] = amount(document.querySelector('#stockBar .'+(i == 3 ? 'granary' : 'warehouse')+' .capacity .value')?.textContent);
+			if (!Number.isFinite(income[i]) || !Number.isFinite(iresNow[i]) || iresNow[i] < 0 || !Number.isFinite(fullRes[i]) || fullRes[i] <= 0) {
+				console.warn('Travian Resource bar plus: resource data not recognised; open the resources page after it has loaded.');
+				return false;
+			}
 			incomepersecond[i] = income[i] / 3600;
-			iresNow[i] = parseInt(toNumber(wholeRes.textContent));
-			fullRes[i] = maxStorage['l'+(1+i)];
 		}
 		resNow = iresNow.slice();
 		initRes = false;
@@ -4734,11 +4748,11 @@ function incomeResourcesInRP34 () {
 function addARLinks(myVid, aDirect) {
 	var newLinks = $e('span');
 	var armStyle = aDirect == 0 ? allIDs[34]: allIDs[35];
-	var ref = $ee('a',trImg(armStyle),[['href','/build.php?gid=16&tt=2&targetMapId=' + myVid],['onclick','return false;']]);
+	var ref = $ee('a',trImg(armStyle),[['href','/building?id=16&tt=2&targetMapId=' + myVid],['onclick','return false;']]);
 	ref.addEventListener('click', function(x) { return function() { sendArmy(x); }}(myVid), false);
 	newLinks.appendChild(ref);
 	if( aDirect < 2 ) {
-		var ref = $ee('a',trImg(allIDs[33]),[['href','/build.php?gid=17&z=' + myVid + '&t=5'],['onclick','return false;']]);
+		var ref = $ee('a',trImg(allIDs[33]),[['href','/building?id=17&z=' + myVid + '&t=5'],['onclick','return false;']]);
 		ref.addEventListener('click', function(x) { return function() { sendResourses(x); }}(myVid), false);
 		newLinks.appendChild(ref);
 	}
@@ -4748,8 +4762,8 @@ function addARLinks(myVid, aDirect) {
 
 function addDorf12Links(myVid) {
 	var newLinks = $e('span');
-	var dorf1 = $ee('a',$e('IMG',[['src',img_out],['style','padding:0px 2px;cursor:pointer;']]),[['href',fullName + 'dorf1.php' + myVid]]);
-	var dorf2 = $ee('a',$e('IMG',[['src',img_in],['style','padding:0px 2px;cursor:pointer;']]),[['href',fullName + 'dorf2.php' + myVid]]);
+	var dorf1 = $ee('a',$e('IMG',[['src',img_out],['style','padding:0px 2px;cursor:pointer;']]),[['href',fullName + 'resources?' + myVid.split('?')[1]]]);
+	var dorf2 = $ee('a',$e('IMG',[['src',img_in],['style','padding:0px 2px;cursor:pointer;']]),[['href',fullName + 'village?' + myVid.split('?')[1]]]);
 	newLinks.appendChild(dorf1);
 	newLinks.appendChild(dorf2);
 	if (screen.width <= 1024) { newLinks.style.height = "26px"; }
@@ -4769,6 +4783,7 @@ var vlist_init = false;
 function vlist_addButtonsT4 () {
 	var vlist = $g("sidebarBoxVillageList");
 	var villages = $gc("listEntry village",vlist);
+	villages_count = 0;
 	var aText = $xf('//script[contains(text(),"incomingAttacksAmount")]');
 	if (aText) {aText = aText.textContent}
 	if (villages.length > 0 ) {
@@ -4776,9 +4791,10 @@ function vlist_addButtonsT4 () {
 			var linkEl = $gt("a",villages[vn])[0];
 			var villageID = villages[vn].getAttribute('data-did');
 			//linkVSwitch[vn] = linkEl.getAttribute('href');
-			var params = new URLSearchParams(urlParams);
+			// Only carry the village ID; building IDs and action parameters belong to the old page.
+			var params = new URLSearchParams();
 			params.set("newdid", villageID);
-			linkVSwitch[vn] = "?" + params.toString();
+			linkVSwitch[vn] = "/resources?" + params.toString();
 			var coords = $gc("coordinatesGrid",villages[vn])[0];
 			var myVid = getVidFromCoords(coords.innerHTML);
 			villages_id[vn] = myVid;
@@ -4798,7 +4814,7 @@ function vlist_addButtonsT4 () {
 				}
 			}
 
-			if( linkEl.hasAttribute('class') && linkEl.getAttribute('class').match(/active/i) ) {
+			if( villages[vn].classList.contains('active') || linkEl.classList.contains('active') ) {
 				village_aid = myVid; village_aNum = vn;
 			}
 			linkHint($gc('name',linkEl)[0], myVid);
@@ -5294,7 +5310,7 @@ function sendArmy( myVid ) {
 		showDistanceIn( 0 );
 	} else {
 		if( myVid != village_aid ) RB_setValue(GMcookieID + 'next', myVid);
-		document.location.href = '/build.php?gid=16&tt=2';
+		document.location.href = '/building?id=16&tt=2';
 	}
 	return false;
 }
@@ -5306,7 +5322,7 @@ function sendResourses( myVid ) {
 		//showDistanceIn( -1 );
 	} else {
 		if( myVid != village_aid ) RB_setValue(GMcookieID + 'next', myVid);
-		document.location.href='/build.php?gid=17&z=' + myVid + '&t=5';
+		document.location.href='/building?id=17&z=' + myVid + '&t=5';
 	}
 	return false;
 }
@@ -5319,14 +5335,11 @@ function parseDorf2 () {
 	var buildsID = ['g17','g19','g20','g21','g14','g29','g30','g46','g48','g49','g24','g13'];
 	var buildsNum = [0,0,0,0,0,0,0,0,0,0,0,0];
 
-	var allIMG = $gt('IMG',base);
-	for( var t=0; t<allIMG.length; t++ ) {
-		for( var i = 0; i < buildsID.length; i++ ) {
-			var Rej = new RegExp(buildsID[i]);
-			if( Rej.test(allIMG[t].getAttribute('class')) ) {
-				buildsNum[i] = allIMG[t].previousElementSibling.getAttribute('class').match(/aid(\d+)/)[1];
-			}
-		}
+	var slots = base.querySelectorAll('.buildingSlot[data-aid][data-gid]');
+	if (!slots.length) return;
+	for (var slot of slots) {
+		var index = buildsID.indexOf('g'+slot.getAttribute('data-gid'));
+		if (index >= 0) buildsNum[index] = Number(slot.getAttribute('data-aid'));
 	}
 
 	for( var i = 0; i < buildsID.length; i++ ) {
@@ -5336,7 +5349,10 @@ function parseDorf2 () {
 		}
 	}
 	if( buildsNum[4] > 0 ) { // search&save Tournament Square
-		var tur = $xf('.//img[contains(@class,"g14")]','f',base).previousElementSibling.firstChild.textContent;
+		var square = base.querySelector('.buildingSlot[data-gid="14"]');
+		var level = square.querySelector('a[data-level]')?.getAttribute('data-level');
+		var tur = level == null ? NaN : Number(level);
+		if (!Number.isSafeInteger(tur) || tur < 0) return;
 		if( tur != RB.village_Var[1] ) {
 			RB.village_Var[1] = tur;
 			saveVCookie( 'VV', RB.village_Var );
@@ -5349,9 +5365,10 @@ function parseDorf2 () {
 	function getBuildingName () {
 		for( var i = 0 ; i < dictsFL.length; i++ ) {
 			if( RB.dictFL[dictsFL[i][1]] == 0 ) {
-				var turF = $gc('building '+dictsFL[i][0],base);
+				var turF = base.querySelectorAll('.buildingSlot[data-gid="'+dictsFL[i][0].slice(1)+'"]');
 				if( turF.length > 0 ) {
-					var turD = turF[0].parentNode.getAttribute('data-name');
+					var turD = turF[0].getAttribute('data-name');
+					if (!turD) continue;
 					RB.dictionary[dictsFL[i][1]] = turD;
 					saveCookie( 'Dict', 'dictionary' );
 					RB.dictFL[dictsFL[i][1]] = 1;
@@ -5602,9 +5619,9 @@ function overviewWarehouse () {
 	function refreshOview () {
 		if( (parseInt(RB.overview[1]) + 900) > nowTime ) return;
 		RB.overview[0] = 0;
-		RB.overview[1] = crtPath.split("?")[0] + clearAntibot( linkVSwitch[village_aNum] );
+		RB.overview[1] = new URL(clearAntibot(linkVSwitch[village_aNum]), fullName).href;
 		saveCookie('OV', 'overview');
-		document.location.href=fullName + 'dorf1.php';
+		document.location.href=fullName + 'resources';
 	}
 
 	var overviewD = $e('TABLE',[['id',allIDs[8]],['style','background-color:'+rbpBckColor]]);
@@ -6247,7 +6264,7 @@ function filterIncomeTroops () {
 		filterITObj.statD = $e('DIV');
 		filterITObj.actD = $e('DIV');
 		$am(filterITObj.newD,[closeDiv(),filterITObj.statD,filterITObj.actD,closeDiv()]);
-		var nP = 'build.php?gid=16&tt=1&filter=1';
+		var nP = 'building?id=16&tt=1&filter=1';
 		var curNum = 1;
 		parseNextPage();
 	}
@@ -6344,7 +6361,7 @@ function viewMessageIW() {
 		var allRows = $xf('.//tr[td/@class="sel"]','l',cont);
 		var tds = allRows.snapshotItem(num).cells;
 		$gt('INPUT',tds[0])[0].click();
-		var aLinks = $xf('.//a[(contains(@href, "?id=") or contains(@href, "messages/")) and not(contains(@href, "toggleState=")) and not(contains(@href, "mark=")) and not(contains(@href, "build.php"))]','f',tds[1]);
+		var aLinks = $xf('.//a[(contains(@href, "?id=") or contains(@href, "messages/")) and not(contains(@href, "toggleState=")) and not(contains(@href, "mark=")) and not(contains(@href, "build.php")) and not(contains(@href, "/building?")) and not(contains(@href, "/slot?"))]','f',tds[1]);
 		var aLink = aLinks.href;
 		var tV = /report/.test(aLink) ? 1: 0;
 		viewMessageIWDisplay( aLink, tV , (num>12?offsetPosition(aLinks):false));
@@ -6430,7 +6447,8 @@ function parseDorf1 () {
 					newCookie[t++] = 0;
 					newCookie[t++] = '';
 				} else {
-					var timer = $xf('.//span[contains(@class, "timer")]','f',td[s+1]).getAttribute("value");
+					var clock = $xf('.//span[contains(@class, "timer")]', 'f', td[s+1]);
+					var timer = clock ? clock.getAttribute('data-value') || clock.getAttribute('value') || toSeconds(clock.textContent) : 0;
 					newCookie[t++] = Math.round(RunTime[0]/1000) + (timer?parseInt(timer):0);
 					newCookie[t++] = td[s+1].textContent.onlyText().replace(/.+?\d\d\s\S+\s/,'').replace(/\s+?/g,' ').trim();
 				}
@@ -6505,7 +6523,7 @@ function parseDorf1 () {
 	}
 
 	parseBuilds();
-	if( /dorf1.php/.test(crtPath) ) {
+	if( isResourcesPage ) {
 		parseAttack();
 		parseTroops();
 		detectTribe();
@@ -6597,7 +6615,7 @@ function showDorf1 () {
 			timerB3[t].obj.addEventListener("mouseover", function(x) { return function() { showTooltipBuild(x); }}(tb), false);
 			timerB3[t].obj.addEventListener("mouseout", removeTooltip, false);
 			var newdid = linkVSwitch[i].match(/newdid=\d+/i)[0];
-			newTD.appendChild($em('A',['[',timerB3[t++].obj,']'],[['href',fullName + 'build.php?'+newdid+'&gid=15'],['style','margin:0px 10px 0px -5px;color:'+color+';font-weight:normal;']]));
+			newTD.appendChild($em('A',['[',timerB3[t++].obj,']'],[['href',fullName + 'building?'+newdid+'&id=15'],['style','margin:0px 10px 0px -5px;color:'+color+';font-weight:normal;']]));
 		}
 
 		loadZVCookie('Dorf14','village_dorf14',villages_id[i]);
@@ -6628,7 +6646,7 @@ function showDorf1 () {
 		loadZVCookie('Dorf11','village_dorf11',villages_id[i]);
 		if( RB.village_dorf11[0] > 0 ) {
 			var newdid = linkVSwitch[i].match(/newdid=\d+/i)[0];
-			var newAI = $a('',[['href',fullName + 'build.php?'+newdid+'&gid=16&id=39'],['style','font-weight:400;color:black;']]);
+			var newAI = $a('',[['href',fullName + 'building?'+newdid+'&id=16'],['style','font-weight:400;color:black;']]);
 			var tb = RB.village_dorf11.slice();
 			for( var j = 0; j < tb[0]; j++ ) {
 				newAI.appendChild($e('IMG',[['src','/img/x.gif'],['class',tb[j*3+1]]]));
@@ -6729,7 +6747,7 @@ function bigQuickLinks () {
 	];
 
 	var bigIcon = [ // [type (true-id, false-ref), value, additional, img_ID, Dict, Dict additionnal, Background]
-		[false, '/build.php?id=39&gid=16&tt=1', '', 0, 6, 31, 0], // RP Overview
+		[false, '/building?id=16&tt=1', '', 0, 6, 31, 0], // RP Overview
 		[true, 3, '&gid=21', 3, 10, 0, 1], // Workshop
 		[true, 0, '&gid=17&t=5', 4, 7, 0, 1], // Market send
 		[false, '/alliance', '', 6, 1, 0, 2], // Ally
@@ -6742,8 +6760,8 @@ function bigQuickLinks () {
 		[true, 7, '&gid=46', 10, 26, 0, 4], // Hospital
 		[true, 8, '&gid=48', 10, 27, 0, 4], // Asclepeion
 		[true, 10, '&gid=24', 11, 29, 0, 4], // Town Hall
-		[false, '/build.php?id=39&gid=16&tt=2', '', 12, 6, 32, 4], // RP SendTroops
-		[false, '/build.php?id=39&gid=16&tt=99', '', 13, 22, 0, 4], // FarmList
+		[false, '/building?id=16&tt=2', '', 12, 6, 32, 4], // RP SendTroops
+		[false, '/building?id=16&tt=99', '', 13, 22, 0, 4], // FarmList
 		[true, 11, '&gid=13', 14, 30, 0, 4] // Smithy
 	];
 	//dorf2 0-market, 1-barracks, 2-stable, 3-workshop, 4-Tournament Square, 5-Great Barracks, 6-Great Stable, 7-Hospital, 8-Asclepeion, 9-Harbor, 10-Town Hall, 11-Smithy
@@ -6767,7 +6785,7 @@ function bigQuickLinks () {
 		//BigLinkButton.appendChild(imgC);
 		BigLinkButton.innerHTML = img_bigIcon[bigIcon[iNo][3]];
 		if( bigIcon[iNo][0] ) {
-			if( RB.village_Dorf2[bigIcon[iNo][1]] != 0 ) { BigLinkButton.href = "/build.php?id="+RB.village_Dorf2[bigIcon[iNo][1]]+bigIcon[iNo][2]; }
+			if( RB.village_Dorf2[bigIcon[iNo][1]] != 0 ) { BigLinkButton.href = "/slot?id="+RB.village_Dorf2[bigIcon[iNo][1]]+bigIcon[iNo][2]; }
 		} else { BigLinkButton.href = bigIcon[iNo][1]; }
 		//if (iNo == 8 || iNo == 9) { BigLinkButton.appendChild($e('img', [['class','productionBoost'],['src','/img/x.gif'],['style','position:absolute;'+docDir[0]+':20px;top:4px;z-index:1000']])); }
 		if (iNo >= 6) { ltr ? BigLinkButton.style.marginLeft = "5px" : BigLinkButton.style.marginRight = "5px"; }
@@ -6858,7 +6876,7 @@ function bigQuickLinks () {
 			if( bigIcon[t][5] > 0 ) tt += ', ' + RB.dictionary[bigIcon[t][5]];
 			if( bigIcon[t][0] ) {
 				if( RB.village_Dorf2[bigIcon[t][1]] != 0 ){
-					var newD = $c($ee('A',img_bigIcon[bigIcon[t][3]],[['href','/build.php?id='+RB.village_Dorf2[bigIcon[t][1]]+bigIcon[t][2]],['title',tt]]),[['style',tdStyle]]);
+					var newD = $c($ee('A',img_bigIcon[bigIcon[t][3]],[['href','/slot?id='+RB.village_Dorf2[bigIcon[t][1]]+bigIcon[t][2]],['title',tt]]),[['style',tdStyle]]);
 				}
 				else {
 					var newD = $c($ee('A',img_bigIcon[bigIcon[t][3]],[['title',tt]]),[['style',tdStyle+'opacity:0.6']]);
@@ -7476,7 +7494,7 @@ function buildDispatcher () {
 	var build = $g('build');
 	if( !(build) ) return;
 	var gid = build.getAttribute('class');
-	gid = gid.split(/\s/)[0];
+	gid = (gid.match(/(?:^|\s)(gid\d+)(?:\s|$)/) || [])[1];
 	var init = true;
 	if( gid == 'gid17' ) {
 		const mutationCallback = (mutationsList, observer) => {
@@ -8220,7 +8238,7 @@ function detectAttack () {
 		}
 	}
 	function findAttack( nd ) {
-		var aLink = fullName +'dorf1.php?'+ linkVSwitch[nd].match(/newdid=\d+/i)[0];
+		var aLink = fullName +'resources?'+ linkVSwitch[nd].match(/newdid=\d+/i)[0];
 		ajaxRequest(aLink, 'GET', null, function(ajaxResp) {
 			var ad = ajaxNDIV(ajaxResp);
 			var move = $xf('.//*[@id="movements"]','f',ad);
@@ -8267,7 +8285,7 @@ function detectAttack () {
 		}, showError);
 	}
 	function findAttackPA() {
-		var aLink = fullName +'dorf1.php';
+		var aLink = fullName +'resources';
 		ajaxRequest(aLink, 'GET', null, function(ajaxResp) {
 			var ad = ajaxNDIV(ajaxResp);
 			var move = $xf('.//div[contains(@class,"listEntry village") and contains(@class,"attack")]','f',ad);
@@ -8279,7 +8297,7 @@ function detectAttack () {
 		}, showError);
 	}
 	function findAttackN() {
-		var aLink = fullName +'dorf1.php';
+		var aLink = fullName +'resources';
 		ajaxRequest(aLink, 'GET', null, function(ajaxResp) {
 			var ad = ajaxResp.responseText;
 			var reg = new RegExp('"gray":([1-9])');
@@ -8308,7 +8326,7 @@ function detectAttack () {
 	var nextCheck =  firstCheck < 3e5 ? getRandom(3e5,3e4): getRandom(firstCheck,1e5);
 
 	var vLinks = $xf(vLinksPat,'l');
-	var active_did = crtPath.split("?")[0] + clearAntibot( linkVSwitch[village_aNum] );
+	var active_did = new URL(clearAntibot(linkVSwitch[village_aNum]), fullName).href;
 	setTimeout( getAttackAInfo, nextCheck);
 	showAtt();
 	var btnX = $ee('BUTTON','X');
@@ -8427,65 +8445,18 @@ fieldsOfVillage = {
 
 // ›› Main.
 function TM_ShowMainBuildingNumbers(){
-	var gid, dorf;
-	var countArray;
-	var BuildingLevel, smallDIV;
-	var levels;
-	var mapOffset = 1;
-	var underConstruction = false;
-	// ›› Map1 holds building names, level and building spot IDs in area elements (2 are duplicate walls to be ignored).
-
-	var mapInfo = $g('villageContent');
-	var mapInfo2 = $g('resourceFieldContainer');
-	if ( mapInfo2 ) {
-		countArray = 18;
-		dorf = 1;
-		var slots = $xf('./a','l',mapInfo2);
-		//remove duplicate nodes (travian bug)
-		for( var i=1; i < slots.snapshotLength; i++ ) {
-			if (slots.snapshotItem(i).href == slots.snapshotItem(i-1).href) {
-				slots.snapshotItem(i).parentNode.removeChild(slots.snapshotItem(i));
-			}
-		}
-		if ($gt('DIV',slots.snapshotItem(1)).length>0) {
-			levels = $xf('.//DIV','l',mapInfo2);
-		}
-	} else {
-		dorf = 2;
-		var lRef = 0;
-		levels = $xf('.//div[contains(@class,"labelLayer")]','l',mapInfo);
-		var imageElements = $xf('.//img[contains(@class,"building") or contains(@class,"Bottom")]','l',mapInfo);
-		countArray = imageElements.snapshotLength;
-	}
-
-	if ( !mapInfo && !mapInfo2 ) return;
-	for (var i = 0; i < countArray; i++) {
-		if (dorf == 1) {
-			BuildingLevel = /level(\d+)/.exec(levels.snapshotItem(i).parentNode.className);
-			if (! BuildingLevel) continue;
-			BuildingLevel = parseInt(BuildingLevel[1]);
-			if (i == 0) { var typeOfVillage = /resourceField(\d+)/.exec(mapInfo2.className); }
-			gid = fieldsOfVillage['f'+typeOfVillage[1]][i]+1;
-			aid = i+mapOffset;
-			smallDIV = levels.snapshotItem(i);
-			if ( /underConstruction/.test(levels.snapshotItem(i).parentNode.getAttribute('class')) ) underConstruction = true; else underConstruction = false;
-		}
-
-		if (dorf == 2) {
-			if ( /iso|g16e/.test(imageElements.snapshotItem(i).getAttribute('class') )) continue;
-			BuildingLevel = imageElements.snapshotItem(i).previousElementSibling.textContent;
-			if (! BuildingLevel) continue;
-			BuildingLevel = parseInt(BuildingLevel);
-
-			gid = parseInt(/(\d+)/.exec(imageElements.snapshotItem(i).getAttribute('class'))[1]);
-			if ( /g40/.test(imageElements.snapshotItem(i).getAttribute('class') )) { //if WW building
-				aid = 35;
-			} else {
-				aid = parseInt(/(\d+)/.exec(imageElements.snapshotItem(i).previousElementSibling.getAttribute('class'))[1]);
-			}
-			smallDIV = levels.snapshotItem(lRef++);
-			if ( /underConstruction/.test(imageElements.snapshotItem(i).previousElementSibling.getAttribute('class')) ) underConstruction = true; else underConstruction = false;
-		}
+	var mapInfo = $g('villageContent') || $g('resourceFieldContainer');
+	if (!mapInfo) return;
+	var slots = mapInfo.querySelectorAll('a.resourceField[data-aid][data-gid], .buildingSlot[data-aid][data-gid]');
+	for (var slot of slots) {
+		var gid = Number(slot.getAttribute('data-gid'));
+		var aid = Number(slot.getAttribute('data-aid'));
+		var label = slot.matches('a.resourceField') ? slot : slot.querySelector('a[data-level]');
+		var level = label?.getAttribute('data-level') ?? slot.className.match(/(?:^|\s)level(\d+)(?:\s|$)/)?.[1];
+		var BuildingLevel = Number(level);
+		var smallDIV = slot.querySelector('.labelLayer') || label?.querySelector('div');
+		if (!gid || !aid || level == null || !Number.isSafeInteger(BuildingLevel) || !smallDIV) continue;
+		var underConstruction = slot.classList.contains('underConstruction') || !!slot.querySelector('.underConstruction');
 
 		if (underConstruction) {
 			setInterval(function(x){return function(){
@@ -8623,7 +8594,7 @@ function cultureCalc () {
 	}
 }
 
-if( /dorf[1,2]\.php/.test(crtPath) ) TM_ShowMainBuildingNumbers();
+if( isResourcesPage || isVillagePage ) TM_ShowMainBuildingNumbers();
 //if( /^\/build/.test(relName) ) cultureCalc();
 }
 /****************************** end Center Number ****************************/
@@ -9591,7 +9562,7 @@ function displayWhatIsNew () {
 
 	//save "produce per hour"
 	if( ! getResources() ) return;
-	if( /dorf[12].php/.test(crtPath) ) parseDorf1();
+	if( isResourcesPage || isVillagePage ) parseDorf1();
 
 	//If keep tribe on conquer feature, then use the village specific tribe.
 	if (RB.Setup[52] == 1) RB.Setup[2] = RB.village_Var[2];
@@ -9606,7 +9577,7 @@ function displayWhatIsNew () {
 			RB.overview[0] = i;
 			saveCookie('OV', 'overview');
 			var newdid = linkVSwitch[i-1].match(/newdid=\d+/i)[0];
-			setTimeout( function() { document.location.href = fullName +'dorf1.php?'+ newdid; }, getRandom(300,1000));
+			setTimeout( function() { document.location.href = fullName +'resources?'+ newdid; }, getRandom(300,1000));
 		}
 		return;
 	} else if( RB.overview[0] == -2 ) {
@@ -9624,9 +9595,9 @@ function displayWhatIsNew () {
 	var cont = $g(pageElem[1]);
 
 	if( RB.Setup[45] > 0 ) { sM = parseInt(RB.Setup[45]); sC = [16/sM,100]; }
-	if( /dorf1.php/.test(crtPath) ) { troopsDorf1(); normalizeProduction(); }
+	if( isResourcesPage ) { troopsDorf1(); normalizeProduction(); }
 	villageHintEdit();
-	if( /dorf2.php/.test(crtPath) ) { parseDorf2(); if( RB.Setup[37] > 0 ) villageBMover(); }
+	if( isVillagePage ) { parseDorf2(); if( RB.Setup[37] > 0 ) villageBMover(); }
 	if( /village\/statistics/.test(crtPath) ) { villageHintDorf3(); }
 	if( /(?:messages|report)/.test(crtPath) ) { viewMessageIW(); messagesTopButtons(); }
 	if( /report/.test(crtPath) ) reportsDelOrSearch(); else if( RB.overview[0] < -2 ) { RB.overview[0] = -1; saveCookie('OV', 'overview'); }
@@ -9634,7 +9605,7 @@ function displayWhatIsNew () {
 	if( /karte.php\?(.*&)?[zdxy]=/.test(crtPath) ) { distanceToMyVillages(); linkOnT4Karte(); }
 	if( /karte.php/.test(crtPath) ) { karteDistance(); cropFind(); resSendOnMap(); createSemiLargerMapHTML(); }
 	if( /position_details.php\?(.*&)?[zdxy]=/.test(crtPath) ) { troopsOasis(); distanceToMyVillages(); viewMessageIWK(); linkOnT4Karte(); }
-	if( ! /dorf.\.php/.test(crtPath) ) addRefIGM();
+	if( ! (isResourcesPage || isVillagePage) ) addRefIGM();
 	if( crtPath.indexOf('alliance') != -1 ) {
 		if( $g('offs') ) { viewMessageIWK(); addAReportFilter(); }
 		var allianceTable = $gc('allianceMembers',cont);
@@ -9649,7 +9620,7 @@ function displayWhatIsNew () {
 	if( /report.+id=/.test(crtPath) ) { addSpeedAndRTSend(); analyzerBattle(); getTroopNames(); }
 	if( /hero/.test(crtPath) ) { neededResAdd(); restHeroTime(); saveHeroSpeed(); saveHeroPower(); saveHeroMount(); addSpeedAndRTSend(); addSpeedAndRTSend($gc('boxes',cont)[0]); }
 	if( /auctions/.test(crtPath) ) { speedBids(); timeToBids(); }
-	if( /build.php/.test(crtPath) ) { neededResAdd(); buildDispatcher(); addSpeedAndRTSend(); }
+	if( isBuildPage ) { neededResAdd(); buildDispatcher(); addSpeedAndRTSend(); }
 
 	setTimeout( function() { progressbar_updValues(); setInterval(progressbar_updValues, 1000); }, (1000-progressbar_time-((Date.now())-RunTime[0])));
 	if( RB.Setup[16] != 0) { bigQuickLinks(); }
