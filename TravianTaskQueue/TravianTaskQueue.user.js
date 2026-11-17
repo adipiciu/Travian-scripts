@@ -12,14 +12,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version     2.0.29
+// @version     2.0.30
 // ==/UserScript==
 
 (function () {
 
 function allInOneTTQ () {
 notRunYet = false;
-var sCurrentVersion = "2.0.29";
+var sCurrentVersion = "2.0.30";
 
 //find out if Server errors
 var strTitle = document.title;
@@ -770,8 +770,10 @@ function TTQ_showMenuCommand() {
 		myPlaceNames[tX+" "+tY] = vName;
 		n8++;
 	}
-	var iSiteId = crtPath.split("?id=");
-	if ( iSiteId.length > 1 ) iSiteId = parseInt(iSiteId[1]);
+	//var iSiteId = crtPath.split("?id=");
+	//if ( iSiteId.length > 1 ) iSiteId = parseInt(iSiteId[1]);
+	const params = new URLSearchParams(urlParams)
+	var iSiteId = params.get("id")
 	// Grab Building site id while we are here... if its there.
 	if ( isNaN(iSiteId) || iSiteId < 0 ) iSiteId = getSiteId();
 	//Grab any other place (village) names I can see here and save them
@@ -3534,7 +3536,7 @@ function getSiteId() {
 	//Check if the page is showing the village instead
 	var xpathVillage = xpath("//div[@class='village2'] | //div[@class='village1'] ");
 	var href = window.location.href;
-	if ( xpathVillage.snapshotLength > 0 || href.indexOf("messages") > -1 || href.indexOf("berichte") > -1 || href.indexOf("hero") > -1 || href.indexOf("details") > -1 || href.indexOf("karte") > -1 || href.indexOf("statistiken") > -1 || href.indexOf("profile") > -1 || href.indexOf("report") > -1 ) {
+	if ( xpathVillage.snapshotLength > 0 || href.indexOf("messages") > -1 || href.indexOf("report") > -1 || href.indexOf("hero") > -1 || href.indexOf("details") > -1 || href.indexOf("karte") > -1 || href.indexOf("statistics") > -1 || href.indexOf("profile") > -1 ) {
 		_log(2, "getSiteId>This is not a screen that has a building. End getSiteId()");
 		return -6;
 	}
@@ -3545,6 +3547,14 @@ function getSiteId() {
 		tSiteId = parseInt(tSiteId[2]);
 		_log(3, "getSiteId> Building site ID is " + tSiteId + ". End getSiteId().");
 		return tSiteId;
+	} else {
+		re = /.*building\?([a-z=0-9&]*&)?id=([0-9]{1,2})/i;
+		tSiteId = window.location.pathname.match(re);
+		if(tSiteId != null) {
+			tSiteId = parseInt(tSiteId[2]);
+			_log(3, "getSiteId> Building site ID is " + tSiteId + ". End getSiteId().");
+			return tSiteId;
+		}
 	}
 	_log(2, "getSiteId> Building site ID not found.... anywhere. End getSiteId();");
 	return -6;
@@ -3975,8 +3985,9 @@ function onLoad() {
 	LOG_LEVEL = getOption("DEBUG", 0, "integer");
 
     tA = /.*build\.php.*/i;
+	tB = /\/(slot|building)\b/i;
 
-	if (iSiteId > -1 && tA.test(window.location.href)) {
+	if (iSiteId > -1 && (tA.test(window.location.href) || tB.test(window.location.href))) {
 		createBuildLinks();
 
 		var build = $id('build');
