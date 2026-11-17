@@ -7,12 +7,12 @@
 // @contributionURL https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=Travian+wave+builder+script&currency_code=EUR
 // @match          https://*.travian.com/build.php*
 
-// @version        2.11
+// @version        2.12
 // ==/UserScript==
 
 function allInOneOpera () {
 
-var version = '2.11';
+var version = '2.12';
 var scriptURL = 'https://github.com/adipiciu/Travian-scripts';
 var defInterval = 200;
 var sLang = detectLanguage();
@@ -138,6 +138,7 @@ function addWave () {
 	var cDescr = '';
 
 	for( var i=0; i<tInputs.length; i++ ) {
+		if (tInputs[i].disabled) continue;
 		var t = tInputs[i].name;
 		if( /redeployHero/.test(t) ) {
 			if( tInputs[i].checked ) {
@@ -288,7 +289,7 @@ function sendTroops (x) {
 	}
 
 	if( x == wCount-1 ) {
-		setTimeout(function(){ document.location.href = fullName +'build.php?gid=16&tt=1'; }, getRandom(2000));
+		setTimeout(function(){ document.location.href = fullName +'building?id=16&tt=1'; }, getRandom(2000));
 	}
 	ajaxRequest(fullName + a2bURL, "POST", sParams, function() { return function(x) { return logWaves(x,1); }(x+1); }, 
 		function() { return function(x) { return logWaves(x,0); }(x+1); } );
@@ -324,7 +325,7 @@ if( nation < 0 ) return;
 
 RB_addStyle(twb_css);
 
-var a2bURL = "build.php?gid=16&tt=2";
+var a2bURL = "building?id=16&tt=2";
 var wCount = 0;
 var wNr = 0;
 var wlog = '';
