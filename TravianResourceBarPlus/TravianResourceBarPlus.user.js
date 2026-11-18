@@ -12,14 +12,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.26.16
+// @version        2.26.17
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.26.16';
+var version = '2.26.17';
 
 notRunYet = false;
 
@@ -2966,10 +2966,10 @@ darkCSS = "#content {background-color: "+dmColors[0]+" !important;}" +
 "#mapContainer .ruler.x, #mapContainer .ruler.y { background-color: "+dmColors[0]+";}" +
 "table#croplist thead th {background-color: "+dmColors[1]+";}" +
 "table#croplist tbody td {background-color: "+dmColors[0]+";}" +
-//dorf1.php
+//resources
 ".villageInfobox {background-color: "+dmColors[0]+" !important;}" +
 ".buildingList {background-color: "+dmColors[0]+" !important;}" +
-//build.php
+//building
 "#build .upgradeBuilding {background-color: "+dmColors[3]+";}" +
 "div#build table:not(.transparent):not(.troop_details) thead th, div#build table:not(.transparent):not(.troop_details) thead td { background-color: "+dmColors[1]+";}" +
 "div#build table:not(.transparent):not(.troop_details) tbody th, div#build table:not(.transparent):not(.troop_details) tbody td { background-color: "+dmColors[0]+";}" +
@@ -3391,7 +3391,7 @@ function convertCoordsInMessagesToLinks() {
 			if( /^[\/:]/.test(arXY[0]) ) continue;
 			if( ! ( arXY[2] != undefined || arXY[3] < 0 )) continue;
 			if( Math.abs(arXY[1]) > mapRadius || Math.abs(arXY[3]) > mapRadius ) continue;
-			villageLink[j] = "<span><a href='/karte.php?x="+arXY[1]+"&y="+arXY[3] +"'>"+ arXY[0] +"</a></span>";
+			villageLink[j] = "<span><a href='/map?x="+arXY[1]+"&y="+arXY[3] +"'>"+ arXY[0] +"</a></span>";
 			iHTML2 = iHTML2.replace(arXY[0], "<#!" + (j++) + "/>");
 		}
 		for( var i = 0; i < j ; i++ ) {
@@ -4593,7 +4593,7 @@ function showAllTTime ( vType, tVil, arena, art, shoes, leftHand ) {
 	if( typeof(tVil) != 'object' ) {
 		var distance = calcDistance(tVil, village_aid);
 		var xy = id2xy(tVil);
-		var nL = $a(printCoords(tVil),[['href','karte.php?x='+xy[0]+'&y='+xy[1]],['style','color:#252525;']]);
+		var nL = $a(printCoords(tVil),[['href','map?x='+xy[0]+'&y='+xy[1]],['style','color:#252525;']]);
 		nL.appendChild($e('SPAN',[['class',allIDs[29]]]));
 		var newTR = $ee('TR',$c(nL,[['style','font-weight:bold;']]));
 	} else {
@@ -4734,11 +4734,11 @@ function incomeResourcesInRP34 () {
 function addARLinks(myVid, aDirect) {
 	var newLinks = $e('span');
 	var armStyle = aDirect == 0 ? allIDs[34]: allIDs[35];
-	var ref = $ee('a',trImg(armStyle),[['href','/build.php?gid=16&tt=2&targetMapId=' + myVid],['onclick','return false;']]);
+	var ref = $ee('a',trImg(armStyle),[['href','/building?id=16&tt=2&targetMapId=' + myVid],['onclick','return false;']]);
 	ref.addEventListener('click', function(x) { return function() { sendArmy(x); }}(myVid), false);
 	newLinks.appendChild(ref);
 	if( aDirect < 2 ) {
-		var ref = $ee('a',trImg(allIDs[33]),[['href','/build.php?gid=17&z=' + myVid + '&t=5'],['onclick','return false;']]);
+		var ref = $ee('a',trImg(allIDs[33]),[['href','/building?id=17&z=' + myVid + '&t=5'],['onclick','return false;']]);
 		ref.addEventListener('click', function(x) { return function() { sendResourses(x); }}(myVid), false);
 		newLinks.appendChild(ref);
 	}
@@ -4748,8 +4748,8 @@ function addARLinks(myVid, aDirect) {
 
 function addDorf12Links(myVid) {
 	var newLinks = $e('span');
-	var dorf1 = $ee('a',$e('IMG',[['src',img_out],['style','padding:0px 2px;cursor:pointer;']]),[['href',fullName + 'dorf1.php' + myVid]]);
-	var dorf2 = $ee('a',$e('IMG',[['src',img_in],['style','padding:0px 2px;cursor:pointer;']]),[['href',fullName + 'dorf2.php' + myVid]]);
+	var dorf1 = $ee('a',$e('IMG',[['src',img_out],['style','padding:0px 2px;cursor:pointer;']]),[['href',fullName + 'resources' + myVid]]);
+	var dorf2 = $ee('a',$e('IMG',[['src',img_in],['style','padding:0px 2px;cursor:pointer;']]),[['href',fullName + 'village' + myVid]]);
 	newLinks.appendChild(dorf1);
 	newLinks.appendChild(dorf2);
 	if (screen.width <= 1024) { newLinks.style.height = "26px"; }
@@ -5294,7 +5294,7 @@ function sendArmy( myVid ) {
 		showDistanceIn( 0 );
 	} else {
 		if( myVid != village_aid ) RB_setValue(GMcookieID + 'next', myVid);
-		document.location.href = '/build.php?gid=16&tt=2';
+		document.location.href = '/building?id=16&tt=2';
 	}
 	return false;
 }
@@ -5306,7 +5306,7 @@ function sendResourses( myVid ) {
 		//showDistanceIn( -1 );
 	} else {
 		if( myVid != village_aid ) RB_setValue(GMcookieID + 'next', myVid);
-		document.location.href='/build.php?gid=17&z=' + myVid + '&t=5';
+		document.location.href='/building?id=17&z=' + myVid + '&t=5';
 	}
 	return false;
 }
@@ -5604,7 +5604,7 @@ function overviewWarehouse () {
 		RB.overview[0] = 0;
 		RB.overview[1] = crtPath.split("?")[0] + clearAntibot( linkVSwitch[village_aNum] );
 		saveCookie('OV', 'overview');
-		document.location.href=fullName + 'dorf1.php';
+		document.location.href=fullName + 'resources';
 	}
 
 	var overviewD = $e('TABLE',[['id',allIDs[8]],['style','background-color:'+rbpBckColor]]);
@@ -5922,7 +5922,7 @@ function showLinks () {
 					newTR.appendChild(newTD);
 				}
 			}
-			var newA = $a(unesc(oneLink[1]),[['href','/karte.php?'+oneLink[0]]]);
+			var newA = $a(unesc(oneLink[1]),[['href','/map?'+oneLink[0]]]);
 			distanceTooltip(newA,0);
 			var newTD = $c( newA);
 			newTR.appendChild(newTD);
@@ -6055,7 +6055,7 @@ function showLinks () {
 	}
 
 	var flKarte = /karte.+?[?&]d=.+c=/i.test(crtPath) ? true: false;
-	if( /karte.php|position_details.php/i.test(crtPath) ) flKarte = true;
+	if( /map/i.test(crtPath) ) flKarte = true;
 	// village links
 	var ln_cookie = RB_getValue(GMcookieID + "ln", "");
 	var alinks = ln_cookie.split("@@_");
@@ -6247,7 +6247,7 @@ function filterIncomeTroops () {
 		filterITObj.statD = $e('DIV');
 		filterITObj.actD = $e('DIV');
 		$am(filterITObj.newD,[closeDiv(),filterITObj.statD,filterITObj.actD,closeDiv()]);
-		var nP = 'build.php?gid=16&tt=1&filter=1';
+		var nP = 'building?id=16&tt=1&filter=1';
 		var curNum = 1;
 		parseNextPage();
 	}
@@ -6505,7 +6505,7 @@ function parseDorf1 () {
 	}
 
 	parseBuilds();
-	if( /dorf1.php/.test(crtPath) ) {
+	if( /resources/.test(crtPath) ) {
 		parseAttack();
 		parseTroops();
 		detectTribe();
@@ -6597,7 +6597,7 @@ function showDorf1 () {
 			timerB3[t].obj.addEventListener("mouseover", function(x) { return function() { showTooltipBuild(x); }}(tb), false);
 			timerB3[t].obj.addEventListener("mouseout", removeTooltip, false);
 			var newdid = linkVSwitch[i].match(/newdid=\d+/i)[0];
-			newTD.appendChild($em('A',['[',timerB3[t++].obj,']'],[['href',fullName + 'build.php?'+newdid+'&gid=15'],['style','margin:0px 10px 0px -5px;color:'+color+';font-weight:normal;']]));
+			newTD.appendChild($em('A',['[',timerB3[t++].obj,']'],[['href',fullName + 'building?id=15&'+newdid],['style','margin:0px 10px 0px -5px;color:'+color+';font-weight:normal;']]));
 		}
 
 		loadZVCookie('Dorf14','village_dorf14',villages_id[i]);
@@ -6628,7 +6628,7 @@ function showDorf1 () {
 		loadZVCookie('Dorf11','village_dorf11',villages_id[i]);
 		if( RB.village_dorf11[0] > 0 ) {
 			var newdid = linkVSwitch[i].match(/newdid=\d+/i)[0];
-			var newAI = $a('',[['href',fullName + 'build.php?'+newdid+'&gid=16&id=39'],['style','font-weight:400;color:black;']]);
+			var newAI = $a('',[['href',fullName + 'building?id=16&'+newdid],['style','font-weight:400;color:black;']]);
 			var tb = RB.village_dorf11.slice();
 			for( var j = 0; j < tb[0]; j++ ) {
 				newAI.appendChild($e('IMG',[['src','/img/x.gif'],['class',tb[j*3+1]]]));
@@ -6698,7 +6698,7 @@ function showAWake () {
 }
 
 function addSpeedAndRTSend ( iBl, href ) {
-	var mLinks = $xf('.//a[contains(@href, "' + (typeof href == 'undefined' ? "karte.php?" : "position_details.php?") + '")]', 'r', (typeof iBl == 'undefined' ? cont : iBl));
+	var mLinks = $xf('.//a[contains(@href, "' + (typeof href == 'undefined' ? "map?" : "position_details.php?") + '")]', 'r', (typeof iBl == 'undefined' ? cont : iBl));
 	for( var j = 0; j < mLinks.snapshotLength; j++ ) {
 		var existT = $gc(allIDs[29],mLinks.snapshotItem(j));
 		if( existT.length > 0 ) continue; else mLinks.snapshotItem(j).appendChild($e('SPAN',[['class',allIDs[29]]]));
@@ -6729,22 +6729,22 @@ function bigQuickLinks () {
 	];
 
 	var bigIcon = [ // [type (true-id, false-ref), value, additional, img_ID, Dict, Dict additionnal, Background]
-		[false, '/build.php?id=39&gid=16&tt=1', '', 0, 6, 31, 0], // RP Overview
-		[true, 3, '&gid=21', 3, 10, 0, 1], // Workshop
-		[true, 0, '&gid=17&t=5', 4, 7, 0, 1], // Market send
+		[false, '/building?id=16&tt=1', '', 0, 6, 31, 0], // RP Overview
+		[true, 3, 'id=21', 3, 10, 0, 1], // Workshop
+		[true, 0, 'id=17&t=5', 4, 7, 0, 1], // Market send
 		[false, '/alliance', '', 6, 1, 0, 2], // Ally
-		[true, 1, '&gid=19', 1, 8, 0, 3], // Barrack
-		[true, 2, '&gid=20', 2, 9, 0, 4], // Stable
-		[true, 0, '&gid=17&t=1', 5, 7, 11, 4], // Market buy
+		[true, 1, 'id=19', 1, 8, 0, 3], // Barrack
+		[true, 2, 'id=20', 2, 9, 0, 4], // Stable
+		[true, 0, 'id=17&t=1', 5, 7, 11, 4], // Market buy
 		[false, '/alliance/reports', '', 6, 1, 12, 5], // Ally attack
-		[true, 5, '&gid=29', 8, 24, 0, 3], // Great Barrack
-		[true, 6, '&gid=30', 9, 25, 0, 4], // Great Stable
-		[true, 7, '&gid=46', 10, 26, 0, 4], // Hospital
-		[true, 8, '&gid=48', 10, 27, 0, 4], // Asclepeion
-		[true, 10, '&gid=24', 11, 29, 0, 4], // Town Hall
-		[false, '/build.php?id=39&gid=16&tt=2', '', 12, 6, 32, 4], // RP SendTroops
-		[false, '/build.php?id=39&gid=16&tt=99', '', 13, 22, 0, 4], // FarmList
-		[true, 11, '&gid=13', 14, 30, 0, 4] // Smithy
+		[true, 5, 'id=29', 8, 24, 0, 3], // Great Barrack
+		[true, 6, 'id=30', 9, 25, 0, 4], // Great Stable
+		[true, 7, 'id=46', 10, 26, 0, 4], // Hospital
+		[true, 8, 'id=48', 10, 27, 0, 4], // Asclepeion
+		[true, 10, 'id=24', 11, 29, 0, 4], // Town Hall
+		[false, '/building?id=16&tt=2', '', 12, 6, 32, 4], // RP SendTroops
+		[false, '/building?id=16&tt=99', '', 13, 22, 0, 4], // FarmList
+		[true, 11, 'id=13', 14, 30, 0, 4] // Smithy
 	];
 	//dorf2 0-market, 1-barracks, 2-stable, 3-workshop, 4-Tournament Square, 5-Great Barracks, 6-Great Stable, 7-Hospital, 8-Asclepeion, 9-Harbor, 10-Town Hall, 11-Smithy
 	var t = 0;
@@ -6767,7 +6767,7 @@ function bigQuickLinks () {
 		//BigLinkButton.appendChild(imgC);
 		BigLinkButton.innerHTML = img_bigIcon[bigIcon[iNo][3]];
 		if( bigIcon[iNo][0] ) {
-			if( RB.village_Dorf2[bigIcon[iNo][1]] != 0 ) { BigLinkButton.href = "/build.php?id="+RB.village_Dorf2[bigIcon[iNo][1]]+bigIcon[iNo][2]; }
+			if( RB.village_Dorf2[bigIcon[iNo][1]] != 0 ) { BigLinkButton.href = "/building?"+bigIcon[iNo][2]; }
 		} else { BigLinkButton.href = bigIcon[iNo][1]; }
 		//if (iNo == 8 || iNo == 9) { BigLinkButton.appendChild($e('img', [['class','productionBoost'],['src','/img/x.gif'],['style','position:absolute;'+docDir[0]+':20px;top:4px;z-index:1000']])); }
 		if (iNo >= 6) { ltr ? BigLinkButton.style.marginLeft = "5px" : BigLinkButton.style.marginRight = "5px"; }
@@ -6858,7 +6858,7 @@ function bigQuickLinks () {
 			if( bigIcon[t][5] > 0 ) tt += ', ' + RB.dictionary[bigIcon[t][5]];
 			if( bigIcon[t][0] ) {
 				if( RB.village_Dorf2[bigIcon[t][1]] != 0 ){
-					var newD = $c($ee('A',img_bigIcon[bigIcon[t][3]],[['href','/build.php?id='+RB.village_Dorf2[bigIcon[t][1]]+bigIcon[t][2]],['title',tt]]),[['style',tdStyle]]);
+					var newD = $c($ee('A',img_bigIcon[bigIcon[t][3]],[['href','/building?'+bigIcon[t][2]],['title',tt]]),[['style',tdStyle]]);
 				}
 				else {
 					var newD = $c($ee('A',img_bigIcon[bigIcon[t][3]],[['title',tt]]),[['style',tdStyle+'opacity:0.6']]);
@@ -6950,7 +6950,7 @@ function linkOnT4Karte ( vV ) {
 		var ln = $gt('A',$gc('detailImage',vilView)[0]);
 		if( ln.length > 0 ) {
 			var xy = id2xy(getVid(ln[0].getAttribute('href')));
-			var nLink = $a('->',[['href','karte.php?x='+xy[0]+'&y='+xy[1]],['style','margin:0px 5px;']]);
+			var nLink = $a('->',[['href','map?x='+xy[0]+'&y='+xy[1]],['style','margin:0px 5px;']]);
 			h1.appendChild(nLink);
 		}
 	}
@@ -7033,7 +7033,7 @@ function addSpeedRTSendMessageInLLinks() {
 	var llinks = $g('llist');
 	if( ! llinks ) return;
 	if( RB.Setup[15] == 1 ) {
-		var mLinks = $xf('tbody//a[contains(@href, "karte.php?")]', 'r', llinks);
+		var mLinks = $xf('tbody//a[contains(@href, "map?")]', 'r', llinks);
 		for( var j = 0; j < mLinks.snapshotLength; j++ ) {
 			distanceTooltip(mLinks.snapshotItem(j),1);
 			sendResTropAdd(mLinks.snapshotItem(j), 1);
@@ -7713,7 +7713,7 @@ function cropFind () {
 	}
 	function printResult ( ft, mX, mY , descr, text ) {
 		var des = typeof descr == 'undefined' ? '': descr;
-		$g(allIDs[18]).appendChild($em('DIV',[ft,' ',$a(mX+'|'+mY,[['href','karte.php?'+'x='+mX+'&y='+mY]])]));
+		$g(allIDs[18]).appendChild($em('DIV',[ft,' ',$a(mX+'|'+mY,[['href','map?'+'x='+mX+'&y='+mY]])]));
 		aCC[aCC.length] = [ft,mX,mY,des,text];
 	}
 	function printFinal () {
@@ -7742,7 +7742,7 @@ function cropFind () {
 					$c((typeof aCCs[i][3].uid != "undefined" ? $em('A',[aCCs[i][0],(aCCs[i][3].v<8?$e('i',[['class','tribe'+aCCs[i][3].v+'_small']]):"")],[['href','/profile/'+aCCs[i][3].uid[0]]]):"")),
 					$c((typeof aCCs[i][3].aid != "undefined" ? ($a(aCCs[i][3].aid[1],[['href','/alliance/'+aCCs[i][3].aid[0]]])):"")),
 					$c(aCCs[i][3].e),$c(''),$c(''),
-					$c($a(aCCs[i][1]+'|'+aCCs[i][2],[['href',('karte.php?x='+aCCs[i][1]+'&y='+aCCs[i][2])]])),
+					$c($a(aCCs[i][1]+'|'+aCCs[i][2],[['href',('map?x='+aCCs[i][1]+'&y='+aCCs[i][2])]])),
 					$c($a('&#10140;',[['onclick',("Travian.WindowManager.closeAllWindows(); window.Travian.React.FarmList.openSlotDialog(window.Travian.React.FarmList.SLOT_DIALOG_TYPE_CREATE, { coordinates: {x: "+aCCs[i][1]+", y: "+aCCs[i][2]+"},});")]])),
 					$c(calcDistance(xy2id(aCCs[i][1],aCCs[i][2]), cell_id).toFixed(1))
 				]));
@@ -7780,7 +7780,7 @@ function cropFind () {
 					}
 				}
 				tBody.appendChild($em('TR',[$c(aCCs[i][0]),$c(oasisCC>0?$em('div',[$e('i',[['class','r4']]),'+'+oasisCC+'%']):''),
-					$c($a(aCCs[i][1]+'|'+aCCs[i][2],[['href','karte.php?'+'x='+aCCs[i][1]+'&y='+aCCs[i][2]]])),
+					$c($a(aCCs[i][1]+'|'+aCCs[i][2],[['href','map?'+'x='+aCCs[i][1]+'&y='+aCCs[i][2]]])),
 					$c(calcDistance(xy2id(aCCs[i][1],aCCs[i][2]), cell_id).toFixed(1))]));
 			}
 		}
@@ -8028,7 +8028,7 @@ function analyzerBattle () {
 	kirilloid = kirilloid.replace(/r0u/g,'u');
 	kirilloid = kirilloid.replace(/[;#]$/,'');
 
-	var adCoords = $xf('.//a[contains(@href, "karte.php")]','l',report);
+	var adCoords = $xf('.//a[contains(@href, "map")]','l',report);
 	if( adCoords.snapshotLength > 1 ) {
 		var atCoord = getVid(adCoords.snapshotItem(0).getAttribute('href'));
 		var dfCoord = getVid(adCoords.snapshotItem(1).getAttribute('href'));
@@ -8220,7 +8220,7 @@ function detectAttack () {
 		}
 	}
 	function findAttack( nd ) {
-		var aLink = fullName +'dorf1.php?'+ linkVSwitch[nd].match(/newdid=\d+/i)[0];
+		var aLink = fullName +'resources?'+ linkVSwitch[nd].match(/newdid=\d+/i)[0];
 		ajaxRequest(aLink, 'GET', null, function(ajaxResp) {
 			var ad = ajaxNDIV(ajaxResp);
 			var move = $xf('.//*[@id="movements"]','f',ad);
@@ -8267,7 +8267,7 @@ function detectAttack () {
 		}, showError);
 	}
 	function findAttackPA() {
-		var aLink = fullName +'dorf1.php';
+		var aLink = fullName +'resources';
 		ajaxRequest(aLink, 'GET', null, function(ajaxResp) {
 			var ad = ajaxNDIV(ajaxResp);
 			var move = $xf('.//div[contains(@class,"listEntry village") and contains(@class,"attack")]','f',ad);
@@ -8279,7 +8279,7 @@ function detectAttack () {
 		}, showError);
 	}
 	function findAttackN() {
-		var aLink = fullName +'dorf1.php';
+		var aLink = fullName +'resources';
 		ajaxRequest(aLink, 'GET', null, function(ajaxResp) {
 			var ad = ajaxResp.responseText;
 			var reg = new RegExp('"gray":([1-9])');
@@ -8623,7 +8623,7 @@ function cultureCalc () {
 	}
 }
 
-if( /dorf[1,2]\.php/.test(crtPath) ) TM_ShowMainBuildingNumbers();
+if( /village|resources/.test(crtPath) ) TM_ShowMainBuildingNumbers();
 //if( /^\/build/.test(relName) ) cultureCalc();
 }
 /****************************** end Center Number ****************************/
@@ -9015,7 +9015,7 @@ function goldClubInfo () {
 				RB.overview[1] = "";
 				saveCookie('OV', 'overview');
 				xy = id2xy( xy );
-				document.location.href = 'karte.php?x='+xy[0]+'&y='+xy[1];
+				document.location.href = 'map?x='+xy[0]+'&y='+xy[1];
 			}
 		}
 		dictRpInit();
@@ -9500,7 +9500,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;padding:5px;text-align:center;']]);
 		var closeb = $ee('div',$a('&#x2716;',[['style','font-size:140%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Travian Resource Bar+";
-		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - July 31, 2026:</p> <ul><li>Added more servers with rebalanced troops</li></ul> <p>Version 2.26.15 - July 31, 2026:</p> <ul><li>Fixed the memory function not subtracting the resources already sent in the marketplace</li></ul> <p>Version 2.26.14 - June 19, 2026:</p> <ul><li>Minor fixes</li></ul> <p>Version 2.26.13 - May 15, 2026:</p> <ul><li>Fixed show needed resources</li></ul> ";
+		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Nov 18, 2026:</p> <ul><li>Added more servers with rebalanced troops</li></ul> <p>Version 2.26.16 - Aug 25, 2026:</p> <ul><li>Added more servers with rebalanced troops</li></ul> <p>Version 2.26.15 - July 31, 2026:</p> <ul><li>Fixed the memory function not subtracting the resources already sent in the marketplace</li></ul> <p>Version 2.26.14 - June 19, 2026:</p> <ul><li>Minor fixes</li></ul> <p>Version 2.26.13 - May 15, 2026:</p> <ul><li>Fixed show needed resources</li></ul> ";
 		footer.appendChild(footerline);
 		footerline.appendChild(homepage);
 		footerline.appendChild(donate);
@@ -9591,7 +9591,7 @@ function displayWhatIsNew () {
 
 	//save "produce per hour"
 	if( ! getResources() ) return;
-	if( /dorf[12].php/.test(crtPath) ) parseDorf1();
+	if( /village|resources/.test(crtPath) ) parseDorf1();
 
 	//If keep tribe on conquer feature, then use the village specific tribe.
 	if (RB.Setup[52] == 1) RB.Setup[2] = RB.village_Var[2];
@@ -9606,7 +9606,7 @@ function displayWhatIsNew () {
 			RB.overview[0] = i;
 			saveCookie('OV', 'overview');
 			var newdid = linkVSwitch[i-1].match(/newdid=\d+/i)[0];
-			setTimeout( function() { document.location.href = fullName +'dorf1.php?'+ newdid; }, getRandom(300,1000));
+			setTimeout( function() { document.location.href = fullName +'resources?'+ newdid; }, getRandom(300,1000));
 		}
 		return;
 	} else if( RB.overview[0] == -2 ) {
@@ -9624,17 +9624,17 @@ function displayWhatIsNew () {
 	var cont = $g(pageElem[1]);
 
 	if( RB.Setup[45] > 0 ) { sM = parseInt(RB.Setup[45]); sC = [16/sM,100]; }
-	if( /dorf1.php/.test(crtPath) ) { troopsDorf1(); normalizeProduction(); }
+	if( /resources/.test(crtPath) ) { troopsDorf1(); normalizeProduction(); }
 	villageHintEdit();
-	if( /dorf2.php/.test(crtPath) ) { parseDorf2(); if( RB.Setup[37] > 0 ) villageBMover(); }
+	if( /village/.test(crtPath) ) { parseDorf2(); if( RB.Setup[37] > 0 ) villageBMover(); }
 	if( /village\/statistics/.test(crtPath) ) { villageHintDorf3(); }
 	if( /(?:messages|report)/.test(crtPath) ) { viewMessageIW(); messagesTopButtons(); }
 	if( /report/.test(crtPath) ) reportsDelOrSearch(); else if( RB.overview[0] < -2 ) { RB.overview[0] = -1; saveCookie('OV', 'overview'); }
 	if( /messages\//.test(crtPath) ) { convertCoordsInMessagesToLinks(); }
-	if( /karte.php\?(.*&)?[zdxy]=/.test(crtPath) ) { distanceToMyVillages(); linkOnT4Karte(); }
-	if( /karte.php/.test(crtPath) ) { karteDistance(); cropFind(); resSendOnMap(); createSemiLargerMapHTML(); }
-	if( /position_details.php\?(.*&)?[zdxy]=/.test(crtPath) ) { troopsOasis(); distanceToMyVillages(); viewMessageIWK(); linkOnT4Karte(); }
-	if( ! /dorf.\.php/.test(crtPath) ) addRefIGM();
+	if( /map\?(.*&)?[zdxy]=/.test(crtPath) ) { distanceToMyVillages(); linkOnT4Karte(); }
+	if( /map/.test(crtPath) ) { karteDistance(); cropFind(); resSendOnMap(); createSemiLargerMapHTML(); }
+	if( /map\?(.*&)?[zdxy]=/.test(crtPath) ) { troopsOasis(); distanceToMyVillages(); viewMessageIWK(); linkOnT4Karte(); }
+	if( ! /village|resources/.test(crtPath) ) addRefIGM();
 	if( crtPath.indexOf('alliance') != -1 ) {
 		if( $g('offs') ) { viewMessageIWK(); addAReportFilter(); }
 		var allianceTable = $gc('allianceMembers',cont);
@@ -9649,7 +9649,7 @@ function displayWhatIsNew () {
 	if( /report.+id=/.test(crtPath) ) { addSpeedAndRTSend(); analyzerBattle(); getTroopNames(); }
 	if( /hero/.test(crtPath) ) { neededResAdd(); restHeroTime(); saveHeroSpeed(); saveHeroPower(); saveHeroMount(); addSpeedAndRTSend(); addSpeedAndRTSend($gc('boxes',cont)[0]); }
 	if( /auctions/.test(crtPath) ) { speedBids(); timeToBids(); }
-	if( /build.php/.test(crtPath) ) { neededResAdd(); buildDispatcher(); addSpeedAndRTSend(); }
+	if( /^\/building|^\/slot/.test(relName) ) { neededResAdd(); buildDispatcher(); addSpeedAndRTSend(); }
 
 	setTimeout( function() { progressbar_updValues(); setInterval(progressbar_updValues, 1000); }, (1000-progressbar_time-((Date.now())-RunTime[0])));
 	if( RB.Setup[16] != 0) { bigQuickLinks(); }
