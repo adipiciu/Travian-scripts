@@ -12,14 +12,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version        2.26.17
+// @version        2.26.18
 // ==/UserScript==
 
 (function () {
 var RunTime = [Date.now()];
 
 function allInOneOpera () {
-var version = '2.26.17';
+var version = '2.26.18';
 
 notRunYet = false;
 
@@ -4738,7 +4738,7 @@ function addARLinks(myVid, aDirect) {
 	ref.addEventListener('click', function(x) { return function() { sendArmy(x); }}(myVid), false);
 	newLinks.appendChild(ref);
 	if( aDirect < 2 ) {
-		var ref = $ee('a',trImg(allIDs[33]),[['href','/building?id=17&z=' + myVid + '&t=5'],['onclick','return false;']]);
+		var ref = $ee('a',trImg(allIDs[33]),[['href','/building?id=17&t=5&z=' + myVid],['onclick','return false;']]);
 		ref.addEventListener('click', function(x) { return function() { sendResourses(x); }}(myVid), false);
 		newLinks.appendChild(ref);
 	}
@@ -6344,7 +6344,7 @@ function viewMessageIW() {
 		var allRows = $xf('.//tr[td/@class="sel"]','l',cont);
 		var tds = allRows.snapshotItem(num).cells;
 		$gt('INPUT',tds[0])[0].click();
-		var aLinks = $xf('.//a[(contains(@href, "?id=") or contains(@href, "messages/")) and not(contains(@href, "toggleState=")) and not(contains(@href, "mark=")) and not(contains(@href, "build.php"))]','f',tds[1]);
+		var aLinks = $xf('.//a[(contains(@href, "?id=") or contains(@href, "messages/")) and not(contains(@href, "toggleState=")) and not(contains(@href, "mark=")) and not(contains(@href, "\/building?id"))]','f',tds[1]);
 		var aLink = aLinks.href;
 		var tV = /report/.test(aLink) ? 1: 0;
 		viewMessageIWDisplay( aLink, tV , (num>12?offsetPosition(aLinks):false));
@@ -6628,7 +6628,7 @@ function showDorf1 () {
 		loadZVCookie('Dorf11','village_dorf11',villages_id[i]);
 		if( RB.village_dorf11[0] > 0 ) {
 			var newdid = linkVSwitch[i].match(/newdid=\d+/i)[0];
-			var newAI = $a('',[['href',fullName + 'building?id=16&'+newdid],['style','font-weight:400;color:black;']]);
+			var newAI = $a('',[['href',fullName + 'building?id=16&tt=1&'+newdid],['style','font-weight:400;color:black;']]);
 			var tb = RB.village_dorf11.slice();
 			for( var j = 0; j < tb[0]; j++ ) {
 				newAI.appendChild($e('IMG',[['src','/img/x.gif'],['class',tb[j*3+1]]]));
@@ -6698,7 +6698,7 @@ function showAWake () {
 }
 
 function addSpeedAndRTSend ( iBl, href ) {
-	var mLinks = $xf('.//a[contains(@href, "' + (typeof href == 'undefined' ? "map?" : "position_details.php?") + '")]', 'r', (typeof iBl == 'undefined' ? cont : iBl));
+	var mLinks = $xf('.//a[contains(@href, "map?")]', 'r', (typeof iBl == 'undefined' ? cont : iBl));
 	for( var j = 0; j < mLinks.snapshotLength; j++ ) {
 		var existT = $gc(allIDs[29],mLinks.snapshotItem(j));
 		if( existT.length > 0 ) continue; else mLinks.snapshotItem(j).appendChild($e('SPAN',[['class',allIDs[29]]]));
@@ -6946,7 +6946,6 @@ function linkOnT4Karte ( vV ) {
 			} else var al = $ee('SPAN',flinks[xy],[['style','color:#00CB00;margin:0px 10px;']]);
 			h1.appendChild(al);
 		}
-		if( /position_details/.test(crtPath) ) return;
 		var ln = $gt('A',$gc('detailImage',vilView)[0]);
 		if( ln.length > 0 ) {
 			var xy = id2xy(getVid(ln[0].getAttribute('href')));
@@ -9500,7 +9499,7 @@ function displayWhatIsNew () {
 		var donate = $ee('div',$a('Donate',[['href','https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=T4.4+script&currency_code=EUR'],['target','_blank']]),[['style','display:table-cell;width:33%;padding:5px;text-align:center;']]);
 		var closeb = $ee('div',$a('&#x2716;',[['style','font-size:140%;float:'+docDir[1]+';']]),[['style','height:15px;padding:10px;']]);
 		header.textContent = "About Travian Resource Bar+";
-		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Nov 18, 2026:</p> <ul><li>Added more servers with rebalanced troops</li></ul> <p>Version 2.26.16 - Aug 25, 2026:</p> <ul><li>Added more servers with rebalanced troops</li></ul> <p>Version 2.26.15 - July 31, 2026:</p> <ul><li>Fixed the memory function not subtracting the resources already sent in the marketplace</li></ul> <p>Version 2.26.14 - June 19, 2026:</p> <ul><li>Minor fixes</li></ul> <p>Version 2.26.13 - May 15, 2026:</p> <ul><li>Fixed show needed resources</li></ul> ";
+		content.innerHTML = "<p><b>Changelog</b></p> <p>Version "+version+" - Nov 18, 2026:</p> <ul><li>Fixes for the latest Travian update</li></ul> <p>Version 2.26.16 - Aug 25, 2026:</p> <ul><li>Added more servers with rebalanced troops</li></ul> <p>Version 2.26.15 - July 31, 2026:</p> <ul><li>Fixed the memory function not subtracting the resources already sent in the marketplace</li></ul> ";
 		footer.appendChild(footerline);
 		footerline.appendChild(homepage);
 		footerline.appendChild(donate);
@@ -9631,9 +9630,8 @@ function displayWhatIsNew () {
 	if( /(?:messages|report)/.test(crtPath) ) { viewMessageIW(); messagesTopButtons(); }
 	if( /report/.test(crtPath) ) reportsDelOrSearch(); else if( RB.overview[0] < -2 ) { RB.overview[0] = -1; saveCookie('OV', 'overview'); }
 	if( /messages\//.test(crtPath) ) { convertCoordsInMessagesToLinks(); }
-	if( /map\?(.*&)?[zdxy]=/.test(crtPath) ) { distanceToMyVillages(); linkOnT4Karte(); }
 	if( /map/.test(crtPath) ) { karteDistance(); cropFind(); resSendOnMap(); createSemiLargerMapHTML(); }
-	if( /map\?(.*&)?[zdxy]=/.test(crtPath) ) { troopsOasis(); distanceToMyVillages(); viewMessageIWK(); linkOnT4Karte(); }
+	if( /map\?(.*&)?[zdxy]=/.test(crtPath) ) { distanceToMyVillages(); viewMessageIWK(); linkOnT4Karte(); }
 	if( ! /village|resources/.test(crtPath) ) addRefIGM();
 	if( crtPath.indexOf('alliance') != -1 ) {
 		if( $g('offs') ) { viewMessageIWK(); addAReportFilter(); }
