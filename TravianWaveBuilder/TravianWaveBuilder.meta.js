@@ -6,6 +6,9 @@
 // @license        GPL version 3 or any later version; http://www.gnu.org/copyleft/gpl.html
 // @contributionURL https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=56E2JM7DNDHGQ&item_name=Travian+wave+builder+script&currency_code=EUR
 // @match          https://*.travian.com/build.php*
+// @match          https://*.travian.com/building?id=16*
+// @match          https://*.travian.com/slot?id=39*
 
-// @version        2.12
+
+// @version        2.13
 // ==/UserScript==
