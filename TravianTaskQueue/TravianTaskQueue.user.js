@@ -12,14 +12,14 @@
 // @exclude     *.css
 // @exclude     *.js
 
-// @version     2.0.30
+// @version     2.0.31
 // ==/UserScript==
 
 (function () {
 
 function allInOneTTQ () {
 notRunYet = false;
-var sCurrentVersion = "2.0.30";
+var sCurrentVersion = "2.0.31";
 
 //find out if Server errors
 var strTitle = document.title;
@@ -140,7 +140,10 @@ function post(url, data, callback, options) {
 		httpRequest.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
 	}
 	else if (url.includes("api/v1/building/demolish")){
-		httpRequest.setRequestHeader('Content-Type', 'application/json;');
+		httpRequest.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+	}
+	else if (url.includes("api/v1/building/build")){
+		httpRequest.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
 	}
 	else if (url.includes("api/v1/")){
 		httpRequest.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
@@ -765,7 +768,7 @@ function TTQ_showMenuCommand() {
 		tX = xy[0];
 		tY = xy[1];
 		vName = $gc('name',tA)[0].textContent;
-		vName = '<span class ="ttq_village_name" onclick="window.location = \''+fullName+'?newdid='+villageID+'&'+'\';return false;" title="'+aLangStrings[80]+'">' + vName + '</span>&nbsp;<span class ="ttq_village_name ttq_village_coords" title="'+aLangStrings[81]+'" onclick="window.location = \'' + window.location.origin + '/position_details.php?x='+tX+'&y='+tY+'\';return false;" >(' + tX + '|' + tY + ')</span>';
+		vName = '<span class ="ttq_village_name" onclick="window.location = \''+fullName+'?newdid='+villageID+'&'+'\';return false;" title="'+aLangStrings[80]+'">' + vName + '</span>&nbsp;<span class ="ttq_village_name ttq_village_coords" title="'+aLangStrings[81]+'" onclick="window.location = \'' + window.location.origin + '/map?x='+tX+'&y='+tY+'\';return false;" >(' + tX + '|' + tY + ')</span>';
 		myPlaceNames[parseInt(villageID)] = vName;  // village id
 		myPlaceNames[tX+" "+tY] = vName;
 		n8++;
@@ -1264,7 +1267,7 @@ function triggerTask(aTask) {
 		case "5": //throw party
 			party(aTask);
 			break;
-		case "6": //demolish building[ALPHA]
+		case "6": //demolish building
 			demolish(aTask);
 			break;
 		case "7": //send merchants
@@ -1510,7 +1513,7 @@ function upgradebuild(aTask) {
 	_log(3,"UpgradeBuild> Begin. aTask = ("+JSON.stringify(aTask)+")");
 	printMsg(aLangStrings[6] + " > 1<br><br>" + getTaskDetails(aTask));
 
-	var buildingID = parseInt(aTask[3]);
+	var buildingID = parseInt(aTask[3].split("_")[0]);
 	var buildingName = aTask[3].split("_")[1];
 	var eParam = aTask[3].split("_")[2];
 	var oldVID = parseInt(aTask[5]);
@@ -1522,22 +1525,16 @@ function upgradebuild(aTask) {
 	if (buildingID==25 || buildingID==26 || buildingID==44) { Tab = "&s=0" } //Residence, Palace or Command Center
 
 	var httpRequest = new XMLHttpRequest();
-		_log(3,"UpgradeBuild> Posting Build/Upgrade request... "+"build.php?" + ((oldVID != 'null')?("newdid=" + oldVID):("")) + Tab + "&id=" + aTask[2] + (eParam ? eParam: ""));
-		httpRequest.open("GET", fullName+"build.php?" + ((oldVID != 'null')?("newdid=" + oldVID):("")) + Tab + "&id=" + aTask[2] + (eParam ? eParam: ""), true);
+		_log(3,"UpgradeBuild> Posting Build/Upgrade request... "+"slot?id=" + aTask[2] + ((oldVID != 'null')?("&newdid=" + oldVID):("")) + Tab + (eParam ? eParam: ""));
+		httpRequest.open("GET", fullName+"slot?id=" + aTask[2] + ((oldVID != 'null')?("&newdid=" + oldVID):("")) + Tab + (eParam ? eParam: ""), true);
 		httpRequest.onreadystatechange = function() {
 			if (httpRequest.readyState == 4) { //complete
 				printMsg(aLangStrings[6] + " > 1 > 2<br><br>" + getTaskDetails(aTask));
 				if (httpRequest.status == 200 && httpRequest.responseText) { // ok
 					var holder = document.createElement('div');
 					holder.innerHTML = httpRequest.responseText;
-					var myContracts = holder.getElementsByClassName("buildingWrapper");
-					if ( myContracts.length <= 0 ) {
-						myContracts = holder.getElementsByClassName("showBuildCosts normal");
-						if ( myContracts.length <= 0 ) {
-							myContracts = holder.getElementsByClassName("upgradeButtonsContainer");
-							if ( myContracts.length <= 0 ) return;
-						}
-					}
+					var myContracts = holder.getElementsByClassName("upgradeButtonsContainer");
+					if ( myContracts.length <= 0 ) return;
 					var myBuilds = holder.getElementsByClassName("roundedCornersBox");
 					if (myBuilds.length <=0 ) myBuilds = holder.getElementsByClassName("upgradeHeader");
 					if (myBuilds.length <=0 ) myBuilds = holder.getElementsByClassName("buildingWrapper");
@@ -1574,6 +1571,14 @@ function upgradebuild(aTask) {
 									addToHistory(aTask, false, "Not enough resources");
 									return;
 								}
+								//var sParams = '{"action": "build", "buildingId": ' + buildingID + ', "masterBuilder": false}'; 
+								var sParams = {};
+								sParams["action"] = "build";
+								sParams["buildingId"] = buildingID;
+								sParams["masterBuilder"] = false;
+								_log(3,"sParams:"+sParams);
+								post(fullName+'api/v1/building/build/'+aTask[2], JSON.stringify(sParams), handleRequestBuild, aTask);
+								return;
 								tmp = tmp[0].getAttribute("onclick").split("'")[1];
 								if ( tmp ) {
 									if ( tmp.startsWith("/") ) { tmp = tmp.substring(1); }
@@ -1623,14 +1628,25 @@ function handleRequestBuild(httpRequest, aTask) {
 //	_log(1,"Begin handleRequestBuild("+httpRequest+", "+aTask+")");
 	if (httpRequest.readyState == 4) {
 		var buildingName = aTask[3].split("_")[1];
+		var buildingID = aTask[3].split("_")[0];
 		var oldVID = parseInt(aTask[5]);
 		if ( isNaN(oldVID) ) oldVID = -2;
 
 		if (httpRequest.status == 200 && httpRequest.responseText) { // ok
-			var holder = document.createElement('div');
-			holder.innerHTML = httpRequest.responseText;
-			var thisNewdid = getActiveVillage(holder);
-			if ( thisNewdid != currentActiveVillage ) switchActiveVillage(currentActiveVillage);
+			//var holder = document.createElement('div');
+			//holder.innerHTML = httpRequest.responseText;
+			//var thisNewdid = getActiveVillage(holder);
+			//if ( thisNewdid != currentActiveVillage ) switchActiveVillage(currentActiveVillage);
+			const data = JSON.parse(httpRequest.responseText);
+			if (data.redirectTo) {
+				_log(1, "handleRequestBuild> Build started! Redirect target:" + data.redirectTo);
+				printMsg(getVillageName(oldVID)+ "<br>" + aLangStrings[5] +' '+ buildingName);  //Your building is being built.
+				addToHistory(aTask, true);
+				return true;
+			} else {
+				_log(1, "Error status: " + httpRequest.status + ". Build rejected by server:" + data);
+				return false;
+			}
 			var re = new RegExp(buildingName, 'i');
 			var bL = $gc('buildingList',holder);
 
@@ -1726,7 +1742,7 @@ function research(aTask) {
 	printMsg(aLangStrings[6] + " > 1<br><br>" + getTaskDetails(aTask));
 	if(aTask[5] != 'null') var sNewDid = "&newdid=" +aTask[5];
 	else var sNewDid = "";
-	var sUrl = "build.php?id=" + aTask[2] + sNewDid;
+	var sUrl = "building?id=" + aTask[2] + sNewDid;
 	get(fullName+sUrl, handleRequestResearch, aTask);
 	_log(1, "End research("+aTask+")");
 }
@@ -1847,38 +1863,29 @@ function handleRequestResearchConfirmation(httpRequest, aTask) {
 // *** Begin Party Functions ***
 function createPartyLinks(/*sBuildingId*/) {
 	_log(3,"Begin createPartyLinks()");
-
-	//var xpathBuildingNames = xpath("//h1");
-	//var re = new RegExp("(.*)\\s(?:<([a-zA-Z][a-zA-Z0-9]*)\\b[^>]*>)?" + aLangStrings[7] + "\\s[0-9]{1,3}(?:<\/\\2>)?$", "i");
-	//var re2 = new RegExp("[0-9]{1,3}\\.\\s(.*)$", "i");
-	//var xpathResult = xpath("id('content')/div[@class='gid24']");
-
-	//if(xpathResult.snapshotLength > 0) {
-//		var xpathStart = document.getElementsByClassName("act");
-		var xpathStart = document.getElementsByClassName("information");
-		_log(3, "Time to party. Found " + xpathStart.length + " type of parties.");
-		var linkTxt = aLangStrings[53];
-		for(var i = 0; i < xpathStart.length ; ++i ) {
-			if ( i == 2 ) continue;
+	var xpathStart = document.getElementsByClassName("information");
+	_log(3, "Time to party. Found " + xpathStart.length + " type of parties.");
+	var linkTxt = aLangStrings[53];
+	for(var i = 0; i < xpathStart.length ; ++i ) {
+		if ( i == 2 ) continue;
 //			var sBuildingName = xpathBuildingNames.snapshotItem(0).innerHTML;
 //			var aMatches = sBuildingName.match(re);
 //			sBuildingName = aMatches[1];
 //			sBuildingName = rtrim(sBuildingName);
 //			var sBuildingId = aLangBuildings.indexOf(sBuildingName);
-			var thisStart = xpathStart[i];
-			var pLink = document.createElement("a");
-			pLink.id = "ttq_research_later" + i;
-			pLink.className = "ttq_research_later";
-			pLink.innerHTML = " " + linkTxt;
-			pLink.title = linkTxt;
-			pLink.href = "#";
-			pLink.setAttribute("itask", 5);
-			pLink.setAttribute("starget", iSiteId);
-			pLink.setAttribute("soptions", /*sBuildingId*/i+1);
-			ttqAddEventListener(pLink, 'click', displayTimerForm, false);
-			thisStart.appendChild(pLink);
-		}
-	//}
+		var thisStart = xpathStart[i];
+		var pLink = document.createElement("a");
+		pLink.id = "ttq_research_later" + i;
+		pLink.className = "ttq_research_later";
+		pLink.innerHTML = " " + linkTxt;
+		pLink.title = linkTxt;
+		pLink.href = "#";
+		pLink.setAttribute("itask", 5);
+		pLink.setAttribute("starget", iSiteId);
+		pLink.setAttribute("soptions", /*sBuildingId*/i+1);
+		ttqAddEventListener(pLink, 'click', displayTimerForm, false);
+		thisStart.appendChild(pLink);
+	}
 	_log(3,"End createPartyLinks()");
 }
 
@@ -1887,13 +1894,24 @@ function party(aTask) {
 	printMsg(aLangStrings[6] + " > 1<br><br>" + getTaskDetails(aTask));
 	if(aTask[5] != 'null') var sNewDid = "&newdid=" +aTask[5];
 	else var sNewDid = "";
-	var sUrl = "build.php?id=" + aTask[2] + "&gid=24&action=celebration&do=" + aTask[3] + "&t=1" + sNewDid;
-	var myOptions = [aTask, currentActiveVillage];
-	get(fullName+sUrl, handleRequestParty, myOptions);
+	get(fullName+"building?id=24" + sNewDid, handleRequestParty1, aTask);
 	_log(1, "End party("+aTask+")");
 }
 
-function handleRequestParty(httpRequest, options) {
+function handleRequestParty1(httpRequest, aTask) {
+	_log(1,"Begin party("+aTask+")");
+	//var sUrl = "building?id=" + aTask[2] + "&action=celebration&do=" + aTask[3] + "&t=1";
+	var sParams = "&action=celebration&do=" + aTask[3] + "&t=1";
+	var myOptions = [aTask, currentActiveVillage];
+	if (httpRequest.readyState == 4) {
+		if (httpRequest.status == 200) {
+			post(fullName+'building?id=' + aTask[2], sParams, handleRequestParty2, myOptions);
+			_log(1, "End party("+aTask+")");
+		}
+	}
+}
+
+function handleRequestParty2(httpRequest, options) {
 	_log(3,"Begin handleRequestParty("+httpRequest+", "+options+")");
 	var aTask = options[0];
 	var activateVillageDid = parseInt(options[1]);
@@ -1995,7 +2013,7 @@ function sendbackwithdraw (aTask) {
 	_log(2,"sendbackwithdraw> Begin. aTask = " + aTask);
 	printMsg(aLangStrings[6] + " > 1<br><br>" + getTaskDetails(aTask));
 	var aTroops = aTask[3].split("_");
-	get(fullName+"build.php" + aTroops[0], sendbackwithdraw2, aTask);
+	get(fullName+"building" + aTroops[0], sendbackwithdraw2, aTask);
 	_log(3,"sendbackwithdraw> End.");
 }
 
@@ -2020,7 +2038,7 @@ function sendbackwithdraw2 (httpRequest,aTask) {
 		var okBtn = holder.getElementsByName('checksum');
 		var checkSum = okBtn[0].value;
 		sParams += "&checksum=" + checkSum;
-		post(fullName+"build.php" + aTroops[0], sParams, handleSendBackRequestConfirmation, aTask);
+		post(fullName+"building" + aTroops[0], sParams, handleSendBackRequestConfirmation, aTask);
 	}
 	_log(3,"sendbackwithdraw2> End.");
 }
@@ -2121,9 +2139,9 @@ function attack(aTask) {
 	printMsg(aLangStrings[6] + " > 1<br><br>" + getTaskDetails(aTask));
 	if(aTask[5] != 'null') {  //multiple villages
 		//we need to switch village (while at the same time, setting the target destination)
-		get(fullName+"build.php?gid=16&tt=2&newdid=" + aTask[5] + "&targetMapId=" + aTask[2], attack2, aTask);
+		get(fullName+"building?id=16&tt=2&newdid=" + aTask[5] + "&targetMapId=" + aTask[2], attack2, aTask);
 	} else {  //only 1 village. Perform attack immediately
-		post(fullName+"build.php?gid=16&tt=2", "targetMapId=" + aTask[2], attack2, aTask);
+		post(fullName+"building?id=16&tt=2", "targetMapId=" + aTask[2], attack2, aTask);
 		_log(2, "The attack was requested.");
 	}
 	_log(1, "End attack("+aTask+")");
@@ -2180,7 +2198,7 @@ function attack2(httpRequest,aTask) {
 					}
 				}
 				sParams += "ok=ok";
-				post(fullName+'build.php?gid=16&tt=2', sParams, attack3, aTask);
+				post(fullName+'building?id=16&tt=2', sParams, attack3, aTask);
 				return;
 			}
 			if ( reqVID != currentActiveVillage ) switchActiveVillage ( currentActiveVillage );
@@ -2249,7 +2267,7 @@ function attack3(httpRequest,aTask){
 					else sParams += t + "=" + tInputs[q].value + "&";
 				}
 				if (sParams.charAt(sParams.length - 1) == '&') { sParams = sParams.slice(0, -1); }
-				post(fullName+'build.php?gid=16&tt=2', sParams, handleRequestAttack, aTask);
+				post(fullName+'building?id=16&tt=2', sParams, handleRequestAttack, aTask);
 				return;
 			}
 			if ( reqVID != currentActiveVillage ) switchActiveVillage(currentActiveVillage);
@@ -2287,7 +2305,7 @@ function handleRequestAttack(httpRequest, aTask) {
 			var reqVID = getActiveVillage(holder);
 			if ( reqVID != currentActiveVillage ) switchActiveVillage(currentActiveVillage);
 			if ( oldVID == reqVID && holder.getElementsByClassName("gid16").length == 1 ) {
-				re = new RegExp('karte\\.php\\?d=' + aTask[2], 'i');
+				re = new RegExp('map\\?d=' + aTask[2], 'i');
 				if(re.test(httpRequest.responseText)) {
 					_log(1, "It seems your attack was successfully sent.");
 					printMsg(sFromName + aLangStrings[18] + " >> " + sPlaceName );
@@ -2365,17 +2383,14 @@ function sendGoldClub (aTask) {
 	_log(1,"Begin attack from gold-club ("+aTask+")");
 	printMsg(aLangStrings[6] + " > 1<br><br>" + getTaskDetails(aTask));
 	//post(fullName+'api/v1/raid-list/slots', sParams, sendGoldClub1, aTask);
-	get(fullName+"build.php?id=39&gid=16&tt=99", sendGoldClub2, aTask);
+	get(fullName+"building?id=16&tt=99", sendGoldClub2, aTask);
 	_log(2, "The attack was requested.");
 	_log(1, "End attack from gold-club ("+aTask+")");
 }
 function getActiveVillage (el,adoc) {
-	var reqVID = xpath('//div[@id="sidebarBoxVillageList"]//a[@class="active"]',el,true,adoc);
-	if ( reqVID ) {
-		reqVID = parseInt(reqVID.href.split("=")[1]);
-		if ( isNaN(reqVID) ) reqVID = -1;
-	} else { reqVID = -1; }
-	return reqVID;
+	const root = adoc || el || document;
+	const reqVID = root.querySelector('#sidebarBoxVillageList div.listEntry.village.active')?.dataset.did;
+	return Number(reqVID) || -1;
 }
 function sendGoldClub2(httpRequest,aTask) {
 	if (httpRequest.readyState == 4) {
@@ -2540,7 +2555,7 @@ function train(aTask) {
 	var troopsInfo = getTroopsInfo(aTroops);
 	var oldGid = parseInt(aTroops[13]);
 	var httpRequest = new XMLHttpRequest();
-	httpRequest.open("GET", fullName+"build.php" + (oldVID>0 ? "?newdid=" + oldVID : "") + (oldVID>0 ? "&id=" + aTask[2] : "?id=" + aTask[2]) + "&gid=" + aTask[4] + residenceTab , true);
+	httpRequest.open("GET", fullName+"building" + (oldVID>0 ? "?newdid=" + oldVID : "") + (oldVID>0 ? "&id=" + aTask[2] : "?id=" + aTask[2]) + residenceTab , true);
 	httpRequest.onreadystatechange = function() {
 		if (httpRequest.readyState == 4) { //complete
 			printMsg(aLangStrings[6] + " > 1 > 2<br><br>" + getTaskDetails(aTask));
@@ -2584,7 +2599,7 @@ function train(aTask) {
 							return;
 						}
 						_log(2, "Train>posting>sParams>" + sParams + "<");
-						post(fullName+"build.php"+"?id=" +aTask[2] + "&gid=" + aTask[4], sParams, handleRequestTrain, aTask);
+						post(fullName+"building?id=" +aTask[2], sParams, handleRequestTrain, aTask);
 						return;
 					}
 					if ( reqVID != currentActiveVillage ) switchActiveVillage(currentActiveVillage);
@@ -2660,7 +2675,7 @@ function handleRequestTrain(httpRequest, aTask) {
 // *** Begin Demolish Functions
 function createDemolishBtn() {
 	_log(3,"Begin createDemolishBtn()");
-	var xpathRes = xpath("//form[contains(@action,'build.php')]/select[@name='abriss']");
+	var xpathRes = xpath("//form[contains(@action,'building')]/select[@name='abriss']");
 	if(xpathRes.snapshotLength > 0) {
 		var oBtnWrapper = generateButton(aLangStrings[62],scheduleDemolish);
 		xpathRes = xpathRes.snapshotItem(0).parentNode;
@@ -2703,14 +2718,14 @@ function demolish(aTask) {
 	var aTaskDetails = getTaskDetails(aTask);
 	printMsg(aLangStrings[6] + " > 1<br><br>" + aTaskDetails);
 
-	//If need to change village, the link should like: build.php?newdid=144307&gid=15&id=26
+	//If need to change village, the link should like: building?id=26&newdid=144307
 	var oldVID = parseInt(aTask[5]);
 	if (isNaN(oldVID)) oldVID = -2;
-	if(oldVID > 0) var sNewDid = "newdid=" +oldVID+"&";
+	if(oldVID > 0) var sNewDid = "newdid=" + oldVID;
 	else var sNewDid = "";
 	//Loading the page once first, changing the active village at the same time
 	var httpRequest = new XMLHttpRequest();
-	var httpRequestString = fullName+"build.php?" + sNewDid + "gid=15";
+	var httpRequestString = fullName+"building?id=15&" + sNewDid;
 	httpRequest.open("GET", httpRequestString, true);
 	httpRequest.onreadystatechange = function() {
 		if (httpRequest.readyState == 4) { //complete
@@ -2817,7 +2832,7 @@ function merchant(aTask) {
 	var opts = aTask[3].split("_");
 	var nid = parseInt(aTask[5]);
 	var target = parseInt(aTask[2]);
-	var sUrl = "build.php?"+(isNaN(nid)?"":("newdid="+nid+"&")) + "t=5&gid=17" + ( (isNaN(target) || target < 1 || target > 641601) ? "" : "&z="+target );
+	var sUrl = "building?id=17t=5&" + ( (isNaN(target) || target < 1 || target > 641601) ? "" : "&z="+target ) + (isNaN(nid)?"":("&newdid="+nid));
 	get(fullName+sUrl, handleMerchantRequest1, aTask);
 	_log(2,"SendMerchant> End.");
 }
@@ -2957,7 +2972,7 @@ function handleMerchantRequest2(httpRequest, aTask) {
 			var opts = aTask[3].split("_");
 			sParams = '{"action":"marketPlace","resources":{"lumber":'+opts[2]+',"clay":'+opts[3]+',"iron":'+opts[4]+',"crop":'+opts[5]+'},"destination":{"x":'+opts[0]+',"y":'+opts[1]+'},"runs":1,"useTradeShips":false}';
 			_log(3,"sParams:"+sParams);
-			
+
 			post(fullName+'api/v1/marketplace/resources/send', sParams, handleMerchantRequestConfirmation, aTask);
 			return;
 			var sParams = {};
@@ -3403,7 +3418,7 @@ function setTask(iTask, iWhen, target, options, taskindex, villagedid, refreshTa
 			sTaskSubject = ' ' + aLangStrings[53];
 			sTask = aLangTasks[5];
 			break;
-		case "6":  //Demolish [ALPHA]
+		case "6":  //Demolish
 			var tO = options.split("_");
 			sTaskSubject = "A building";
 			target = parseInt(target);
@@ -3536,7 +3551,7 @@ function getSiteId() {
 	//Check if the page is showing the village instead
 	var xpathVillage = xpath("//div[@class='village2'] | //div[@class='village1'] ");
 	var href = window.location.href;
-	if ( xpathVillage.snapshotLength > 0 || href.indexOf("messages") > -1 || href.indexOf("report") > -1 || href.indexOf("hero") > -1 || href.indexOf("details") > -1 || href.indexOf("karte") > -1 || href.indexOf("statistics") > -1 || href.indexOf("profile") > -1 ) {
+	if ( xpathVillage.snapshotLength > 0 || href.indexOf("messages") > -1 || href.indexOf("report") > -1 || href.indexOf("hero") > -1 || href.indexOf("details") > -1 || href.indexOf("map") > -1 || href.indexOf("statistics") > -1 || href.indexOf("profile") > -1 ) {
 		_log(2, "getSiteId>This is not a screen that has a building. End getSiteId()");
 		return -6;
 	}
@@ -3581,7 +3596,7 @@ function getVillageNameXY(iVillageX, iVillageY){
 	iVillageY = parseInt(iVillageY);
 	if ( isNaN(iVillageX) || Math.abs(iVillageX) > mapRadius || isNaN(iVillageY) ||  Math.abs(iVillageY) > mapRadius ) return aLangStrings[2];
 	if ( typeof(myPlaceNames[iVillageX+" "+iVillageY]) != "undefined" ) return myPlaceNames[iVillageX+" "+iVillageY];
-	var nV, tStr1 = '<span class ="ttq_village_name" title="'+aLangStrings[81]+'" onclick="window.location = \'' + window.location.origin + '/position_details.php?x='+iVillageX+'&y='+iVillageY+'\';return false;">';
+	var nV, tStr1 = '<span class ="ttq_village_name" title="'+aLangStrings[81]+'" onclick="window.location = \'' + window.location.origin + '/map?x='+iVillageX+'&y='+iVillageY+'\';return false;">';
 	var tStr2 = "("+iVillageX+"|"+iVillageY+")</span>";
 	for ( var i = 0, k = otherPlaceNames.length ; i < k ; ++i ) {
 		nV = otherPlaceNames[i].split("|");
@@ -3668,7 +3683,7 @@ function getTaskDetails(aTask) {
 
 function getTroopNames() {
 	var httpRequest = new XMLHttpRequest();
-	var httpRequestString = fullName+"build.php?id=39&gid=16&tt=1";
+	var httpRequestString = fullName+"building?id=16&tt=1";
 	httpRequest.open("GET", httpRequestString, true);
 	httpRequest.onreadystatechange = function() {
 		if (httpRequest.readyState == 4) { //complete
@@ -3704,7 +3719,7 @@ function detectTribe() {
 	if ( isNaN(iMyRace) || iMyRace < 0 ) {
 		setVariable("TROOP_NAMES", "");
 		var httpRequest = new XMLHttpRequest();
-		var httpRequestString = fullName+"build.php?id=39&gid=16&tt=2";
+		var httpRequestString = fullName+"building?id=16&tt=2";
 		httpRequest.open("GET", httpRequestString, true);
 		httpRequest.onreadystatechange = function() {
 			if (httpRequest.readyState == 4) { //complete
@@ -3747,7 +3762,7 @@ function onlySpies(aTroops) { // @return true if there are only spies, false if 
 
 function switchActiveVillage(did) {
 	_log(2, "Switching your village back to " +did);
-	if ( Number.isInteger(did) && did > 0 ) get(fullName+"dorf1.php?newdid="+did, null, null);
+	if ( Number.isInteger(did) && did > 0 ) get(fullName+"resources?newdid="+did, null, null);
 }
 
 // *** Display Helper Functions
@@ -3984,10 +3999,9 @@ function onLoad() {
 
 	LOG_LEVEL = getOption("DEBUG", 0, "integer");
 
-    tA = /.*build\.php.*/i;
-	tB = /\/(slot|building)\b/i;
+    tA = /\/(slot|building)/i;
 
-	if (iSiteId > -1 && (tA.test(window.location.href) || tB.test(window.location.href))) {
+	if (iSiteId > -1 && tA.test(window.location.href)) {
 		createBuildLinks();
 
 		var build = $id('build');
